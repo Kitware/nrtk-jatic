@@ -27,6 +27,10 @@ copyright = '2023, Kitware, Inc.'
 author = 'Kitware, Inc.'
 release = nrtk_cdao.__version__
 
+site_url = "https://jatic.pages.jatic.net/kitware/nrtk-cdao/"
+repo_url = "https://gitlab.jatic.net/jatic/kitware/nrtk-cdao"
+repo_name = "nrtk-cdao"
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
