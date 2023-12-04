@@ -15,11 +15,16 @@ Documentation
 
 * Added ability to render documentation on Gitlab Pages.
 
+* Update README.md
+
 Examples
 
 * Added an example notebook exploring the current state of several augmentation
   tools as well as the usability of the JATIC Toolbox augmentation protocol.
 
+License
+
+* Add Apache 2.0 license
 
 Fixes
 -----
