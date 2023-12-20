@@ -191,7 +191,7 @@ test-notebooks:
     matrix:
       # Sequences combinatorically combine within a list entry
       - NOTEBOOK_DIR: "examples/"
-        NOTEBOOK_FILE: [ "./jatic_toolbox/augmentations.ipynb", "./daml/daml_example_notebook.ipynb" ]
+        NOTEBOOK_FILE: [ "./augmentations.ipynb", "./daml/daml_example_notebook.ipynb" ]
   # Using default container image defined above
   script:
     - cd "${NOTEBOOK_DIR}"

@@ -20,11 +20,11 @@ Documentation
 Examples
 
 * Added an example notebook exploring the current state of several augmentation
-  tools as well as the usability of the JATIC Toolbox augmentation protocol.
+  tools as well as the usability of the JATIC augmentation protocol.
 
 * Added an example notebook exploring the DPDivergence metric using the DAML
   tools developed by the ARIA team.
-  
+
 License
 
 * Add Apache 2.0 license
