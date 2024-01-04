@@ -140,3 +140,5 @@ cython_debug/
 
 # Example notebooks
 examples/data
+examples/gradio/*/*.yaml
+examples/gradio/*.yaml

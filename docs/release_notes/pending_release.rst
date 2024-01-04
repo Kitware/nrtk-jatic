@@ -25,6 +25,9 @@ Examples
 * Added an example notebook exploring the DPDivergence metric using the DAML
   tools developed by the ARIA team.
 
+* Added an example notebook exploring using Gradio as an interface for applying
+  pyBSM perturbations.
+
 License
 
 * Add Apache 2.0 license
