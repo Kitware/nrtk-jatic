@@ -28,7 +28,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.12"
-maite = { version = ">=0.3.4", extras = ["test"] }
+maite = ">=0.3.4"
 nrtk = ">=0.2.1"
 
 [tool.poetry.extras]
