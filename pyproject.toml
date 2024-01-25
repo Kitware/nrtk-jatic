@@ -55,7 +55,6 @@ sphinx-prompt = ">=1.5.0"
 livereload = ">=2.6.3"
 # Utility
 ipython = ">=8.6.0"
-daml = ">=0.38.0"
 
 
 [tool.poetry.scripts]
