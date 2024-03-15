@@ -45,7 +45,7 @@ flake8-mutable = ">=1.2.0"
 # Type checking
 mypy = ">=0.991"
 types-setuptools = ">=65.6.0.1"
-maite = { version = ">=0.3.4", extras = ["test"] }
+maite = { version = ">=0.3.4", extras = ["test", "torch", "torchvision"] }
 # Testing
 coverage = ">=6.5.0"
 pytest = ">=7.2.0"
@@ -62,6 +62,7 @@ livereload = ">=2.6.3"
 ipython = ">=8.6.0"
 
 [tool.poetry.scripts]
+nrtk-perturber = "nrtk_cdao.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
 
 [tool.poetry.plugins."smqtk_plugins"]
 
