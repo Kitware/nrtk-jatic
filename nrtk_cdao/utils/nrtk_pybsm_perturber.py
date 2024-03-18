@@ -49,6 +49,10 @@ def nrtk_pybsm_perturber(
     logging.info(f"Dataset path: {dataset_img_dir}")
     logging.info(f"Task: {task}")
 
+    # Checking if all essential pybsm configurations exist
+    if any(key not in config for key in ["gsd", "sensor", "scenario"]):
+        raise ValueError("Invalid Configuration")
+
     # Convert list values to numpy arrays in sensor config
     for key, value in config["sensor"].items():
         if isinstance(value, List):

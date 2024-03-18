@@ -1,0 +1,6 @@
+# focal length (m)
+f: [0.014, 0.012]
+# telescope diameter (m)
+D: [0.001, 0.003]
+# detector pitch (m)
+px: [0.00002]

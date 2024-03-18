@@ -53,22 +53,16 @@ def nrtk_perturber_cli(
         raise ValueError("Invalid Task")
 
     # load config
-    with open(config_file, 'r') as cfg_file:
-        config = yaml.safe_load(cfg_file)
+    config = yaml.safe_load(config_file)
 
-    # Checking if all essential pybsm configurations exist
-    if all(key in config for key in ["gsd", "sensor", "scenario"]):
+    # Load pybsm perturb params
+    perturb_factory_config = yaml.safe_load(perturb_params_file)
 
-        # Load pybsm perturb params
-        with open(perturb_params_file, 'r') as cfg_file:
-            perturb_factory_config = yaml.safe_load(cfg_file)
-        nrtk_pybsm_perturber(
-            dataset_img_dir,
-            task,
-            output_dir,
-            config,
-            perturb_factory_config,
-            verbose
-        )
-    else:
-        raise ValueError("Incomplete config file")
+    nrtk_pybsm_perturber(
+        dataset_img_dir,
+        task,
+        output_dir,
+        config,
+        perturb_factory_config,
+        verbose
+    )
