@@ -42,5 +42,10 @@ License
 
 * Add Apache 2.0 license
 
+Utils
+
+* Added a CLI script to perform PyBSM perturbations on a sample image set that
+  conforms with the MAITE dataset protocol.
+
 Fixes
 -----
