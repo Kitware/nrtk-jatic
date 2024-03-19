@@ -10,13 +10,13 @@ from PIL import Image  # type: ignore
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignore
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory  # type: ignore
-from nrtk_cdao.interop.augmentation import JATICClassificationAugmentation, JATICDetectionAugmentation
-from nrtk_cdao.interop.dataset import CustomMAITEClassificationDataset, CustomMAITEDetectionDataset
+from nrtk_cdao.interop.augmentation import JATICAugmentation
+from nrtk_cdao.interop.dataset import CustomMAITEDataset
+from maite.protocols import HasDataImage
 
 
 def nrtk_pybsm_perturber(
     dataset_img_dir: str,
-    task: str,
     output_dir: str,
     config: Dict,
     perturb_factory_config: Dict,
@@ -29,14 +29,10 @@ def nrtk_pybsm_perturber(
 
     \b
     DATASET_IMG_DIR - Directory where the source images are located.
-    TASK - Choice of tasks between "image-classification" and "object-
-        detection".
     OUTPUT_DIR - Directory to write the perturbed images to.
 
     \f
     :param dataset_img_dir: Directory where the source images are located.
-    :param task: Choice of tasks between "image-classification" and "object-
-        detection".
     :param output_dir: Directory to write the perturbed images to.
     :param config: PyBSM config dictionary.
     :param perturb_factory_config: Perturber factory parameter dictionary.
@@ -47,7 +43,6 @@ def nrtk_pybsm_perturber(
         logging.basicConfig(level=logging.INFO)
 
     logging.info(f"Dataset path: {dataset_img_dir}")
-    logging.info(f"Task: {task}")
 
     # Checking if all essential pybsm configurations exist
     if any(key not in config for key in ["gsd", "sensor", "scenario"]):
@@ -85,7 +80,7 @@ def nrtk_pybsm_perturber(
         thetas=thetas
     )
 
-    perturbed_images: List[Dict] = []
+    perturbed_images: HasDataImage = {'image': []}
     # Iterate through the different perturber factory parameter combinations and
     # save the perturbed images to disk
     logging.info("Starting perturber sweep")
@@ -93,14 +88,9 @@ def nrtk_pybsm_perturber(
         output_perturb_params = ''.join('_' + str(k) + '-' + str(v)
                                         for k, v in perturber_combo.items())
         logging.info(f"Starting perturbation for {output_perturb_params}")
-        if task == "image-classification":
-            perturbed_images = JATICClassificationAugmentation(augment=[perturber],  # type: ignore
-                                                               gsd=image_gsd).__call__(
-                                                               CustomMAITEClassificationDataset(img_paths=img_paths))
-        else:
-            perturbed_images = JATICDetectionAugmentation(augment=[perturber],  # type: ignore
-                                                          gsd=image_gsd).__call__(
-                                                          CustomMAITEDetectionDataset(img_paths=img_paths))
+        perturbed_images = JATICAugmentation(augment=[perturber],
+                                             gsd=image_gsd).__call__(
+                                             CustomMAITEDataset(img_paths=img_paths))
 
         Path(output_dir + '/' + output_perturb_params).mkdir(parents=True, exist_ok=True)
 
