@@ -28,6 +28,13 @@ Examples
 * Added an example notebook exploring using Gradio as an interface for applying
   pyBSM perturbations.
 
+API
+
+* Added in REST API server which accepts a POST request with a JSON data
+  payload and returns a stub JSON payload
+
+* Added in unit-test for POST request with REST API server
+
 License
 
 * Add Apache 2.0 license
