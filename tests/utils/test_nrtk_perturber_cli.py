@@ -1,5 +1,6 @@
+from typing import List, ContextManager
+from contextlib import nullcontext as does_not_raise
 from click.testing import CliRunner
-import unittest.mock as mock
 import pytest
 import os
 import py  # type: ignore
@@ -9,44 +10,11 @@ from tests import DATA_DIR
 
 from nrtk_cdao.utils.bin.nrtk_perturber_cli import nrtk_perturber_cli
 
-from importlib.util import find_spec
-
-deps = ['kwcoco']
-specs = [find_spec(dep) for dep in deps]
-is_usable = all([spec is not None for spec in specs])
-
 dataset_folder = os.path.join(DATA_DIR, 'VisDrone2019-DET-test-dev-TINY')
 config = yaml.safe_load(os.path.join(DATA_DIR, 'pybsm_config.yaml'))
 perturb_params = yaml.safe_load(os.path.join(DATA_DIR, 'pybsm_perturb_params.yaml'))
 
 
-class TestNRTKPerturberNotUsable:
-    """
-    These tests make use of the `tmpdir` fixture from `pytest`. Find more
-    information here: https://docs.pytest.org/en/6.2.x/tmpdir.html
-    """
-
-    @mock.patch("nrtk_cdao.utils.bin.nrtk_perturber_cli.kwcoco_is_usable", False)
-    def test_warning(self, tmpdir: py.path.local) -> None:
-        """
-        Test that proper warning is displayed when required dependencies are
-        not installed.
-        """
-        output_dir = tmpdir.join('out')
-
-        runner = CliRunner()
-
-        result = runner.invoke(nrtk_perturber_cli,
-                               [str(dataset_folder),
-                                str(output_dir),
-                                config,
-                                perturb_params, "-v"])
-
-        result.exception == "This tool requires additional dependencies, please install 'nrtk-cdao[tools]'"
-        assert not output_dir.check(dir=1)
-
-
-@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 class TestNRTKPerturber:
     """
     These tests make use of the `tmpdir` fixture from `pytest`. Find more
@@ -68,7 +36,41 @@ class TestNRTKPerturber:
                                 perturb_params, "-v"])
 
         assert result.exit_code == 0
-        assert output_dir.check(dir=1)
+
+    @pytest.mark.parametrize("output_subfolders, expectation", [
+        (["_f-0.012_D-0.001_px-2e-05",
+          "_f-0.012_D-0.003_px-2e-05",
+          "_f-0.014_D-0.001_px-2e-05",
+          "_f-0.014_D-0.003_px-2e-05"], does_not_raise())
+    ])
+    def test_perturber_output_files_exist(self, tmpdir: py.path.local,
+                                          output_subfolders: List[str],
+                                          expectation: ContextManager) -> None:
+        """
+        Test if the required output folders and files exist when the CLI
+        runs successfully
+        """
+        output_dir = tmpdir.join('out')
+
+        runner = CliRunner()
+        result = runner.invoke(nrtk_perturber_cli,
+                               [str(dataset_folder),
+                                str(output_dir),
+                                config,
+                                perturb_params, "-v"])
+
+        assert result.exit_code == 0
+
+        with expectation:
+            assert output_dir.check(dir=1)
+            for img_dir in output_subfolders:
+                assert output_dir.join(img_dir).check(dir=1)
+                # image metadata json file
+                img_metadata = output_dir.join(img_dir).join("image_metadata.json")
+                # resized detections after augmentations
+                augmented_detections = output_dir.join(img_dir).join("augmented_detections.json")
+                assert img_metadata.check(exists=1)
+                assert augmented_detections.check(exists=1)
 
     def test_nrtk_perturber_invalid_config(self, tmpdir: py.path.local) -> None:
         """

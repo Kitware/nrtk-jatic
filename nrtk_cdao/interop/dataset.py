@@ -1,72 +1,75 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
-from typing import List, Dict, Tuple, Any, Union
+from typing import List, Tuple, Any, Sequence
 from pathlib import Path
 
 from PIL import Image  # type: ignore
-import torch
-from torchvision.ops.boxes import box_convert  # type: ignore
-from torchvision.transforms.functional import pil_to_tensor  # type: ignore
+import numpy as np
+import kwcoco
 
-from maite.protocols import ArrayLike
-from maite.protocols.object_detection import ObjectDetectionTarget
+from maite.protocols.object_detection import (
+    Dataset,
+    InputType,
+    TargetType,
+    DatumMetadataType
+)
+
+OBJ_DETECTION_DATUM_T = Tuple[InputType, TargetType, DatumMetadataType]
 
 
 @dataclass
 class JATICDetectionTarget:
-    boxes: torch.Tensor
-    labels: torch.Tensor
-    scores: torch.Tensor
+    boxes: np.ndarray
+    labels: np.ndarray
+    scores: np.ndarray
 
 
-def _coco_to_maite_detections(coco_annotation: List) -> ObjectDetectionTarget:
+def _xyxy_bbox_form(x: int, y: int,
+                    w: int, h: int
+                    ) -> Tuple[int, int, int, int]:
+    return x, y, x + w, y + h
 
+
+def _coco_to_maite_detections(coco_annotation: List) -> TargetType:
     num_anns = len(coco_annotation)
-    boxes = torch.zeros(num_anns, 4)
+    boxes = np.zeros((num_anns, 4))
     for i, anns in enumerate(coco_annotation):
+        box = list(map(int, anns["bbox"]))
         # convert box from xywh in xyxy format
-        box = torch.tensor(list(map(int, anns["bbox"])))
-        box = box_convert(box, "xywh", "xyxy")
-        boxes[i, :] = box
+        x1, y1, x2, y2 = _xyxy_bbox_form(x=box[0], y=box[1],
+                                         w=box[2], h=box[3])
+        boxes[i, :] = np.array((x1, y1, x2, y2))
 
-    # change class label from 1...10 to 0...9
-    labels = torch.tensor([int(anns["category_id"]) - 1
-                           for anns in coco_annotation])
-    scores = torch.ones(num_anns)
+    labels = np.stack([int(anns["category_id"])
+                      for anns in coco_annotation])
+    scores = np.ones(num_anns)
 
     return JATICDetectionTarget(boxes, labels, scores)
 
 
-class JATICObjectDetectionDataset:
+class COCOJATICObjectDetectionDataset(Dataset):
     """
-    Dataset class for Object Detection that is supported by
-    JATIC's Object Detection protocol.
+    Dataset class to convert a COCO dataset to a dataset
+    compliant with JATIC's Object Detection protocol.
 
     Parameters
     ----------
-    root : Path | str
+    root : str
         The root directory of the dataset.
-    kwcoco_dataset:
+    kwcoco_dataset: kwcoco.CocoDataset
         The kwcoco COCODataset object.
-    Methods
-    -------
-    __len__() -> int
-        Returns the number of images in the dataset.
-    __getitem__(index: int) -> Union[JATICObjectDetectionDataset,
-               Tuple[ArrayLike, ObjectDetectionTarget, Dict[str, Any]]]
-        Returns the image, annotations and metadata at the given index.
+    **kwargs: Any
+        Additional dataset-related metadata required by
+        a perturber during augmentation
     """
 
-    def __init__(self, root: Union[Path, str], kwcoco_dataset):  # type: ignore
-
+    def __init__(self, root: str,
+                 kwcoco_dataset: kwcoco.CocoDataset,
+                 **kwargs: Any):
         self._root: Path = Path(root)
-
+        self.kwargs = kwargs
         image_dir = self._root / "images"
-
-        file_exts = ['jpg', 'JPG', 'png', 'PNG']
-        self.all_img_paths = [filename for ext in file_exts
-                              for filename in image_dir.glob("*." + ext)]
+        self.all_img_paths = [image_dir / val["file_name"]
+                              for key, val in kwcoco_dataset.imgs.items()]
         self.all_image_ids = sorted({p.stem for p in self.all_img_paths})
 
         # Get all image filenames from the kwcoco object
@@ -87,32 +90,67 @@ class JATICObjectDetectionDataset:
         self.classes = list(kwcoco_dataset.cats.values())
 
     def __len__(self) -> int:
+        """
+        Returns the number of images in the dataset.
+        """
         return len(self._images)
 
     def __getitem__(
         self, index: int
-    ) -> Union[JATICObjectDetectionDataset,
-               Tuple[ArrayLike, ObjectDetectionTarget, Dict[str, Any]]]:
+    ) -> OBJ_DETECTION_DATUM_T:
+        """
+        Returns the dataset object at the given index
+        """
         image_path = self._images[index]
         image = Image.open(image_path)
         image_id = image_path.stem
         width, height = image.size
         annotation = self._annotations[image_id].labels
-        num_objects = annotation.size(dim=0)  # type: ignore
-        uniq_objects = torch.unique(annotation)  # type: ignore
-        num_unique_classes = uniq_objects.size(dim=0)
+        num_objects = np.asarray(annotation).shape[0]
+        uniq_objects = np.unique(annotation)
+        num_unique_classes = uniq_objects.shape[0]
         unique_classes = [self.classes[int(idx)]['name']
-                          for idx in uniq_objects.tolist()]  # type: ignore
+                          for idx in uniq_objects.tolist()]
 
-        input_img, bbox_labels, metadata = pil_to_tensor(image), self._annotations[image_id], {
-            "id": image_id,
-            "image_info": {
-                "width": width,
-                "height": height,
-                "num_objects": num_objects,
-                "num_unique_classes": num_unique_classes,
-                "unique_classes": unique_classes}}
-        return input_img, bbox_labels, metadata
+        input_img, dets, metadata = (
+            np.asarray(image),
+            self._annotations[image_id],
+            dict(
+                id=image_id,
+                image_info=dict(
+                    width=width,
+                    height=height,
+                    num_objects=num_objects,
+                    num_unique_classes=num_unique_classes,
+                    unique_classes=unique_classes
+                )
+            )
+        )
+
+        metadata.update(self.kwargs)
+
+        return input_img, dets, metadata
 
     def get_img_path_list(self) -> List[Path]:
-        return self.all_img_paths
+        """
+        Returns the sorted list of absolute paths
+        for the input images.
+        """
+        return sorted(self.all_img_paths)
+
+
+class JATICObjectDetectionDataset(Dataset):
+    def __init__(self, imgs: Sequence[np.ndarray], dets: Sequence[TargetType],
+                 metadata: Sequence[DatumMetadataType]) -> None:
+        self.imgs = imgs
+        self.dets = dets
+        self.metadata = metadata
+
+    def __len__(self) -> int:
+        return len(self.imgs)
+
+    def __getitem__(self,
+                    index: int
+                    ) -> OBJ_DETECTION_DATUM_T:
+
+        return self.imgs[index], self.dets[index], self.metadata[index]

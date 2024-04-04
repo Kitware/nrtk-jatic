@@ -3,23 +3,17 @@ from typing import TextIO, List
 from pathlib import Path
 import logging
 import yaml  # type: ignore
-import itertools
-from importlib import find_loader
+import json
 
+from PIL import Image  # type: ignore
 import numpy as np
+import kwcoco
 
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignore
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory  # type: ignore
-from nrtk_cdao.interop.dataset import JATICObjectDetectionDataset
+from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
-
-
-kwcoco_loader = find_loader('kwcoco')
-kwcoco_is_usable = kwcoco_loader is not None
-
-if kwcoco_is_usable:
-    import kwcoco  # type: ignore
 
 
 @click.command(context_settings={"help_option_names": ['-h', '--help']})
@@ -36,9 +30,10 @@ def nrtk_perturber_cli(
     verbose: bool
 ) -> None:
     """
-    Generate NRTK perturbed images from a given set of source images and write
-    them to an output folder in disk. The perturbed images are stored in subfolders
-    named after the chosen perturbation parameter keys and values.
+    Generate NRTK perturbed images and detections from a given set of source images and
+    COCO-format annotations and write them to an output folder in disk. The perturbed
+    images are stored in subfolders named after the chosen perturbation parameter keys
+    and values.
 
     \b
     DATASET_DIR - Root directory of dataset.
@@ -58,9 +53,6 @@ def nrtk_perturber_cli(
     :param verbose: Display progress messages. Default is false.
     """
 
-    if not kwcoco_is_usable:
-        raise ImportError("This tool requires additional dependencies, please install 'nrtk-cdao[tools]'")
-
     if verbose:
         logging.basicConfig(level=logging.INFO)
 
@@ -71,10 +63,6 @@ def nrtk_perturber_cli(
 
     coco_file = list(annotation_dir.glob("*.json"))
     kwcoco_dataset = kwcoco.CocoDataset(coco_file[0])
-
-    # Initialize dataset object
-    dataset = JATICObjectDetectionDataset(root=dataset_dir,
-                                          kwcoco_dataset=kwcoco_dataset)
 
     # load config
     config = yaml.safe_load(config_file)
@@ -93,15 +81,18 @@ def nrtk_perturber_cli(
     sensor = PybsmSensor(**config["sensor"])
     scenario = PybsmScenario(**config["scenario"])
 
-    # Set up custom pybsm perturber factory
+    # Initialize dataset object
+    input_dataset = COCOJATICObjectDetectionDataset(
+        root=dataset_dir,
+        kwcoco_dataset=kwcoco_dataset,
+        img_gsd=image_gsd  # A global GSD value is applied to each image
+    )
+
     perturb_factory_keys = list(perturb_factory_config.keys())
     thetas = [perturb_factory_config[key]
               for key in perturb_factory_keys]
-    perturber_combinations = [dict(zip(perturb_factory_keys, v))
-                              for v in itertools.product(*thetas)]
 
-    logging.info(f"Perturber sweep values: {perturber_combinations}")
-
+    # Set up custom pybsm perturber factory
     perturber_factory = CustomPybsmPerturbImageFactory(
         sensor=sensor,
         scenario=scenario,
@@ -109,10 +100,38 @@ def nrtk_perturber_cli(
         thetas=thetas
     )
 
-    nrtk_perturber(
-        maite_dataset=dataset,  # type: ignore
-        output_dir=output_dir,
-        perturber_combinations=perturber_combinations,
-        perturber_factory=perturber_factory,
-        image_gsd=image_gsd
+    augmented_datasets = nrtk_perturber(
+        maite_dataset=input_dataset,
+        perturber_factory=perturber_factory
     )
+
+    output_path = Path(output_dir)
+    img_paths = input_dataset.get_img_path_list()
+    for perturb_params, aug_dataset in augmented_datasets:
+        (output_path / perturb_params).mkdir(parents=True, exist_ok=True)
+        augmented_annotations = kwcoco.CocoDataset()
+        for i in range(len(aug_dataset)):
+            image, det, metadata = aug_dataset[i]
+
+            # Setting pybsm config in updated metadata to 'None' since the output of get_config()
+            # PyBSM perturber is (as of currently) not JSON serializable
+            metadata.update({"pybsm_params": "None"})
+            img_path = img_paths[i]
+            im = Image.fromarray(image)
+            im.save(output_path / perturb_params / (img_path.stem + img_path.suffix))
+            labels = np.asarray(det.labels)
+            boxes = np.asarray(det.boxes)
+            augmented_annotations.add_images([{'id': i, 'file_name': img_path.stem + img_path.suffix}])
+            for lbl, bbox in zip(labels, boxes.tolist()):
+                augmented_annotations.add_annotation(
+                    image_id=i,
+                    category_id=int(lbl),
+                    bbox=list(map(int, bbox))
+                )
+        logging.info(f"Saved perturbed images to {output_path / perturb_params}")
+        with open(output_path / perturb_params / "image_metadata.json", "w") as f:
+            json.dump([aug_dataset[d][2] for d in range(len(aug_dataset))], f)
+        logging.info(f"Saved image_metadata to {output_path}/{perturb_params}/image_metadata.json")
+
+        augmented_annotations.dump(output_path / perturb_params / "augmented_detections.json")
+        logging.info(f"Saved augmented detections to {output_path}/{perturb_params}/augmented_detections.json")

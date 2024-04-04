@@ -1,70 +1,78 @@
-from typing import List, Dict, Any, Tuple, Union
-from pathlib import Path
+from typing import List, Tuple, Iterable
 import logging
-import json
+import itertools
 
-from PIL import Image  # type: ignore
+import numpy as np
 
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory  # type: ignore
-from nrtk_cdao.interop.augmentation import JATICAugmentation
+from nrtk_cdao.interop.augmentation import JATICDetectionAugmentation
 from nrtk_cdao.interop.dataset import JATICObjectDetectionDataset
-from maite.protocols import ArrayLike
-from maite.protocols.object_detection import ObjectDetectionTarget
+from maite.protocols.object_detection import Dataset
 
 
 def nrtk_perturber(
-    maite_dataset: Union[JATICObjectDetectionDataset,
-                         Tuple[ArrayLike, ObjectDetectionTarget,
-                               Dict[str, Any]]],
-    output_dir: str,
-    perturber_combinations: List[Dict],
-    perturber_factory: PerturbImageFactory,
-    **kwargs: Any
-) -> None:
+    maite_dataset: Dataset,
+    perturber_factory: PerturbImageFactory
+) -> Iterable[Tuple[str, Dataset]]:
     """
-    Generate NRTK perturbed images from a given set of source images and write
-    them to an output folder in disk. The perturbed images are stored in subfolders
-    named after the chosen perturbation parameter keys and values.
-
-    \b
-    OUTPUT_DIR - Directory to write the perturbed images to.
+    Generate augmented dataset(s) of type maite.protocols.object_detection.Dataset
+    given an input dataset of the same type and a perturber factory
+    implementation. Each perturber combination will result in a newly
+    generated dataset.
 
     \f
-    :param dataset_dir: Root directory of dataset.
-    :param output_dir: Directory to write the perturbed images to.
-    :param perturber_combinations: Perturber parameter sweep combinations.
-    :param perturb_factory_config: PerturbImageFactory implementation.
+    :param maite_dataset: A dataset object of type maite.protocols.object_detection.Dataset
+    :param perturber_factory: PerturbImageFactory implementation.
     """
 
-    img_data: List[ArrayLike] = []
-    img_metadata: List[Dict] = []
-    for img, _, metadata in maite_dataset:  # type: ignore
-        logging.info(metadata)
-        img_metadata.append(metadata)
-        img_data.append(img.detach().cpu())
+    perturber_factory_config = perturber_factory.get_config()
+    perturb_factory_keys = perturber_factory_config["theta_keys"]
+    thetas = perturber_factory_config["thetas"]
+    perturber_combinations = [dict(zip(perturb_factory_keys, v))
+                              for v in itertools.product(*thetas)]
+    logging.info(f"Perturber sweep values: {perturber_combinations}")
 
     # Iterate through the different perturber factory parameter combinations and
     # save the perturbed images to disk
     logging.info("Starting perturber sweep")
-    for perturber_combo, perturber in zip(perturber_combinations, perturber_factory):
-        output_perturb_params = ''.join('_' + str(k) + '-' + str(v)
-                                        for k, v in perturber_combo.items())
-        Path(output_dir + '/' + output_perturb_params).mkdir(parents=True, exist_ok=True)
+    augmented_datasets: List[Dataset] = []
+    output_perturb_params: List[str] = []
+    for i, (perturber_combo, perturber) in enumerate(zip(perturber_combinations,
+                                                         perturber_factory)):
+        output_perturb_params.append(''.join("_{!s}-{!s}".format(k, v)
+                                     for k, v in perturber_combo.items()))
 
-        logging.info(f"Starting perturbation for {output_perturb_params}")
+        logging.info(f"Starting perturbation for {output_perturb_params[i]}")
 
-        for img, img_path in zip(img_data, maite_dataset.get_img_path_list()):  # type: ignore
-            augmented_img = JATICAugmentation(augment=[perturber],
-                                              gsd=kwargs["image_gsd"]).__call__(
-                                                            data=img)
-            im = Image.fromarray(augmented_img)
-            im.save(output_dir + '/' +
-                    output_perturb_params + '/' +
-                    img_path.stem + img_path.suffix)
+        aug_imgs = []
+        aug_dets = []
+        aug_metadata = []
 
-        logging.info(f"Saved perturbed images to {output_dir + '/' + output_perturb_params}")
+        jatic_perturber = JATICDetectionAugmentation(augment=perturber)
 
-    with open((Path(output_dir) / "image_metadata.json"), "w") as f:
-        json.dump(img_metadata, f)
+        # Formatting data to be of batch_size=1 in order to support MAITE
+        # detection protocol's expected input for Augmentation
+        for idx in range(len(maite_dataset)):
+            aug_img, aug_det, aug_md = (
+                jatic_perturber(
+                    batch=(
+                        np.expand_dims(maite_dataset[idx][0], axis=0),
+                        [maite_dataset[idx][1]],
+                        [maite_dataset[idx][2]]
+                    )
+                )
+            )
+            # Appending data to separate lists in order to handle images
+            # of varying sizes
+            aug_imgs.append(np.asarray(aug_img)[0])
+            aug_dets.append(aug_det[0])
+            aug_metadata.append(aug_md[0])
 
-    logging.info(f"Saved image_metadata to {output_dir}/image_metadata.json")
+        augmented_datasets.append(
+            JATICObjectDetectionDataset(
+                aug_imgs,
+                aug_dets,
+                aug_metadata
+            )
+        )
+    return zip(output_perturb_params, augmented_datasets)
