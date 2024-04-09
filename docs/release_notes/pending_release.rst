@@ -35,6 +35,9 @@ API
 
 * Added in unit-test for POST request with REST API server
 
+* Added JSON schema pydantic file and corresponding documentation for how it
+  should be used
+
 License
 
 * Add Apache 2.0 license

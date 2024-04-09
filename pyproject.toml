@@ -33,6 +33,8 @@ nrtk = ">=0.2.1"
 # REST API deps
 fastapi = "^0.110.0"
 httpx = "^0.27.0"
+# JSON Schema
+pydantic = ">=2.6.4"
 
 [tool.poetry.extras]
 
@@ -58,7 +60,6 @@ sphinx-prompt = ">=1.5.0"
 livereload = ">=2.6.3"
 # Utility
 ipython = ">=8.6.0"
-
 
 [tool.poetry.scripts]
 
