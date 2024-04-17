@@ -42,5 +42,20 @@ License
 
 * Add Apache 2.0 license
 
+Interoperability
+
+* Added ``JATICDetectionAugmentation`` which performs perturbations on MAITE-protocol
+  based object detection datasets.
+
+* Added ``COCOJATICObjectDetectionDataset``` which loads a COCO detection dataset from
+  disk and converts it to a MAITE-protocol compliant detection dataset.
+
+* Added ``JATICObjectDetectionDataset`` which is a custom I/O bridging dataset wrapper
+  for MAITE compliant detection datasets.
+
+Utils
+
+* Added a CLI script to perform PyBSM perturbations on a sample image set.
+
 Fixes
 -----
