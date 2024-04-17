@@ -13,37 +13,37 @@ class Schema(BaseModel):
     gsd: float
 
     # Scenario Params
-    ihaze: Optional[int]
-    altitude: Optional[int]
-    groundRange: Optional[int]
-    aircraftSpeed: Optional[float]
-    targetReflectance: Optional[float]
-    targetTemperature: Optional[float]
-    backgroundReflectance: Optional[float]
-    backgroundTemperature: Optional[float]
-    haWindspeed: Optional[float]
-    cn2at1m: Optional[float]
+    ihaze: int = 2
+    altitude: int = 75
+    groundRange: int = 0
+    aircraftSpeed: Optional[float] = None
+    targetReflectance: Optional[float] = None
+    targetTemperature: Optional[float] = None
+    backgroundReflectance: Optional[float] = None
+    backgroundTemperature: Optional[float] = None
+    haWindspeed: Optional[float] = None
+    cn2at1m: Optional[float] = None
 
     # Sensor Params
-    D: Optional[float]
-    f: Optional[float]
-    px: Optional[float]
-    optTransWavelengths: Optional[np.ndarray]
-    opticsTransmission: Optional[np.ndarray]
-    eta: Optional[float]
-    wx: Optional[float]
-    wy: Optional[float]
-    darkCurrent: Optional[float]
-    otherNoise: Optional[float]
-    maxN: Optional[float]
-    bitdepth: Optional[float]
-    maxWellFill: Optional[float]
-    sx: Optional[float]
-    sy: Optional[float]
-    dax: Optional[float]
-    day: Optional[float]
-    qewavelengths: Optional[np.ndarray]
-    qe: Optional[np.ndarray]
+    D: float = 0.005
+    f: float = 0.014
+    px: float = 0.0000074
+    optTransWavelengths: List[float] = [3.8e-7, 7.0e-7]
+    opticsTransmission: Optional[np.ndarray] = None
+    eta: Optional[float] = None
+    wx: Optional[float] = None
+    wy: Optional[float] = None
+    darkCurrent: Optional[float] = None
+    otherNoise: Optional[float] = None
+    maxN: Optional[float] = None
+    bitdepth: Optional[float] = None
+    maxWellFill: Optional[float] = None
+    sx: Optional[float] = None
+    sy: Optional[float] = None
+    dax: Optional[float] = None
+    day: Optional[float] = None
+    qewavelengths: Optional[List[float]] = None
+    qe: Optional[List[float]] = None
 
     # nrtk parameters
     theta_keys: List[str]
