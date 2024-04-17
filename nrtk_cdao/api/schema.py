@@ -7,7 +7,10 @@ class Schema(BaseModel):
     # Header
     id: str
     name: str
-    gsds: List[float]
+
+    # Dataset Params
+    dataset_dir: str
+    gsd: float
 
     # Scenario Params
     ihaze: Optional[int]
@@ -43,7 +46,6 @@ class Schema(BaseModel):
     qe: Optional[np.ndarray]
 
     # nrtk parameters
-    images: Sequence[np.ndarray]
     theta_keys: List[str]
     thetas: List[List[float]]
 
