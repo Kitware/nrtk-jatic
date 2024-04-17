@@ -32,7 +32,7 @@ def test_handle_post(test_client: TestClient) -> None:
     assert response.json()['message'] == 'Data received successfully'
 
     # Check if the response data contains the processed data
-    assert response.json()['processed_data'] == {'dataset_len': 11, 'factory_thetas': [[0.014, 0.012], [0.001, 0.003], [0.00002]]}
+    assert response.json()['processed_data'] == {'dataset_len': 11, 'factory_config': {'theta_keys': ['f', 'd', 'px'], 'sensor': {'name': '', 'D': 0.005, 'f': 0.014, 'px': 7.4e-06, 'optTransWavelengths': [3.8e-07, 7e-07], 'opticsTransmission': [1.0, 1.0], 'eta': 0.0, 'wx': 7.4e-06, 'wy': 7.4e-06, 'intTime': 1.0, 'darkCurrent': 0.0, 'readNoise': 0.0, 'maxN': 100000000.0, 'bitdepth': 100.0, 'maxWellFill': 1.0, 'sx': 0.0, 'sy': 0.0, 'dax': 0.0, 'day': 0.0, 'qewavelengths': [3.8e-07, 7e-07], 'qe': [1.0, 1.0]}, 'scenario': {'name': '', 'ihaze': 2, 'altitude': 75, 'groundRange': 0, 'aircraftSpeed': 0.0, 'targetReflectance': 0.15, 'targetTemperature': 295.0, 'backgroundReflectance': 0.07, 'backgroundTemperature': 293.0, 'haWindspeed': 21.0, 'cn2at1m': 1.7e-14}, 'thetas': [[0.014, 0.012], [0.001, 0.003], [2e-05]], 'sets': [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]]}}
 
 
 if __name__ == "__main__":

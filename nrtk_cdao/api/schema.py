@@ -29,7 +29,7 @@ class Schema(BaseModel):
     f: float = 0.014
     px: float = 0.0000074
     optTransWavelengths: List[float] = [3.8e-7, 7.0e-7]
-    opticsTransmission: Optional[np.ndarray] = None
+    opticsTransmission: Optional[List[float]] = None
     eta: Optional[float] = None
     wx: Optional[float] = None
     wy: Optional[float] = None

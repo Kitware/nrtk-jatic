@@ -17,7 +17,7 @@ app = FastAPI()
 scenario_keys = ['ihaze', 'altitude', 'groundRange', 'aircraftSpeed', 'targetReflectance', 'targetTemperature', 'backgroundReflectance', 'backgroundTemperature', 'haWindspeed', 'cn2at1m']
 sensor_keys = ['D', 'f', 'px', 'optTransWavelengths', 'opticsTransmission', 'eta', 'wx', 'wy', 'darkCurrent', 'otherNoise', 'maxN', 'bitdepth', 'maxWellFill', 'sx', 'sy', 'dax', 'day', 'qewavelengths', 'qe']
 
-def _build_sensor_and_scenario(data: Dict[str, Any]) -> Tuple[PybsmSensor, PybsmScenario]:
+def _build_pybsm_factory(data: Dict[str, Any]) -> CustomPybsmPerturbImageFactory:
     scenario_params = {key: data[key] for key in scenario_keys if (key in data and data[key] is not None)}
     sensor_params = {key: data[key] for key in sensor_keys if (key in data and data[key] is not None)}
 
@@ -26,7 +26,32 @@ def _build_sensor_and_scenario(data: Dict[str, Any]) -> Tuple[PybsmSensor, Pybsm
         if isinstance(sensor_params[key], List):
             sensor_params[key] = np.asarray(sensor_params[key])
 
-    return (PybsmSensor(name='', **sensor_params), PybsmScenario(name='', **scenario_params))
+    sensor = PybsmSensor(name='', **sensor_params)
+    scenario = PybsmScenario(name='', **scenario_params)
+
+
+    perturber_factory = CustomPybsmPerturbImageFactory(
+        sensor=sensor,
+        scenario=scenario,
+        theta_keys=data['theta_keys'],
+        thetas=data['thetas']
+    )
+
+    return perturber_factory
+
+def _load_COCOJAITIC_dataset(data: Dict[str, Any]) -> COCOJATICObjectDetectionDataset:
+    annotation_dir = Path(data['dataset_dir']) / 'annotations'
+
+    coco_file = list(annotation_dir.glob("*.json"))
+    kwcoco_dataset = kwcoco.CocoDataset(coco_file[0])
+
+    dataset = COCOJATICObjectDetectionDataset(
+        root=data['dataset_dir'],
+        kwcoco_dataset=kwcoco_dataset,
+        img_gsd=data['gsd']  # A global GSD value is applied to each image
+    )
+
+    return dataset
 
 # Define a route for handling POST requests
 @app.post('/')
@@ -35,28 +60,11 @@ def handle_post(data: Dict[str, Any]) -> Dict[str, Any]:
     if not data:
         raise HTTPException(status_code=400, detail="No data provided")
 
-    # Build scenario/sensor
-    sensor, scenario = _build_sensor_and_scenario(data)
-    # Setup pybsm factory
-    perturber_factory = CustomPybsmPerturbImageFactory(
-        sensor=sensor,
-        scenario=scenario,
-        theta_keys=data['theta_keys'],
-        thetas=data['thetas']
-    )
+    # Build pybsm factory
+    perturber_factory = _build_pybsm_factory(data)
 
     # Load dataset
-    annotation_dir = Path(data['dataset_dir']) / 'annotations'
-
-    coco_file = list(annotation_dir.glob("*.json"))
-    kwcoco_dataset = kwcoco.CocoDataset(coco_file[0])
-
-    input_dataset = COCOJATICObjectDetectionDataset(
-        root=data['dataset_dir'],
-        kwcoco_dataset=kwcoco_dataset,
-        img_gsd=data['gsd']  # A global GSD value is applied to each image
-    )
-
+    input_dataset = _load_COCOJAITIC_dataset(data)
 
     # Call nrtk_perturber
     augmented_datasets = nrtk_perturber(
@@ -64,9 +72,16 @@ def handle_post(data: Dict[str, Any]) -> Dict[str, Any]:
         perturber_factory=perturber_factory
     )
 
+    factory_config = perturber_factory.get_config()
+
+    for key in factory_config['sensor']:
+        if isinstance(factory_config['sensor'][key], np.ndarray):
+            factory_config['sensor'][key] = factory_config['sensor'][key].tolist()
+
+
     processed_data = {
         'dataset_len': len(input_dataset),
-        'factory_thetas': perturber_factory.thetas,
+        'factory_config': factory_config,
     }
 
     # Prepare a stub response
