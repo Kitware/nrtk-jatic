@@ -129,6 +129,9 @@ class COCOJATICObjectDetectionDataset(Dataset):
 
         metadata.update(self.kwargs)
 
+        if isinstance(self.kwargs["img_gsd"], List):
+            metadata.update({"img_gsd": self.kwargs["img_gsd"][index]})
+
         return input_img, dets, metadata
 
     def get_img_path_list(self) -> List[Path]:

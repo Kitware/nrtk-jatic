@@ -103,7 +103,7 @@ class TestAPIConversionFunctions:
 
     @pytest.mark.parametrize(
         "data",
-        [({"dataset_dir": str(DATASET_FOLDER), "label_file": str(LABEL_FILE), "gsd": 0.0})],
+        [({"dataset_dir": str(DATASET_FOLDER), "label_file": str(LABEL_FILE), "gsds": list(range(11))})],
     )
     def test_load_COCOJAITIC_dataset(self, data: Dict[str, Any]) -> None:
         """
@@ -111,7 +111,8 @@ class TestAPIConversionFunctions:
         """
 
         dataset = _load_COCOJAITIC_dataset(data)
-        # Check first images metadata for gsd
-        assert dataset[0][2]["img_gsd"] == data["gsd"]
+        # Check all images metadata for gsd
+        for i in range(len(dataset)):
+            assert dataset[i][2]["img_gsd"] == data["gsds"][i]
         # Check number of image matches
         assert len(dataset) == len(os.listdir(os.path.join(data["dataset_dir"], "images")))

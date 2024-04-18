@@ -21,8 +21,8 @@ Dataset Parameters
   A filepath to the top folder of a COCO dataset.
 - **label_file** (str) 
   A filepath to the annotations file for the COCO dataset.
-- **gsd** (float) 
-  A gsd (pixel/m) for all images in the dataset.
+- **gsd** (List[float]) 
+  A list of gsds (pixel/m) where the length of the list is the same as the number of images in the dataset.
 
 ---------------
 NRTK Parameters

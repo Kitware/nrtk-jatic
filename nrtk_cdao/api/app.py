@@ -24,8 +24,8 @@ def _build_pybsm_factory(data: Dict[str, Any]) -> CustomPybsmPerturbImageFactory
     scenario_params = PybsmScenario.get_default_config()
     sensor_params = PybsmSensor.get_default_config()
 
-    scenario_params = {key: data[key] for key in scenario_params.keys() if (key in data and data[key] is not None)}
-    sensor_params = {key: data[key] for key in sensor_params.keys() if (key in data and data[key] is not None)}
+    scenario_params.update({key: data[key] for key in scenario_params if key in data})
+    sensor_params.update({key: data[key] for key in sensor_params if key in data})
 
     # Convert list to np.arrays. Should change to from_config_dict
     # (https://github.com/Kitware/SMQTK-Core/blob/master/smqtk_core/configuration.py#L443) when possible
@@ -57,7 +57,7 @@ def _load_COCOJAITIC_dataset(data: Dict[str, Any]) -> COCOJATICObjectDetectionDa
     dataset = COCOJATICObjectDetectionDataset(
         root=data["dataset_dir"],
         kwcoco_dataset=kwcoco_dataset,
-        img_gsd=data["gsd"],  # A global GSD value is applied to each image
+        img_gsd=data["gsds"],  # A global GSD value is applied to each image
     )
 
     return dataset

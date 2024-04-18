@@ -10,7 +10,7 @@ class Schema(BaseModel):
     # Dataset Params
     dataset_dir: str
     label_file: str
-    gsd: float
+    gsds: List[float]
 
     # Scenario Params
     ihaze: int = 2
