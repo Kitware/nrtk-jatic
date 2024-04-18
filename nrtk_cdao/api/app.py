@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from typing import Dict, Any, List
-from pathlib import Path
 import numpy as np
 import kwcoco
 
@@ -9,43 +8,10 @@ from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignor
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory  # type: ignore
 from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
+
 # from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
 app = FastAPI()
-
-scenario_keys = [
-    "ihaze",
-    "altitude",
-    "groundRange",
-    "aircraftSpeed",
-    "targetReflectance",
-    "targetTemperature",
-    "backgroundReflectance",
-    "backgroundTemperature",
-    "haWindspeed",
-    "cn2at1m",
-]
-sensor_keys = [
-    "D",
-    "f",
-    "px",
-    "optTransWavelengths",
-    "opticsTransmission",
-    "eta",
-    "wx",
-    "wy",
-    "darkCurrent",
-    "otherNoise",
-    "maxN",
-    "bitdepth",
-    "maxWellFill",
-    "sx",
-    "sy",
-    "dax",
-    "day",
-    "qewavelengths",
-    "qe",
-]
 
 
 def _build_pybsm_factory(data: Dict[str, Any]) -> CustomPybsmPerturbImageFactory:
@@ -54,16 +20,21 @@ def _build_pybsm_factory(data: Dict[str, Any]) -> CustomPybsmPerturbImageFactory
 
     :param data: dictionary of Schema from schema.py
     """
-    scenario_params = {key: data[key] for key in scenario_keys if (key in data and data[key] is not None)}
-    sensor_params = {key: data[key] for key in sensor_keys if (key in data and data[key] is not None)}
 
-    # Convert list to np arrays
+    scenario_params = PybsmScenario.get_default_config()
+    sensor_params = PybsmSensor.get_default_config()
+
+    scenario_params = {key: data[key] for key in scenario_params.keys() if (key in data and data[key] is not None)}
+    sensor_params = {key: data[key] for key in sensor_params.keys() if (key in data and data[key] is not None)}
+
+    # Convert list to np.arrays. Should change to from_config_dict
+    # (https://github.com/Kitware/SMQTK-Core/blob/master/smqtk_core/configuration.py#L443) when possible
     for key in sensor_params:
         if isinstance(sensor_params[key], List):
             sensor_params[key] = np.asarray(sensor_params[key])
 
-    sensor = PybsmSensor(name="", **sensor_params)
-    scenario = PybsmScenario(name="", **scenario_params)
+    sensor = PybsmSensor(**sensor_params)
+    scenario = PybsmScenario(**scenario_params)
 
     perturber_factory = CustomPybsmPerturbImageFactory(
         sensor=sensor,
@@ -81,10 +52,7 @@ def _load_COCOJAITIC_dataset(data: Dict[str, Any]) -> COCOJATICObjectDetectionDa
 
     :param data: dictionary of Schema from schema.py
     """
-    annotation_dir = Path(data["dataset_dir"]) / "annotations"
-
-    coco_file = list(annotation_dir.glob("*.json"))
-    kwcoco_dataset = kwcoco.CocoDataset(coco_file[0])
+    kwcoco_dataset = kwcoco.CocoDataset(data["label_file"])
 
     dataset = COCOJATICObjectDetectionDataset(
         root=data["dataset_dir"],
@@ -121,6 +89,7 @@ def handle_post(data: Dict[str, Any]) -> Dict[str, Any]:
 
     factory_config = perturber_factory.get_config()
 
+    # Convert np.ndarry to List for easier serialization
     for key in factory_config["sensor"]:
         if isinstance(factory_config["sensor"][key], np.ndarray):
             factory_config["sensor"][key] = factory_config["sensor"][key].tolist()
@@ -130,7 +99,7 @@ def handle_post(data: Dict[str, Any]) -> Dict[str, Any]:
         "factory_config": factory_config,
     }
 
-    # Prepare a stub response
+    # Prepare a response
     response_data = {
         "message": "Data received successfully",
         "processed_data": processed_data,  # Echo back the received data

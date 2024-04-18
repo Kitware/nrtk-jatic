@@ -5,10 +5,7 @@ from nrtk_cdao.api.schema import Schema
 from typing import Generator
 from fastapi.encoders import jsonable_encoder
 
-import os
-from tests import DATA_DIR
-
-dataset_folder = os.path.join(DATA_DIR, "VisDrone2019-DET-test-dev-TINY")
+from tests import DATASET_FOLDER, LABEL_FILE
 
 
 @pytest.fixture
@@ -23,9 +20,10 @@ def test_handle_post(test_client: TestClient) -> None:
     test_data = Schema(
         id="0",
         name="Example",
-        dataset_dir=dataset_folder,
+        dataset_dir=str(DATASET_FOLDER),
+        label_file=str(LABEL_FILE),
         gsd=0.04,
-        theta_keys=["f", "d", "px"],
+        theta_keys=["f", "D", "px"],
         thetas=[[0.014, 0.012], [0.001, 0.003], [0.00002]],
     )
 
@@ -42,9 +40,9 @@ def test_handle_post(test_client: TestClient) -> None:
     assert response.json()["processed_data"] == {
         "dataset_len": 11,
         "factory_config": {
-            "theta_keys": ["f", "d", "px"],
+            "theta_keys": ["f", "D", "px"],
             "sensor": {
-                "name": "",
+                "name": "Example",
                 "D": 0.005,
                 "f": 0.014,
                 "px": 7.4e-06,
@@ -67,7 +65,7 @@ def test_handle_post(test_client: TestClient) -> None:
                 "qe": [1.0, 1.0],
             },
             "scenario": {
-                "name": "",
+                "name": "Example",
                 "ihaze": 2,
                 "altitude": 75,
                 "groundRange": 0,

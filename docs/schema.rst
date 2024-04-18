@@ -15,16 +15,18 @@ Header Parameters
   The human interpretable name of the invocation of nrtk
 
 ----------------
-PyBSM Parameters
+Dataset Parameters
 ----------------
-- **gsds** (List[float]) 
-  A list of gsds (pixel/m) where the length of the list is the same as the number of images in the dataset.
+- **dataset_dir** (str) 
+  A filepath to the top folder of a COCO dataset.
+- **label_file** (str) 
+  A filepath to the annotations file for the COCO dataset.
+- **gsd** (float) 
+  A gsd (pixel/m) for all images in the dataset.
 
 ---------------
 NRTK Parameters
 ---------------
-- **images** (Sequence[np.array])
-  Sequence of images to generate responses for.
 - **theta_keys** (List[str])
   The PyBSM parameters to be perturbed
 - **thetas** (List[List[float]])
@@ -33,21 +35,21 @@ NRTK Parameters
 The following parameters will be used to generate a PyBSM configuration to
 recreate the input data. These should be as close as possible to the parameters of
 sensor and scenario used when capturing the images. If these optional parameters
-are not included, nrtk will estimate them using the per image gsds that are provided.
+are not included, nrtk will use default values
 
 Optional Sensor Parameters
 ==========================
 - **D** (float)
-  Effective aperture diameter (m).
+  Effective aperture diameter (m). Defualt value of 0.005.
 
 - **f** (float)
-  Focal length (m).
+  Focal length (m). Defualt value of 0.014.
 
 - **px** (float)
-  Detector center-to-center spacings (pitch) in the x and y directions (m).
+  Detector center-to-center spacings (pitch) in the x and y directions (m). Defualt value of 0.0000074.
 
 - **optTransWavelengths** (numpy array)
-  Spectral bandpass of the camera (m). At minimum, start and end wavelengths should be specified.
+  Spectral bandpass of the camera (m). At minimum, start and end wavelengths should be specified. Defualt value of [3.8e-7, 7.0e-7].
 
 - **opticsTransmission** (float)
   Full system in-band optical transmission (unitless). Loss due to any telescope obscuration should *not* be included in this optical transmission array.
@@ -91,6 +93,7 @@ Optional Scenario Parameters
   MODTRAN code for visibility. Valid options are:
     - 1: Rural extinction with 23 km visibility
     - 2: Rural extinction with 5 km visibility
+  Default value of 2.
 
 - **altitude** (integer)
   Sensor height above ground level in meters. The database includes the following altitude options:
@@ -98,6 +101,7 @@ Optional Scenario Parameters
     - 1000 to 12000 in 1000 meter steps
     - 14000 to 20000 in 2000 meter steps
     - 24500
+  Default value of 75.
 
 - **groundRange** (integer)
   Distance on the ground between the target and sensor in meters. The following ground ranges are included in the database at each altitude until the ground range exceeds the distance to the spherical earth horizon:
@@ -105,6 +109,7 @@ Optional Scenario Parameters
     - 1000 to 20000 in 1000 meter steps
     - 22000 to 80000 in 2000 meter steps
     - 85000 to 300000 in 5000 meter steps
+  Default value of 0.
 
 - **aircraftSpeed** (float)
   Ground speed of the aircraft in meters per second (m/s).

@@ -9,6 +9,7 @@ class Schema(BaseModel):
 
     # Dataset Params
     dataset_dir: str
+    label_file: str
     gsd: float
 
     # Scenario Params
