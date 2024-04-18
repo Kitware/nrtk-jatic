@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-import numpy as np
-from typing import Optional, List, Sequence
+from typing import Optional, List
 
 
 class Schema(BaseModel):
