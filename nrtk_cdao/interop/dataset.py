@@ -129,7 +129,7 @@ class COCOJATICObjectDetectionDataset(Dataset):
 
         metadata.update(self.kwargs)
 
-        if isinstance(self.kwargs["img_gsd"], List):
+        if "img_gsd" in self.kwargs and isinstance(self.kwargs["img_gsd"], List):
             metadata.update({"img_gsd": self.kwargs["img_gsd"][index]})
 
         return input_img, dets, metadata
