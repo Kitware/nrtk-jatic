@@ -1,75 +1,21 @@
-from fastapi import FastAPI, HTTPException
-from typing import Dict, Any, List
 import numpy as np
-import kwcoco
+from fastapi import FastAPI, HTTPException
+from typing import Dict, Any
 
+from nrtk_cdao.api.converters import build_pybsm_factory, load_COCOJAITIC_dataset
+from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema
 
-from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignore
-from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
-from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory  # type: ignore
-from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
-
-# from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
 app = FastAPI()
 
 
-def _build_pybsm_factory(data: Dict[str, Any]) -> CustomPybsmPerturbImageFactory:
-    """
-    Returns a CustomPybsmPerturbImageFactory based on scenario and sensor parameters in data
-
-    :param data: dictionary of Schema from schema.py
-    """
-
-    scenario_params = PybsmScenario.get_default_config()
-    sensor_params = PybsmSensor.get_default_config()
-
-    scenario_params.update({key: data[key] for key in scenario_params if key in data})
-    sensor_params.update({key: data[key] for key in sensor_params if key in data})
-
-    # Convert list to np.arrays. Should change to from_config_dict
-    # (https://github.com/Kitware/SMQTK-Core/blob/master/smqtk_core/configuration.py#L443) when possible
-    for key in sensor_params:
-        if isinstance(sensor_params[key], List):
-            sensor_params[key] = np.asarray(sensor_params[key])
-
-    sensor = PybsmSensor(**sensor_params)
-    scenario = PybsmScenario(**scenario_params)
-
-    perturber_factory = CustomPybsmPerturbImageFactory(
-        sensor=sensor,
-        scenario=scenario,
-        theta_keys=data["theta_keys"],
-        thetas=data["thetas"],
-    )
-
-    return perturber_factory
-
-
-def _load_COCOJAITIC_dataset(data: Dict[str, Any]) -> COCOJATICObjectDetectionDataset:
-    """
-    Returns a COCOJATICObjectDetectionDataset based on dataset parameters in data
-
-    :param data: dictionary of Schema from schema.py
-    """
-    kwcoco_dataset = kwcoco.CocoDataset(data["label_file"])
-
-    dataset = COCOJATICObjectDetectionDataset(
-        root=data["dataset_dir"],
-        kwcoco_dataset=kwcoco_dataset,
-        img_gsd=data["gsds"],  # A global GSD value is applied to each image
-    )
-
-    return dataset
-
-
 # Define a route for handling POST requests
 @app.post("/")
-def handle_post(data: Dict[str, Any]) -> Dict[str, Any]:
+def handle_post(data: NrtkPybsmPerturbInputSchema) -> Dict[str, Any]:
     """
     Returns a collection of augmented datasets based parameters in data
 
-    :param data: dictionary of Schema from schema.py
+    :param data: NrtkPybsmPerturbInputSchema from schema.py
     """
 
     # Validate input data if needed
@@ -77,10 +23,10 @@ def handle_post(data: Dict[str, Any]) -> Dict[str, Any]:
         raise HTTPException(status_code=400, detail="No data provided")
 
     # Build pybsm factory
-    perturber_factory = _build_pybsm_factory(data)
+    perturber_factory = build_pybsm_factory(data)
 
     # Load dataset
-    input_dataset = _load_COCOJAITIC_dataset(data)
+    input_dataset = load_COCOJAITIC_dataset(data)
 
     # Call nrtk_perturber
     # augmented_datasets = nrtk_perturber(

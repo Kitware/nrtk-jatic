@@ -1,7 +1,7 @@
 import pytest
 from starlette.testclient import TestClient
 from nrtk_cdao.api.app import app
-from nrtk_cdao.api.schema import Schema
+from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema
 from typing import Generator
 from fastapi.encoders import jsonable_encoder
 
@@ -17,7 +17,7 @@ def test_client() -> Generator:
 
 def test_handle_post(test_client: TestClient) -> None:
     # Test data to be sent in the POST request
-    test_data = Schema(
+    test_data = NrtkPybsmPerturbInputSchema(
         id="0",
         name="Example",
         dataset_dir=str(DATASET_FOLDER),
@@ -36,6 +36,8 @@ def test_handle_post(test_client: TestClient) -> None:
     # Check if the response data contains the expected message
     assert response.json()["message"] == "Data received successfully"
 
+    print(response.json()["processed_data"])
+
     # Check if the response data contains the processed data
     assert response.json()["processed_data"] == {
         "dataset_len": 11,
@@ -48,19 +50,19 @@ def test_handle_post(test_client: TestClient) -> None:
                 "px": 7.4e-06,
                 "optTransWavelengths": [3.8e-07, 7e-07],
                 "opticsTransmission": [1.0, 1.0],
-                "eta": None,
+                "eta": 0.0,
                 "wx": 7.4e-06,
                 "wy": 7.4e-06,
                 "intTime": 1.0,
-                "darkCurrent": None,
+                "darkCurrent": 0.0,
                 "readNoise": 0.0,
-                "maxN": None,
-                "bitdepth": None,
-                "maxWellFill": None,
-                "sx": None,
-                "sy": None,
-                "dax": None,
-                "day": None,
+                "maxN": 100000000.0,
+                "bitdepth": 100.0,
+                "maxWellFill": 1.0,
+                "sx": 0.0,
+                "sy": 0.0,
+                "dax": 0.0,
+                "day": 0.0,
                 "qewavelengths": [3.8e-07, 7e-07],
                 "qe": [1.0, 1.0],
             },
@@ -69,13 +71,13 @@ def test_handle_post(test_client: TestClient) -> None:
                 "ihaze": 2,
                 "altitude": 75,
                 "groundRange": 0,
-                "aircraftSpeed": None,
-                "targetReflectance": None,
-                "targetTemperature": None,
-                "backgroundReflectance": None,
-                "backgroundTemperature": None,
-                "haWindspeed": None,
-                "cn2at1m": None,
+                "aircraftSpeed": 0.0,
+                "targetReflectance": 0.15,
+                "targetTemperature": 295.0,
+                "backgroundReflectance": 0.07,
+                "backgroundTemperature": 293.0,
+                "haWindspeed": 21.0,
+                "cn2at1m": 1.7e-14,
             },
             "thetas": [[0.014, 0.012], [0.001, 0.003], [2e-05]],
             "sets": [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]],

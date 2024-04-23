@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 
-class Schema(BaseModel):
+class NrtkPybsmPerturbInputSchema(BaseModel):
     # Header
     id: str
     name: str
@@ -51,3 +51,16 @@ class Schema(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+        schema_extra = {
+            "examples": [
+                {
+                    "id": "0",
+                    "name": "Example",
+                    "dataset_dir": "path/to/dataset/dir",
+                    "label_file": "path/to/label_file",
+                    "gsds": list(range(10)),
+                    "theta_keys": ["f"],
+                    "thetas": [[0.014, 0.012]],
+                }
+            ]
+        }

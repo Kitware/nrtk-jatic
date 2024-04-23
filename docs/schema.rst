@@ -35,7 +35,7 @@ NRTK Parameters
 The following parameters will be used to generate a PyBSM configuration to
 recreate the input data. These should be as close as possible to the parameters of
 sensor and scenario used when capturing the images. If these optional parameters
-are not included, nrtk will use default values
+are not included, nrtk will use default values.
 
 Optional Sensor Parameters
 ==========================
