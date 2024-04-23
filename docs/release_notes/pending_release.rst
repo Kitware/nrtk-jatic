@@ -38,6 +38,8 @@ API
 * Added JSON schema pydantic file and corresponding documentation for how it
   should be used
 
+* Added conversion from JSON schema to inputs for ``nrtk_pertuber`` entrypoint.
+
 License
 
 * Add Apache 2.0 license
