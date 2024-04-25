@@ -17,11 +17,13 @@ Header Parameters
 ----------------
 Dataset Parameters
 ----------------
-- **dataset_dir** (str) 
+- **dataset_dir** (str)
   A filepath to the top folder of a COCO dataset.
-- **label_file** (str) 
+- **label_file** (str)
   A filepath to the annotations file for the COCO dataset.
-- **gsd** (List[float]) 
+- **output_dir** (str)
+  A filepath to the directory where augmented datasets should be saved.
+- **gsds** (List[float])
   A list of gsds (pixel/m) where the length of the list is the same as the number of images in the dataset.
 
 ---------------
@@ -87,7 +89,7 @@ Optional Sensor Parameters
 - **otherNoise** (float)
   A catch-all for noise terms that are not explicitly included elsewhere (read noise, photon noise, dark current, quantization noise, etc.).
 
-Optional Scenario Parameters 
+Optional Scenario Parameters
 ============================
 - **ihaze** (integer)
   MODTRAN code for visibility. Valid options are:

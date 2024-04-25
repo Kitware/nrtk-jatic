@@ -31,7 +31,7 @@ Examples
 API
 
 * Added in REST API server which accepts a POST request with a JSON data
-  payload and returns a stub JSON payload
+  payload and returns a JSON payload
 
 * Added in unit-test for POST request with REST API server
 
@@ -54,6 +54,9 @@ Interoperability
 
 * Added ``JATICObjectDetectionDataset`` which is a custom I/O bridging dataset wrapper
   for MAITE compliant detection datasets.
+
+* Added a utility function to save a MAITE object detection dataset to file as a COCO
+  dataset.
 
 Utils
 

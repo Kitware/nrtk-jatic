@@ -19,6 +19,7 @@ class TestAPIConversionFunctions:
                     "name": "Example",
                     "dataset_dir": "",  # Not used in this test
                     "label_file": "",  # Not used in this test
+                    "output_dir": "",  # Not used in this test
                     "gsds": [],  # Not used in this test
                     "theta_keys": ["f", "D"],
                     "thetas": [[0.014, 0.012], [0.001, 0.003]],
@@ -39,6 +40,7 @@ class TestAPIConversionFunctions:
                     "name": "Example",
                     "dataset_dir": "",  # Not used in this test
                     "label_file": "",  # Not used in this test
+                    "output_dir": "",  # Not used in this test
                     "gsds": [],  # Not used in this test
                     "theta_keys": ["f"],
                     "thetas": [[0.014, 0.012]],
@@ -59,6 +61,7 @@ class TestAPIConversionFunctions:
                     "name": "Example",
                     "dataset_dir": "",  # Not used in this test
                     "label_file": "",  # Not used in this test
+                    "output_dir": "",  # Not used in this test
                     "gsds": [],  # Not used in this test
                     "aircraftSpeed": 100,
                     "wx": 1.1,
@@ -101,6 +104,7 @@ class TestAPIConversionFunctions:
                     "name": "Example",
                     "dataset_dir": str(DATASET_FOLDER),
                     "label_file": str(LABEL_FILE),
+                    "output_dir": "",  # Not used in this test
                     "gsds": list(range(11)),
                     "theta_keys": [],  # Not used in this test
                     "thetas": [],  # Not used in this test

@@ -3,9 +3,7 @@ from typing import TextIO, List
 from pathlib import Path
 import logging
 import yaml  # type: ignore
-import json
 
-from PIL import Image  # type: ignore
 import numpy as np
 import kwcoco
 
@@ -13,6 +11,7 @@ from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignor
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory  # type: ignore
 from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
+from nrtk_cdao.interop.utils import dataset_to_coco
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
 
@@ -85,7 +84,8 @@ def nrtk_perturber_cli(
     input_dataset = COCOJATICObjectDetectionDataset(
         root=dataset_dir,
         kwcoco_dataset=kwcoco_dataset,
-        img_gsd=image_gsd  # A global GSD value is applied to each image
+        # A global GSD value is applied to each image
+        image_metadata=[{"img_gsd": image_gsd} for _ in range(len(kwcoco_dataset.imgs))]
     )
 
     perturb_factory_keys = list(perturb_factory_config.keys())
@@ -100,38 +100,19 @@ def nrtk_perturber_cli(
         thetas=thetas
     )
 
+    # Augment input dataset
     augmented_datasets = nrtk_perturber(
         maite_dataset=input_dataset,
         perturber_factory=perturber_factory
     )
 
+    # Save each augmented dataset to its own directory
     output_path = Path(output_dir)
-    img_paths = input_dataset.get_img_path_list()
+    img_filenames = [Path(img_path.name) for img_path in input_dataset.get_img_path_list()]
     for perturb_params, aug_dataset in augmented_datasets:
-        (output_path / perturb_params).mkdir(parents=True, exist_ok=True)
-        augmented_annotations = kwcoco.CocoDataset()
-        for i in range(len(aug_dataset)):
-            image, det, metadata = aug_dataset[i]
-
-            # Setting pybsm config in updated metadata to 'None' since the output of get_config()
-            # PyBSM perturber is (as of currently) not JSON serializable
-            metadata.update({"pybsm_params": "None"})
-            img_path = img_paths[i]
-            im = Image.fromarray(image)
-            im.save(output_path / perturb_params / (img_path.stem + img_path.suffix))
-            labels = np.asarray(det.labels)
-            boxes = np.asarray(det.boxes)
-            augmented_annotations.add_images([{'id': i, 'file_name': img_path.stem + img_path.suffix}])
-            for lbl, bbox in zip(labels, boxes.tolist()):
-                augmented_annotations.add_annotation(
-                    image_id=i,
-                    category_id=int(lbl),
-                    bbox=list(map(int, bbox))
-                )
-        logging.info(f"Saved perturbed images to {output_path / perturb_params}")
-        with open(output_path / perturb_params / "image_metadata.json", "w") as f:
-            json.dump([aug_dataset[d][2] for d in range(len(aug_dataset))], f)
-        logging.info(f"Saved image_metadata to {output_path}/{perturb_params}/image_metadata.json")
-
-        augmented_annotations.dump(output_path / perturb_params / "augmented_detections.json")
-        logging.info(f"Saved augmented detections to {output_path}/{perturb_params}/augmented_detections.json")
+        dataset_to_coco(
+            dataset=aug_dataset,
+            output_dir=output_path / perturb_params,
+            img_filenames=img_filenames,
+            dataset_categories=input_dataset.get_categories()
+        )

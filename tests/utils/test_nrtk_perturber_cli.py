@@ -68,7 +68,7 @@ class TestNRTKPerturber:
                 # image metadata json file
                 img_metadata = output_dir.join(img_dir).join("image_metadata.json")
                 # resized detections after augmentations
-                augmented_detections = output_dir.join(img_dir).join("augmented_detections.json")
+                augmented_detections = output_dir.join(img_dir).join("annotations.json")
                 assert img_metadata.check(exists=1)
                 assert augmented_detections.check(exists=1)
 
