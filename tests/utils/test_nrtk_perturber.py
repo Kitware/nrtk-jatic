@@ -1,6 +1,6 @@
 import os
 import yaml  # type: ignore
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict
 from pathlib import Path
 import itertools
 
@@ -20,7 +20,7 @@ config_file = os.path.join(DATA_DIR, 'pybsm_config.yaml')
 perturb_params_file = os.path.join(DATA_DIR, 'pybsm_perturb_params.yaml')
 
 
-def _load_dataset(dataset_path: str, **kwargs: Any) -> COCOJATICObjectDetectionDataset:
+def _load_dataset(dataset_path: str, img_gsd: float) -> COCOJATICObjectDetectionDataset:
     annotation_dir = Path(dataset_path) / "annotations"
     coco_file = list(annotation_dir.glob("*.json"))
     kwcoco_dataset = kwcoco.CocoDataset(coco_file[0])
@@ -29,7 +29,7 @@ def _load_dataset(dataset_path: str, **kwargs: Any) -> COCOJATICObjectDetectionD
     dataset = COCOJATICObjectDetectionDataset(
         root=dataset_folder,
         kwcoco_dataset=kwcoco_dataset,
-        **kwargs
+        image_metadata=[{"img_gsd": img_gsd} for _ in range(len(kwcoco_dataset.imgs))]
     )
 
     return dataset

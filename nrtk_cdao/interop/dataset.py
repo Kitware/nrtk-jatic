@@ -1,5 +1,6 @@
+import copy
 from dataclasses import dataclass
-from typing import List, Tuple, Any, Sequence
+from typing import Dict, List, Tuple, Any, Sequence
 from pathlib import Path
 
 from PIL import Image  # type: ignore
@@ -23,9 +24,7 @@ class JATICDetectionTarget:
     scores: np.ndarray
 
 
-def _xyxy_bbox_form(x: int, y: int,
-                    w: int, h: int
-                    ) -> Tuple[int, int, int, int]:
+def _xyxy_bbox_xform(x: int, y: int, w: int, h: int) -> Tuple[int, int, int, int]:
     return x, y, x + w, y + h
 
 
@@ -35,9 +34,7 @@ def _coco_to_maite_detections(coco_annotation: List) -> TargetType:
     for i, anns in enumerate(coco_annotation):
         box = list(map(int, anns["bbox"]))
         # convert box from xywh in xyxy format
-        x1, y1, x2, y2 = _xyxy_bbox_form(x=box[0], y=box[1],
-                                         w=box[2], h=box[3])
-        boxes[i, :] = np.array((x1, y1, x2, y2))
+        boxes[i, :] = np.asarray(_xyxy_bbox_xform(x=box[0], y=box[1], w=box[2], h=box[3]))
 
     labels = np.stack([int(anns["category_id"])
                       for anns in coco_annotation])
@@ -57,16 +54,11 @@ class COCOJATICObjectDetectionDataset(Dataset):
         The root directory of the dataset.
     kwcoco_dataset: kwcoco.CocoDataset
         The kwcoco COCODataset object.
-    **kwargs: Any
-        Additional dataset-related metadata required by
-        a perturber during augmentation
+    image_metadata : A list of per-image metadata. Any metadata required by a perturber should be provided.
     """
 
-    def __init__(self, root: str,
-                 kwcoco_dataset: kwcoco.CocoDataset,
-                 **kwargs: Any):
+    def __init__(self, root: str, kwcoco_dataset: kwcoco.CocoDataset, image_metadata: List[Dict[str, Any]],):
         self._root: Path = Path(root)
-        self.kwargs = kwargs
         image_dir = self._root / "images"
         self.all_img_paths = [image_dir / val["file_name"]
                               for key, val in kwcoco_dataset.imgs.items()]
@@ -88,6 +80,10 @@ class COCOJATICObjectDetectionDataset(Dataset):
             self._annotations[image_id] = _coco_to_maite_detections(image_annotations)
 
         self.classes = list(kwcoco_dataset.cats.values())
+
+        self._image_metadata = copy.deepcopy(image_metadata)
+        if len(self._image_metadata) != len(self.all_img_paths):
+            raise ValueError("Image metadata length mismatch, metadata needed for every image")
 
     def __len__(self) -> int:
         """
@@ -112,25 +108,22 @@ class COCOJATICObjectDetectionDataset(Dataset):
         unique_classes = [self.classes[int(idx)]['name']
                           for idx in uniq_objects.tolist()]
 
+        self._image_metadata[index].update(dict(
+            id=image_id,
+            image_info=dict(
+                width=width,
+                height=height,
+                num_objects=num_objects,
+                num_unique_classes=num_unique_classes,
+                unique_classes=unique_classes
+            )
+        ))
+
         input_img, dets, metadata = (
             np.asarray(image),
             self._annotations[image_id],
-            dict(
-                id=image_id,
-                image_info=dict(
-                    width=width,
-                    height=height,
-                    num_objects=num_objects,
-                    num_unique_classes=num_unique_classes,
-                    unique_classes=unique_classes
-                )
-            )
+            self._image_metadata[index]
         )
-
-        metadata.update(self.kwargs)
-
-        if "img_gsd" in self.kwargs and isinstance(self.kwargs["img_gsd"], List):
-            metadata.update({"img_gsd": self.kwargs["img_gsd"][index]})
 
         return input_img, dets, metadata
 
@@ -140,6 +133,12 @@ class COCOJATICObjectDetectionDataset(Dataset):
         for the input images.
         """
         return sorted(self.all_img_paths)
+
+    def get_categories(self) -> List[Dict[str, Any]]:
+        """
+        Returns the list of categories for this dataset.
+        """
+        return self.classes
 
 
 class JATICObjectDetectionDataset(Dataset):

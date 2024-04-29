@@ -53,7 +53,7 @@ def load_COCOJAITIC_dataset(data: NrtkPybsmPerturbInputSchema) -> COCOJATICObjec
     dataset = COCOJATICObjectDetectionDataset(
         root=data.dataset_dir,
         kwcoco_dataset=kwcoco_dataset,
-        img_gsd=data.gsds,  # A global GSD value is applied to each image
+        image_metadata=[{"img_gsd": gsd} for gsd in data.gsds],
     )
 
     return dataset

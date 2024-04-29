@@ -67,9 +67,7 @@ class JATICDetectionAugmentation(Augmentation):
             )
 
             m_aug = copy.deepcopy(md)
-            m_aug.update({"pybsm_params": self.augment.get_config()})
-            m_aug["image_info"]["width"] = aug_width
-            m_aug["image_info"]["height"] = aug_height
+            m_aug.update({"nrtk::perturber": self.augment.get_config()})
             aug_metadata.append(m_aug)
 
         # return batch of augmented inputs, resized bounding boxes and updated metadata
