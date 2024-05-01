@@ -23,7 +23,6 @@ AUKUS_app = FastAPI()
 
 @AUKUS_app.post("/")
 def handle_aukus_post(data: AukusDatasetSchema) -> List[AukusDatasetSchema]:
-
     if data.dataFormat != "COCO":
         raise HTTPException(status_code=400, detail="Labels provided in incorrect format.")
     if not settings.NRTK_IP:
