@@ -38,7 +38,8 @@ API
 * Added JSON schema pydantic file and corresponding documentation for how it
   should be used
 
-* Added conversion from JSON schema to inputs for ``nrtk_pertuber`` entrypoint.
+* Added additional POST request specifically to accept the AUKUS json schema
+  and call our main API with that data
 
 License
 

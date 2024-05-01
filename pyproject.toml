@@ -52,6 +52,8 @@ maite = { version = "^0.5.0", extras = ["test"] }
 coverage = ">=6.5.0"
 pytest = ">=7.2.0"
 pytest-cov = ">=4.0.0"
+responses = ">=0.25.0"
+types-requests = ">=2.31.0.10"
 # Jupyter notebook testing
 jupyter = ">=1.0.0"
 papermill = ">=2.4.0"
@@ -62,6 +64,10 @@ sphinx-prompt = ">=1.5.0"
 livereload = ">=2.6.3"
 # Utility
 ipython = ">=8.6.0"
+#JSON-Schema
+pydantic_settings = ">=2.2.1"
+pyyaml = ">=6.0.1"
+types-PyYAML = ">=6.0.12.11"
 
 [tool.poetry.scripts]
 nrtk-perturber = "nrtk_cdao.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
