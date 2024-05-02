@@ -41,6 +41,9 @@ API
 * Added additional POST request specifically to accept the AUKUS json schema
   and call our main API with that data
 
+* Added `Dockerfile` and `compose.yaml` to containerize the `nrtk-cdao` package
+  and host the base REST API and AUKUS REST API.
+
 License
 
 * Add Apache 2.0 license
