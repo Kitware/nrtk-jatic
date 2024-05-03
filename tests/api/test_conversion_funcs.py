@@ -2,8 +2,8 @@ import pytest
 from nrtk_cdao.api.converters import build_pybsm_factory, load_COCOJAITIC_dataset
 from typing import Dict, Any
 import numpy as np
-from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignore
-from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
+from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
+from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
 import os
 from tests import DATASET_FOLDER, LABEL_FILE
 from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema

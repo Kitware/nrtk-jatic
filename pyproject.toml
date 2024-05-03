@@ -29,7 +29,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.8.1"
 maite = "^0.5.0"
-nrtk = ">=0.2.1"
+nrtk = ">=0.3.1"
 kwcoco = ">=0.2.18"
 # REST API deps
 fastapi = "^0.110.0"
