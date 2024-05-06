@@ -7,9 +7,9 @@ import yaml  # type: ignore
 import numpy as np
 import kwcoco
 
-from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignore
-from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
-from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory  # type: ignore
+from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
+from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
+from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory
 from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
 from nrtk_cdao.interop.utils import dataset_to_coco
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber

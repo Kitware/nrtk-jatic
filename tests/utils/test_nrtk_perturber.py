@@ -10,10 +10,10 @@ from tests import DATA_DIR
 
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
-from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario  # type: ignore
-from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor  # type: ignore
-from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory  # type: ignore
-from nrtk.interfaces.perturb_image_factory import PerturbImageFactory  # type: ignore
+from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
+from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
+from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory
+from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
 
 dataset_folder = os.path.join(DATA_DIR, 'VisDrone2019-DET-test-dev-TINY')
 config_file = os.path.join(DATA_DIR, 'pybsm_config.yaml')

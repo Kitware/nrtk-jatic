@@ -4,7 +4,7 @@ import itertools
 
 import numpy as np
 
-from nrtk.interfaces.perturb_image_factory import PerturbImageFactory  # type: ignore
+from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
 from nrtk_cdao.interop.augmentation import JATICDetectionAugmentation
 from nrtk_cdao.interop.dataset import JATICObjectDetectionDataset
 from maite.protocols.object_detection import Dataset
