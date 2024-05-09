@@ -17,6 +17,9 @@ Documentation
 
 * Update README.md
 
+* Added Sphinx document rendering for MRs. The docs pages can be accessed by clicking the "View App"
+  button located in the merge request page under the test pipeline section.
+
 Examples
 
 * Added an example notebook exploring the current state of several augmentation
