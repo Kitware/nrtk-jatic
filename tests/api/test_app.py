@@ -63,12 +63,7 @@ def test_handle_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.
     kwargs = patch.call_args.kwargs
     assert len(kwargs["maite_dataset"]) == 11
 
-    # TODO: Remove once Plugfigurable issues have been resolved
     factory_config = kwargs["perturber_factory"].get_config()
-    for key in factory_config["sensor"]:
-        if isinstance(factory_config["sensor"][key], np.ndarray):
-            factory_config["sensor"][key] = factory_config["sensor"][key].tolist()
-
     assert factory_config == {
         "theta_keys": ["f", "D", "px"],
         "sensor": {

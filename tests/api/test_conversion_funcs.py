@@ -1,15 +1,17 @@
 import pytest
-from nrtk_cdao.api.converters import (
-    build_pybsm_factory,
-    load_COCOJAITIC_dataset,
-)
-from typing import Dict, Any
 import numpy as np
+import os
+from typing import Dict, Any
+
+from smqtk_core.configuration import to_config_dict
+
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
-import os
-from tests import DATASET_FOLDER, LABEL_FILE
+
+from nrtk_cdao.api.converters import build_pybsm_factory, load_COCOJAITIC_dataset
 from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema
+
+from tests import DATASET_FOLDER, LABEL_FILE
 
 
 class TestAPIConversionFunctions:
@@ -30,22 +32,10 @@ class TestAPIConversionFunctions:
                 {
                     "theta_keys": ["f", "D"],
                     "thetas": [[0.014, 0.012], [0.001, 0.003]],
-                    "sensor": {
-                        "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
-                        "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": PybsmSensor(
-                            name="Example",
-                            D=0.005,
-                            f=0.014,
-                            px=0.0000074,
-                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
-                        ).get_config(),
-                    },
-                    "scenario": {
-                        "type": "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario",
-                        "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario": PybsmScenario(
-                            name="Example", ihaze=2, altitude=75, groundRange=0
-                        ).get_config(),
-                    },
+                    "sensor": to_config_dict(PybsmSensor(
+                        name="Example", D=0.005, f=0.014, px=0.0000074, optTransWavelengths=np.asarray([3.8e-7, 7.0e-7])
+                    )),
+                    "scenario": to_config_dict(PybsmScenario(name="Example", ihaze=2, altitude=75, groundRange=0)),
                 },
             ),
             (
@@ -62,22 +52,10 @@ class TestAPIConversionFunctions:
                 {
                     "theta_keys": ["f"],
                     "thetas": [[0.014, 0.012]],
-                    "sensor": {
-                        "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
-                        "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": PybsmSensor(
-                            name="Example",
-                            D=0.005,
-                            f=0.014,
-                            px=0.0000074,
-                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
-                        ).get_config(),
-                    },
-                    "scenario": {
-                        "type": "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario",
-                        "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario": PybsmScenario(
-                            name="Example", ihaze=2, altitude=75, groundRange=0
-                        ).get_config(),
-                    },
+                    "sensor": to_config_dict(PybsmSensor(
+                        name="Example", D=0.005, f=0.014, px=0.0000074, optTransWavelengths=np.asarray([3.8e-7, 7.0e-7])
+                    )),
+                    "scenario": to_config_dict(PybsmScenario(name="Example", ihaze=2, altitude=75, groundRange=0)),
                 },
             ),
             (
@@ -96,27 +74,17 @@ class TestAPIConversionFunctions:
                 {
                     "theta_keys": ["f"],
                     "thetas": [[0.014, 0.012]],
-                    "sensor": {
-                        "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
-                        "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": PybsmSensor(
-                            name="Example",
-                            D=0.005,
-                            f=0.014,
-                            px=0.0000074,
-                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
-                            wx=1.1,
-                        ).get_config(),
-                    },
-                    "scenario": {
-                        "type": "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario",
-                        "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario": PybsmScenario(
-                            name="Example",
-                            ihaze=2,
-                            altitude=75,
-                            groundRange=0,
-                            aircraftSpeed=100,
-                        ).get_config(),
-                    },
+                    "sensor": to_config_dict(PybsmSensor(
+                        name="Example",
+                        D=0.005,
+                        f=0.014,
+                        px=0.0000074,
+                        optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
+                        wx=1.1,
+                    )),
+                    "scenario": to_config_dict(PybsmScenario(
+                        name="Example", ihaze=2, altitude=75, groundRange=0, aircraftSpeed=100
+                    )),
                 },
             ),
         ],
