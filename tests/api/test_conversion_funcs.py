@@ -1,5 +1,8 @@
 import pytest
-from nrtk_cdao.api.converters import build_pybsm_factory, load_COCOJAITIC_dataset
+from nrtk_cdao.api.converters import (
+    build_pybsm_factory,
+    load_COCOJAITIC_dataset,
+)
 from typing import Dict, Any
 import numpy as np
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
@@ -27,11 +30,22 @@ class TestAPIConversionFunctions:
                 {
                     "theta_keys": ["f", "D"],
                     "thetas": [[0.014, 0.012], [0.001, 0.003]],
-                    "sets": [[0, 0], [0, 1], [1, 0], [1, 1]],
-                    "sensor": PybsmSensor(
-                        name="Example", D=0.005, f=0.014, px=0.0000074, optTransWavelengths=np.asarray([3.8e-7, 7.0e-7])
-                    ).get_config(),
-                    "scenario": PybsmScenario(name="Example", ihaze=2, altitude=75, groundRange=0).get_config(),
+                    "sensor": {
+                        "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
+                        "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": PybsmSensor(
+                            name="Example",
+                            D=0.005,
+                            f=0.014,
+                            px=0.0000074,
+                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
+                        ).get_config(),
+                    },
+                    "scenario": {
+                        "type": "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario",
+                        "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario": PybsmScenario(
+                            name="Example", ihaze=2, altitude=75, groundRange=0
+                        ).get_config(),
+                    },
                 },
             ),
             (
@@ -48,11 +62,22 @@ class TestAPIConversionFunctions:
                 {
                     "theta_keys": ["f"],
                     "thetas": [[0.014, 0.012]],
-                    "sets": [[0], [1]],
-                    "sensor": PybsmSensor(
-                        name="Example", D=0.005, f=0.014, px=0.0000074, optTransWavelengths=np.asarray([3.8e-7, 7.0e-7])
-                    ).get_config(),
-                    "scenario": PybsmScenario(name="Example", ihaze=2, altitude=75, groundRange=0).get_config(),
+                    "sensor": {
+                        "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
+                        "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": PybsmSensor(
+                            name="Example",
+                            D=0.005,
+                            f=0.014,
+                            px=0.0000074,
+                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
+                        ).get_config(),
+                    },
+                    "scenario": {
+                        "type": "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario",
+                        "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario": PybsmScenario(
+                            name="Example", ihaze=2, altitude=75, groundRange=0
+                        ).get_config(),
+                    },
                 },
             ),
             (
@@ -71,23 +96,34 @@ class TestAPIConversionFunctions:
                 {
                     "theta_keys": ["f"],
                     "thetas": [[0.014, 0.012]],
-                    "sets": [[0], [1]],
-                    "sensor": PybsmSensor(
-                        name="Example",
-                        D=0.005,
-                        f=0.014,
-                        px=0.0000074,
-                        optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
-                        wx=1.1,
-                    ).get_config(),
-                    "scenario": PybsmScenario(
-                        name="Example", ihaze=2, altitude=75, groundRange=0, aircraftSpeed=100
-                    ).get_config(),
+                    "sensor": {
+                        "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
+                        "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": PybsmSensor(
+                            name="Example",
+                            D=0.005,
+                            f=0.014,
+                            px=0.0000074,
+                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
+                            wx=1.1,
+                        ).get_config(),
+                    },
+                    "scenario": {
+                        "type": "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario",
+                        "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario": PybsmScenario(
+                            name="Example",
+                            ihaze=2,
+                            altitude=75,
+                            groundRange=0,
+                            aircraftSpeed=100,
+                        ).get_config(),
+                    },
                 },
             ),
         ],
     )
-    def test_build_pybsm_factory(self, data: Dict[str, Any], expected: Dict[str, Any]) -> None:
+    def test_build_pybsm_factory(
+        self, data: Dict[str, Any], expected: Dict[str, Any]
+    ) -> None:
         """
         Test if _build_pybsm_factory returns the expected factory.
         """
@@ -122,4 +158,6 @@ class TestAPIConversionFunctions:
         for i in range(len(dataset)):
             assert dataset[i][2]["img_gsd"] == data["gsds"][i]
         # Check number of image matches
-        assert len(dataset) == len(os.listdir(os.path.join(data["dataset_dir"], "images")))
+        assert len(dataset) == len(
+            os.listdir(os.path.join(data["dataset_dir"], "images"))
+        )
