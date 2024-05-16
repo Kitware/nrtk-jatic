@@ -148,7 +148,7 @@ test-pytest:
   extends: .test_headless
   parallel:
     matrix:
-      - PY_VERSION: [ "3.8", "3.9", "3.10", "3.11" ]
+      - PY_VERSION: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
   image: python:${PY_VERSION}
   script:
     - poetry run pytest
