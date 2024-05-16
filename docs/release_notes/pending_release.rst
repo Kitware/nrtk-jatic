@@ -69,5 +69,13 @@ Utils
 
 * Added a CLI script to perform PyBSM perturbations on a sample image set.
 
+Python Version Support
+
+* Added support for `py3.12`
+
+CI/CD
+
+* Updated CI test matrix to support `py3.12`
+
 Fixes
 -----
