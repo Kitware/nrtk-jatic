@@ -56,19 +56,6 @@ def dataset_to_coco(
                 )
             )
 
-        # PyBSM perturber is (as of currently) not JSON serializable
-        # Modify metadata to be serializable
-        # TODO: Remove once plugfigurable issues are solved
-        if "nrtk::perturber" in metadata:
-            config_keys = ["sensor", "scenario"]
-            for cfg_key in config_keys:
-                if cfg_key in metadata["nrtk::perturber"]:
-                    for k, v in metadata["nrtk::perturber"][cfg_key].items():
-                        if isinstance(v, np.ndarray):
-                            metadata["nrtk::perturber"][cfg_key][k] = v.tolist()
-            for k, v in metadata["nrtk::perturber"].items():
-                if isinstance(v, np.ndarray):
-                    metadata["nrtk::perturber"][k] = v.tolist()
         mod_metadata.append(metadata)
     logging.info(f"Saved perturbed images to {output_dir}")
 

@@ -1,15 +1,13 @@
 import click  # type: ignore
-from typing import TextIO, List
-from pathlib import Path
-import logging
-import yaml  # type: ignore
-
-import numpy as np
+import json
 import kwcoco
+import logging
+from pathlib import Path
+from typing import Any, Dict, List, TextIO
 
-from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
-from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
-from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory
+from smqtk_core.configuration import from_config_dict, make_default_config
+
+from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
 from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
 from nrtk_cdao.interop.utils import dataset_to_coco
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
@@ -19,13 +17,13 @@ from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 @click.argument('dataset_dir', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=False))
 @click.argument('config_file', type=click.File(mode='r'))
-@click.argument('perturb_params_file', type=click.File(mode='r'))
+@click.option('-g', '--generate-config-file', help='write default config to specified file', type=click.File(mode='w'))
 @click.option('--verbose', '-v', count=True, help='print progress messages')
 def nrtk_perturber_cli(
     dataset_dir: str,
     output_dir: str,
     config_file: TextIO,
-    perturb_params_file: TextIO,
+    generate_config_file: TextIO,
     verbose: bool
 ) -> None:
     """
@@ -37,67 +35,56 @@ def nrtk_perturber_cli(
     \b
     DATASET_DIR - Root directory of dataset.
     OUTPUT_DIR - Directory to write the perturbed images to.
-    CONFIG_FILE - Configuration file pertaining to a specific type of
-        NRTK perturber.
-    PERTURB_PARAMS_FILE - Configuration file containing the parameter value
-        combinations to be implemented with the perturber factory.
+    CONFIG_FILE - Configuration file specifying the PerturbImageFactory configuration.
 
     \f
     :param dataset_dir: Root directory of dataset.
     :param output_dir: Directory to write the perturbed images to.
-    :param config_file: Configuration file pertaining to a specific type of
-        NRTK perturber.
-    :param perturb_params_file: Configuration file containing the values needed
-        for the parameter sweep implemented with the perturber factory.
+    :param config_file: Configuration file specifying the PerturbImageFactory configuration.
+    :param generate_config_file: File to write default config file, only written
+        if specified.
     :param verbose: Display progress messages. Default is false.
     """
+
+    if generate_config_file:
+        config: Dict[str, Any] = dict()
+        config["PerturberFactory"] = make_default_config(PerturbImageFactory.get_impls())
+        json.dump(config, generate_config_file, indent=4)
+
+        exit()
 
     if verbose:
         logging.basicConfig(level=logging.INFO)
 
     logging.info(f"Dataset path: {dataset_dir}")
 
-    logging.info("Loading kwcoco annotations")
-    annotation_dir = Path(dataset_dir) / "annotations"
+    # Load COCO dataset
+    coco_file = Path(dataset_dir) / "annotations.json"
+    if not coco_file.is_file():
+        raise ValueError("Could not identify annotations file. Expected at '[dataset_dir]/annotations.json'")
+    logging.info(f"Loading kwcoco annotations from {coco_file}")
+    kwcoco_dataset = kwcoco.CocoDataset(coco_file)
 
-    coco_file = list(annotation_dir.glob("*.json"))
-    kwcoco_dataset = kwcoco.CocoDataset(coco_file[0])
+    # Load metadata, if it exists
+    metadata_file = Path(dataset_dir) / "image_metadata.json"
+    if not metadata_file.is_file():
+        logging.warn("Could not identify metadata file, assuming no metadata. "
+                     "Expected at '[dataset_dir]/image_metadata.json'")
+        metadata: List[Dict[str, Any]] = [dict() for _ in range(len(kwcoco_dataset.imgs))]
+    else:
+        logging.info(f"Loading metadata from {metadata_file}")
+        with open(metadata_file) as f:
+            metadata = json.load(f)
 
-    # load config
-    config = yaml.safe_load(config_file)
-
-    if any(key not in config for key in ["gsd", "sensor", "scenario"]):
-        raise ValueError("Invalid Configuration")
-
-    # Load pybsm perturb params
-    perturb_factory_config = yaml.safe_load(perturb_params_file)
-
-    for key, value in config["sensor"].items():
-        if isinstance(value, List):
-            config["sensor"][key] = np.asarray(value)
-
-    image_gsd = config["gsd"]
-    sensor = PybsmSensor(**config["sensor"])
-    scenario = PybsmScenario(**config["scenario"])
+    # Load config
+    config = json.load(config_file)
+    perturber_factory = from_config_dict(config["PerturberFactory"], PerturbImageFactory.get_impls())
 
     # Initialize dataset object
     input_dataset = COCOJATICObjectDetectionDataset(
         root=dataset_dir,
         kwcoco_dataset=kwcoco_dataset,
-        # A global GSD value is applied to each image
-        image_metadata=[{"img_gsd": image_gsd} for _ in range(len(kwcoco_dataset.imgs))]
-    )
-
-    perturb_factory_keys = list(perturb_factory_config.keys())
-    thetas = [perturb_factory_config[key]
-              for key in perturb_factory_keys]
-
-    # Set up custom pybsm perturber factory
-    perturber_factory = CustomPybsmPerturbImageFactory(
-        sensor=sensor,
-        scenario=scenario,
-        theta_keys=perturb_factory_keys,
-        thetas=thetas
+        image_metadata=metadata
     )
 
     # Augment input dataset

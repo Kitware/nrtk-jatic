@@ -1,6 +1,7 @@
-import numpy as np
 import kwcoco
-from typing import List
+from typing import Dict, TYPE_CHECKING
+
+from smqtk_core.configuration import from_config_dict, make_default_config
 
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
@@ -16,24 +17,36 @@ def build_pybsm_factory(data: NrtkPybsmPerturbInputSchema) -> CustomPybsmPerturb
     :param data: dictionary of Schema from schema.py
     """
     data_dict = dict(data)
-    scenario_params = PybsmScenario.get_default_config()
-    sensor_params = PybsmSensor.get_default_config()
+    scenario_config = make_default_config([PybsmScenario])
+    scenario_impl = "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario"
+    scenario_config["type"] = scenario_impl
+    sensor_config = make_default_config([PybsmSensor])
+    sensor_impl = "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor"
+    sensor_config["type"] = sensor_impl
 
+    scenario_params = scenario_config[scenario_impl]
+    if TYPE_CHECKING:
+        assert isinstance(scenario_params, Dict)
     scenario_params.update(
-        {key: data_dict[key] for key in scenario_params if key in data_dict and data_dict[key] is not None}
+        {
+            key: data_dict[key]
+            for key in scenario_params
+            if key in data_dict and data_dict[key] is not None
+        }
     )
+    sensor_params = sensor_config[sensor_impl]
+    if TYPE_CHECKING:
+        assert isinstance(sensor_params, Dict)
     sensor_params.update(
-        {key: data_dict[key] for key in sensor_params if key in data_dict and data_dict[key] is not None}
+        {
+            key: data_dict[key]
+            for key in sensor_params
+            if key in data_dict and data_dict[key] is not None
+        }
     )
 
-    # Convert list to np.arrays. Should change to from_config_dict
-    # (https://github.com/Kitware/SMQTK-Core/blob/master/smqtk_core/configuration.py#L443) when possible
-    for key in sensor_params:
-        if isinstance(sensor_params[key], List):
-            sensor_params[key] = np.asarray(sensor_params[key])
-
-    sensor = PybsmSensor(**sensor_params)
-    scenario = PybsmScenario(**scenario_params)
+    sensor = from_config_dict(sensor_config, [PybsmSensor])
+    scenario = from_config_dict(scenario_config, [PybsmScenario])
 
     perturber_factory = CustomPybsmPerturbImageFactory(
         sensor=sensor, scenario=scenario, theta_keys=data.theta_keys, thetas=data.thetas

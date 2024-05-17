@@ -67,7 +67,7 @@ Interoperability
 
 Utils
 
-* Added a CLI script to perform PyBSM perturbations on a sample image set.
+* Added a CLI script to perform perturbations on a sample image set.
 
 Python Version Support
 
