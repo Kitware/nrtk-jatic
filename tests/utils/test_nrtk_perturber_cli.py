@@ -2,15 +2,11 @@ from typing import List, ContextManager
 from contextlib import nullcontext as does_not_raise
 from click.testing import CliRunner
 import pytest
-import os
 import py  # type: ignore
 
-from tests import DATA_DIR
+from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG
 
 from nrtk_cdao.utils.bin.nrtk_perturber_cli import nrtk_perturber_cli
-
-dataset_folder = os.path.join(DATA_DIR, 'VisDrone2019-DET-test-dev-TINY')
-config_file = os.path.join(DATA_DIR, 'nrtk_config.json')
 
 
 class TestNRTKPerturber:
@@ -41,9 +37,9 @@ class TestNRTKPerturber:
         result = runner.invoke(
             nrtk_perturber_cli,
             [
-                str(dataset_folder),
+                str(DATASET_FOLDER),
                 str(output_dir),
-                str(config_file),
+                str(NRTK_PYBSM_CONFIG),
                 "-v"
             ]
         )
@@ -73,9 +69,9 @@ class TestNRTKPerturber:
         runner.invoke(
             nrtk_perturber_cli,
             [
-                str(dataset_folder),
+                str(DATASET_FOLDER),
                 str(output_dir),
-                str(config_file),
+                str(NRTK_PYBSM_CONFIG),
                 "-g", str(output_config)
             ]
         )

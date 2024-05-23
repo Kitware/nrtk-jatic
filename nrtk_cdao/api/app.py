@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pathlib import Path
 
-from nrtk_cdao.api.converters import build_pybsm_factory, load_COCOJAITIC_dataset
-from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema, NrtkPybsmPerturbOutputSchema, DatasetSchema
+from nrtk_cdao.api.converters import build_factory, load_COCOJATIC_dataset
+from nrtk_cdao.api.schema import NrtkPerturbInputSchema, NrtkPerturbOutputSchema, DatasetSchema
 from nrtk_cdao.interop.object_detection.utils import dataset_to_coco
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
@@ -12,7 +12,7 @@ app = FastAPI()
 
 # Define a route for handling POST requests
 @app.post("/")
-def handle_post(data: NrtkPybsmPerturbInputSchema) -> NrtkPybsmPerturbOutputSchema:
+def handle_post(data: NrtkPerturbInputSchema) -> NrtkPerturbOutputSchema:
     """
     Returns a collection of augmented datasets based parameters in data
 
@@ -24,10 +24,10 @@ def handle_post(data: NrtkPybsmPerturbInputSchema) -> NrtkPybsmPerturbOutputSche
     """
     try:
         # Build pybsm factory
-        perturber_factory = build_pybsm_factory(data)
+        perturber_factory = build_factory(data)
 
         # Load dataset
-        input_dataset = load_COCOJAITIC_dataset(data)
+        input_dataset = load_COCOJATIC_dataset(data)
 
         # Call nrtk_perturber
         augmented_datasets = nrtk_perturber(
@@ -51,7 +51,7 @@ def handle_post(data: NrtkPybsmPerturbInputSchema) -> NrtkPybsmPerturbOutputSche
                 metadata_file="image_metadata.json"
             ))
 
-        return NrtkPybsmPerturbOutputSchema(
+        return NrtkPerturbOutputSchema(
             message="Data received successfully",
             datasets=datasets_out,
         )

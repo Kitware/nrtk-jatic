@@ -1,17 +1,18 @@
 import pytest
 import numpy as np
 import os
-from typing import Dict, Any
+from typing import Dict, Any, Type
 
 from smqtk_core.configuration import to_config_dict
 
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
+from nrtk.impls.perturb_image.generic.cv2.blur import AverageBlurPerturber
 
-from nrtk_cdao.api.converters import build_pybsm_factory, load_COCOJAITIC_dataset
-from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema
+from nrtk_cdao.api.converters import build_factory, load_COCOJATIC_dataset
+from nrtk_cdao.api.schema import NrtkPerturbInputSchema
 
-from tests import DATASET_FOLDER, LABEL_FILE
+from tests import DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG, NRTK_GENERIC_CONFIG, BAD_NRTK_CONFIG
 
 
 class TestAPIConversionFunctions:
@@ -25,79 +26,95 @@ class TestAPIConversionFunctions:
                     "dataset_dir": "",  # Not used in this test
                     "label_file": "",  # Not used in this test
                     "output_dir": "",  # Not used in this test
-                    "gsds": [],  # Not used in this test
-                    "theta_keys": ["f", "D"],
-                    "thetas": [[0.014, 0.012], [0.001, 0.003]],
+                    "image_metadata": {},  # Not used in this test
+                    "config_file": str(NRTK_PYBSM_CONFIG),
                 },
                 {
-                    "theta_keys": ["f", "D"],
-                    "thetas": [[0.014, 0.012], [0.001, 0.003]],
-                    "sensor": to_config_dict(PybsmSensor(
-                        name="Example", D=0.005, f=0.014, px=0.0000074, optTransWavelengths=np.asarray([3.8e-7, 7.0e-7])
-                    )),
-                    "scenario": to_config_dict(PybsmScenario(name="Example", ihaze=2, altitude=75, groundRange=0)),
-                },
-            ),
-            (
-                {
-                    "id": "0",
-                    "name": "Example",
-                    "dataset_dir": "",  # Not used in this test
-                    "label_file": "",  # Not used in this test
-                    "output_dir": "",  # Not used in this test
-                    "gsds": [],  # Not used in this test
-                    "theta_keys": ["f"],
-                    "thetas": [[0.014, 0.012]],
-                },
-                {
-                    "theta_keys": ["f"],
-                    "thetas": [[0.014, 0.012]],
-                    "sensor": to_config_dict(PybsmSensor(
-                        name="Example", D=0.005, f=0.014, px=0.0000074, optTransWavelengths=np.asarray([3.8e-7, 7.0e-7])
-                    )),
-                    "scenario": to_config_dict(PybsmScenario(name="Example", ihaze=2, altitude=75, groundRange=0)),
-                },
-            ),
-            (
-                {
-                    "id": "0",
-                    "name": "Example",
-                    "dataset_dir": "",  # Not used in this test
-                    "label_file": "",  # Not used in this test
-                    "output_dir": "",  # Not used in this test
-                    "gsds": [],  # Not used in this test
-                    "aircraftSpeed": 100,
-                    "wx": 1.1,
-                    "theta_keys": ["f"],
-                    "thetas": [[0.014, 0.012]],
-                },
-                {
-                    "theta_keys": ["f"],
-                    "thetas": [[0.014, 0.012]],
-                    "sensor": to_config_dict(PybsmSensor(
-                        name="Example",
-                        D=0.005,
-                        f=0.014,
-                        px=0.0000074,
-                        optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
-                        wx=1.1,
-                    )),
-                    "scenario": to_config_dict(PybsmScenario(
-                        name="Example", ihaze=2, altitude=75, groundRange=0, aircraftSpeed=100
-                    )),
+                    "theta_keys": ["f", "D", "px"],
+                    "thetas": [[0.014, 0.012], [0.001, 0.003], [0.00002]],
+                    "sensor": to_config_dict(
+                        PybsmSensor(
+                            name="L32511x",
+                            D=0.004,
+                            f=0.014285714285714287,
+                            px=0.00002,
+                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
+                            eta=0.4,
+                            intTime=0.03,
+                            readNoise=25.0,
+                            maxN=96000.0,
+                            bitdepth=11.9,
+                            maxWellFill=0.005,
+                            dax=0.0001,
+                            day=0.0001,
+                            qewavelengths=np.asarray(
+                                [3.0e-7, 4.0e-7, 5.0e-7, 6.0e-7, 7.0e-7, 8.0e-7, 9.0e-7, 1.0e-6, 1.1e-6]
+                            ),
+                            qe=np.asarray([0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]),
+                        )
+                    ),
+                    "scenario": to_config_dict(
+                        PybsmScenario(name="niceday", ihaze=2, altitude=75, groundRange=0, cn2at1m=0)
+                    ),
                 },
             ),
         ],
     )
-    def test_build_pybsm_factory(
-        self, data: Dict[str, Any], expected: Dict[str, Any]
-    ) -> None:
+    def test_build_factory(self, data: Dict[str, Any], expected: Dict[str, Any]) -> None:
         """
         Test if _build_pybsm_factory returns the expected factory.
         """
-        schema = NrtkPybsmPerturbInputSchema.model_validate(data)
-        factory = build_pybsm_factory(schema)
+        schema = NrtkPerturbInputSchema.model_validate(data)
+        factory = build_factory(schema)
         np.testing.assert_equal(factory.get_config(), expected)
+
+    @pytest.mark.parametrize(
+        "data",
+        [
+            (
+                {
+                    "id": "0",
+                    "name": "Example",
+                    "dataset_dir": "",  # Not used in this test
+                    "label_file": "",  # Not used in this test
+                    "output_dir": "",  # Not used in this test
+                    "image_metadata": {},  # Not used in this test
+                    "config_file": "",
+                }
+            ),
+        ],
+    )
+    def test_build_factory_no_config(self, data: Dict[str, Any]) -> None:
+        """
+        Test if build_factory throws .
+        """
+        schema = NrtkPerturbInputSchema.model_validate(data)
+        with pytest.raises(FileNotFoundError):
+            build_factory(schema)
+
+    @pytest.mark.parametrize(
+        "data",
+        [
+            (
+                {
+                    "id": "0",
+                    "name": "Example",
+                    "dataset_dir": "",  # Not used in this test
+                    "label_file": "",  # Not used in this test
+                    "output_dir": "",  # Not used in this test
+                    "image_metadata": {},  # Not used in this test
+                    "config_file": str(BAD_NRTK_CONFIG),
+                }
+            )
+        ],
+    )
+    def test_build_factory_bad_config(self, data: Dict[str, Any]) -> None:
+        """
+        Test if build_factory throws .
+        """
+        schema = NrtkPerturbInputSchema.model_validate(data)
+        with pytest.raises(ValueError):
+            build_factory(schema)
 
     @pytest.mark.parametrize(
         "data",
@@ -109,23 +126,20 @@ class TestAPIConversionFunctions:
                     "dataset_dir": str(DATASET_FOLDER),
                     "label_file": str(LABEL_FILE),
                     "output_dir": "",  # Not used in this test
-                    "gsds": list(range(11)),
-                    "theta_keys": [],  # Not used in this test
-                    "thetas": [],  # Not used in this test
+                    "image_metadata": {"gsds": list(range(11))},
+                    "config_file": "",  # Not used in this test
                 }
             )
         ],
     )
-    def test_load_COCOJAITIC_dataset(self, data: Dict[str, Any]) -> None:
+    def test_load_COCOJATIC_dataset(self, data: Dict[str, Any]) -> None:
         """
-        Test if _load_COCOJAITIC_dataset returns the expected dataset.
+        Test if load_COCOJATIC_dataset returns the expected dataset.
         """
-        schema = NrtkPybsmPerturbInputSchema.model_validate(data)
-        dataset = load_COCOJAITIC_dataset(schema)
+        schema = NrtkPerturbInputSchema.model_validate(data)
+        dataset = load_COCOJATIC_dataset(schema)
         # Check all images metadata for gsd
         for i in range(len(dataset)):
-            assert dataset[i][2]["img_gsd"] == data["gsds"][i]
+            assert dataset[i][2]["img_gsd"] == data["image_metadata"]["gsds"][i]
         # Check number of image matches
-        assert len(dataset) == len(
-            os.listdir(os.path.join(data["dataset_dir"], "images"))
-        )
+        assert len(dataset) == len(os.listdir(os.path.join(data["dataset_dir"], "images")))

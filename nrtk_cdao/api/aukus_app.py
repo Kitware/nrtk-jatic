@@ -1,13 +1,12 @@
 import copy
 import os
 import requests
-import yaml
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema
+from nrtk_cdao.api.schema import NrtkPerturbInputSchema
 from nrtk_cdao.api.aukus_schema import AukusDatasetSchema
 
 
@@ -31,23 +30,17 @@ def handle_aukus_post(data: AukusDatasetSchema) -> List[AukusDatasetSchema]:
     # Read NRTK configuration file and add relevant data to internalJSON
     if not os.path.isfile(data.nrtkConfig):
         raise HTTPException(status_code=400, detail="Provided NRTK config is not a valid file.")
-    with open(data.nrtkConfig) as f:
-        nrtk_config = yaml.safe_load(f)
-    for key in ['gsds', 'theta_keys', 'thetas']:
-        if key not in nrtk_config:
-            raise HTTPException(status_code=400, detail="NRTK config missing {0} parameter.".format(key))
 
     annotation_file = Path(data.uri) / data.labels[0]['iri']
 
-    nrtk_input = NrtkPybsmPerturbInputSchema(
+    nrtk_input = NrtkPerturbInputSchema(
                     id=data.id,
                     name=data.name,
                     dataset_dir=data.uri,
                     label_file=str(annotation_file),
                     output_dir=data.outputDir,
-                    gsds=nrtk_config['gsds'],
-                    theta_keys=nrtk_config['theta_keys'],
-                    thetas=nrtk_config['thetas']
+                    image_metadata=data.image_metadata,
+                    config_file=data.nrtkConfig
     )
 
     # Call 'handle_post' function with processed data and get the result
