@@ -5,13 +5,14 @@
 
 Welcome to nrtk-cdao's documentation!
 =====================================
-This is an extension of the Natural Robustness Toolkit (NRTK) for CDAO. This documentation will only contain information exclusive to the CDAO extention of NRTK. Documentation for NRTK can be found `here <https://jatic.pages.jatic.net/kitware/nrtk/index.html>`_. 
+This is an extension of the Natural Robustness Toolkit (NRTK) for CDAO. This documentation will only contain information exclusive to the CDAO extention of NRTK. Documentation for NRTK can be found `here <https://jatic.pages.jatic.net/kitware/nrtk/index.html>`_.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    releasing
+   jatic_interoperability
    miscellaneous
 
 
