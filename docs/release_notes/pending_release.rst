@@ -79,3 +79,9 @@ CI/CD
 
 Fixes
 -----
+
+* Updated to use `nrtk>=0.5.3` which patched an issue with `numpy` dependency resolution.
+
+* Numpy is used by the package but was never added to the list of dependencies and
+  was instead installed indirectly from `nrtk`. Added `numpy` as a required
+  dependency, which also has the side effect of solving resolution issues.
