@@ -9,10 +9,10 @@ from typing import Any, ContextManager, Dict, List
 
 from maite.protocols.object_detection import Dataset
 
-from nrtk_cdao.interop.dataset import (
+from nrtk_cdao.interop.object_detection.dataset import (
     JATICDetectionTarget, COCOJATICObjectDetectionDataset, JATICObjectDetectionDataset
 )
-from nrtk_cdao.interop.utils import dataset_to_coco
+from nrtk_cdao.interop.object_detection.utils import dataset_to_coco
 
 
 @pytest.mark.parametrize("dataset, img_filenames, categories, expectation", [

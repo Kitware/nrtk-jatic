@@ -22,6 +22,8 @@ Documentation
 
 * Added sphinx auto-documentation on JATIC interoperability for object detection.
 
+* Added sphinx auto-documentation on JATIC interoperability for image classification.
+
 Examples
 
 * Added an example notebook exploring the current state of several augmentation
@@ -66,6 +68,9 @@ Interoperability
 
 * Added a utility function to save a MAITE object detection dataset to file as a COCO
   dataset.
+
+* Added ``JATICClassificationAugmentation`` which performs perturbations on MAITE-protocol
+  based image classification datasets.
 
 Utils
 

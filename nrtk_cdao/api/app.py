@@ -3,7 +3,7 @@ from pathlib import Path
 
 from nrtk_cdao.api.converters import build_pybsm_factory, load_COCOJAITIC_dataset
 from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema, NrtkPybsmPerturbOutputSchema, DatasetSchema
-from nrtk_cdao.interop.utils import dataset_to_coco
+from nrtk_cdao.interop.object_detection.utils import dataset_to_coco
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
 

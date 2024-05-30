@@ -8,7 +8,7 @@ from typing import List
 from smqtk_core.configuration import from_config_dict
 
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
-from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
+from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
 from tests import DATA_DIR
