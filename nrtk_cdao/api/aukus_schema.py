@@ -43,7 +43,7 @@ class AukusDatasetSchema(BaseModel):
 
     # NRTk specific param
     nrtkConfig: str
-    image_metadata: Dict[str, Any]
+    image_metadata: List[Dict[str, Any]]
     outputDir: str
 
     # Optional Dataset Params

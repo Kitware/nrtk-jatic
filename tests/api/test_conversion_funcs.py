@@ -1,18 +1,17 @@
 import pytest
 import numpy as np
 import os
-from typing import Dict, Any, Type
+from typing import Dict, Any
 
 from smqtk_core.configuration import to_config_dict
 
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
-from nrtk.impls.perturb_image.generic.cv2.blur import AverageBlurPerturber
 
 from nrtk_cdao.api.converters import build_factory, load_COCOJATIC_dataset
 from nrtk_cdao.api.schema import NrtkPerturbInputSchema
 
-from tests import DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG, NRTK_GENERIC_CONFIG, BAD_NRTK_CONFIG
+from tests import DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG, BAD_NRTK_CONFIG, EMPTY_NRTK_CONFIG
 
 
 class TestAPIConversionFunctions:
@@ -26,7 +25,7 @@ class TestAPIConversionFunctions:
                     "dataset_dir": "",  # Not used in this test
                     "label_file": "",  # Not used in this test
                     "output_dir": "",  # Not used in this test
-                    "image_metadata": {},  # Not used in this test
+                    "image_metadata": [],  # Not used in this test
                     "config_file": str(NRTK_PYBSM_CONFIG),
                 },
                 {
@@ -78,7 +77,7 @@ class TestAPIConversionFunctions:
                     "dataset_dir": "",  # Not used in this test
                     "label_file": "",  # Not used in this test
                     "output_dir": "",  # Not used in this test
-                    "image_metadata": {},  # Not used in this test
+                    "image_metadata": [],  # Not used in this test
                     "config_file": "",
                 }
             ),
@@ -102,8 +101,19 @@ class TestAPIConversionFunctions:
                     "dataset_dir": "",  # Not used in this test
                     "label_file": "",  # Not used in this test
                     "output_dir": "",  # Not used in this test
-                    "image_metadata": {},  # Not used in this test
+                    "image_metadata": [],  # Not used in this test
                     "config_file": str(BAD_NRTK_CONFIG),
+                }
+            ),
+            (
+                {
+                    "id": "0",
+                    "name": "Example",
+                    "dataset_dir": "",  # Not used in this test
+                    "label_file": "",  # Not used in this test
+                    "output_dir": "",  # Not used in this test
+                    "image_metadata": [],  # Not used in this test
+                    "config_file": str(EMPTY_NRTK_CONFIG),
                 }
             )
         ],
@@ -126,7 +136,7 @@ class TestAPIConversionFunctions:
                     "dataset_dir": str(DATASET_FOLDER),
                     "label_file": str(LABEL_FILE),
                     "output_dir": "",  # Not used in this test
-                    "image_metadata": {"gsds": list(range(11))},
+                    "image_metadata": [{"gsd": gsd} for gsd in range(11)],
                     "config_file": "",  # Not used in this test
                 }
             )
@@ -140,6 +150,6 @@ class TestAPIConversionFunctions:
         dataset = load_COCOJATIC_dataset(schema)
         # Check all images metadata for gsd
         for i in range(len(dataset)):
-            assert dataset[i][2]["img_gsd"] == data["image_metadata"]["gsds"][i]
+            assert dataset[i][2]["gsd"] == data["image_metadata"][i]["gsd"]
         # Check number of image matches
         assert len(dataset) == len(os.listdir(os.path.join(data["dataset_dir"], "images")))

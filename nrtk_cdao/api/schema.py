@@ -11,7 +11,7 @@ class NrtkPerturbInputSchema(BaseModel):
     dataset_dir: str
     label_file: str
     output_dir: str
-    image_metadata: Dict[str, Any]
+    image_metadata: List[Dict[str, Any]]
 
     # NRTK Perturber
     config_file: str
@@ -26,7 +26,7 @@ class NrtkPerturbInputSchema(BaseModel):
                     "dataset_dir": "path/to/dataset/dir",
                     "output_dir": "path/to/output/dir",
                     "label_file": "path/to/label_file",
-                    "image_metadata": {"gsds": list(range(10))},
+                    "image_metadata": [{"gsd": gsd} for gsd in range(11)],
                     "isFactory": True,
                     "config": "path/to/config_file"
                 }

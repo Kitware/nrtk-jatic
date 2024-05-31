@@ -13,7 +13,7 @@ from nrtk_cdao.api.app import app
 from nrtk_cdao.api.schema import NrtkPerturbInputSchema
 from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
 
-from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG, LABEL_FILE, NRTK_GENERIC_CONFIG, BAD_NRTK_CONFIG
+from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG, LABEL_FILE, BAD_NRTK_CONFIG
 
 
 @pytest.fixture
@@ -50,7 +50,7 @@ def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py
         dataset_dir=str(DATASET_FOLDER),
         label_file=str(LABEL_FILE),
         output_dir=str(tmpdir),
-        image_metadata={"gsds": list(range(11))},
+        image_metadata=[{"gsd": gsd} for gsd in range(11)],
         config_file=str(NRTK_PYBSM_CONFIG),
     )
 
@@ -156,7 +156,7 @@ def test_bad_gsd_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path
         dataset_dir=str(DATASET_FOLDER),
         label_file=str(LABEL_FILE),
         output_dir=str(tmpdir),
-        image_metadata={"gsds": list(range(3))},  # incorrect number of gsds
+        image_metadata=[{"gsd": gsd} for gsd in range(3)],  # incorrect number of gsds
         config_file=str(NRTK_PYBSM_CONFIG),
     )
 
@@ -196,7 +196,7 @@ def test_no_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.pa
         dataset_dir=str(DATASET_FOLDER),
         label_file=str(LABEL_FILE),
         output_dir=str(tmpdir),
-        image_metadata={"gsds": list(range(11))},
+        image_metadata=[{"gsd": gsd} for gsd in range(11)],
         config_file="/bad/path/",
     )
 
@@ -236,7 +236,7 @@ def test_bad_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.p
         dataset_dir=str(DATASET_FOLDER),
         label_file=str(LABEL_FILE),
         output_dir=str(tmpdir),
-        image_metadata={"gsds": list(range(11))},
+        image_metadata=[{"gsd": gsd} for gsd in range(11)],
         config_file=str(BAD_NRTK_CONFIG),
     )
 
