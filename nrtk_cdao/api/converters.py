@@ -6,7 +6,7 @@ from smqtk_core.configuration import from_config_dict, make_default_config
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory
-from nrtk_cdao.interop.dataset import COCOJATICObjectDetectionDataset
+from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
 from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema
 
 

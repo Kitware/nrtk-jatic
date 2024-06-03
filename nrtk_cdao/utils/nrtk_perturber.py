@@ -5,8 +5,8 @@ import itertools
 import numpy as np
 
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
-from nrtk_cdao.interop.augmentation import JATICDetectionAugmentation
-from nrtk_cdao.interop.dataset import JATICObjectDetectionDataset
+from nrtk_cdao.interop.object_detection.augmentation import JATICDetectionAugmentation
+from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset
 from maite.protocols.object_detection import Dataset
 
 

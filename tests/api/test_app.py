@@ -11,7 +11,7 @@ from unittest.mock import MagicMock
 
 from nrtk_cdao.api.app import app
 from nrtk_cdao.api.schema import NrtkPybsmPerturbInputSchema
-from nrtk_cdao.interop.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
+from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
 
 from tests import DATASET_FOLDER, LABEL_FILE
 

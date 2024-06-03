@@ -4,7 +4,7 @@ JSON Schema
 
 
 Required Parameters
-==================
+===================
 
 -----------------
 Header Parameters
@@ -14,9 +14,9 @@ Header Parameters
 - **name** (string)
   The human interpretable name of the invocation of nrtk
 
-----------------
+------------------
 Dataset Parameters
-----------------
+------------------
 - **dataset_dir** (str)
   A filepath to the top folder of a COCO dataset.
 - **label_file** (str)

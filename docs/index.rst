@@ -13,6 +13,8 @@ This is an extension of the Natural Robustness Toolkit (NRTK) for CDAO. This doc
 
    releasing
    jatic_interoperability
+   api
+   schema
    miscellaneous
 
 

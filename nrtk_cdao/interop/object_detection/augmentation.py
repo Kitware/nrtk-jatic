@@ -4,7 +4,7 @@ import copy
 import numpy as np
 
 from nrtk.interfaces.perturb_image import PerturbImage
-from nrtk_cdao.interop.dataset import JATICDetectionTarget
+from nrtk_cdao.interop.object_detection.dataset import JATICDetectionTarget
 from maite.protocols.object_detection import (
     Augmentation,
     InputBatchType,

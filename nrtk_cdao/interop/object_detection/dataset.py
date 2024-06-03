@@ -52,11 +52,11 @@ class COCOJATICObjectDetectionDataset(Dataset):
     ----------
     root : str
         The root directory of the dataset.
-    kwcoco_dataset: kwcoco.CocoDataset
+    kwcoco_dataset : kwcoco.CocoDataset
         The kwcoco COCODataset object.
-    image_metadata : A list of per-image metadata. Any metadata required by a perturber should be provided.
+    image_metadata : List[Dict[str, Any]]
+        A list of per-image metadata. Any metadata required by a perturber should be provided.
     """
-
     def __init__(self, root: str, kwcoco_dataset: kwcoco.CocoDataset, image_metadata: List[Dict[str, Any]],):
         self._root: Path = Path(root)
         image_dir = self._root / "images"
@@ -142,6 +142,19 @@ class COCOJATICObjectDetectionDataset(Dataset):
 
 
 class JATICObjectDetectionDataset(Dataset):
+    """
+    Implementation of the JATIC Object Detection dataset wrapper for
+    dataset images of varying sizes.
+
+    Parameters
+    ----------
+    imgs : Sequence[np.ndarray]
+        Sequence of images.
+    dets : Sequence[ObjectDetectionTarget]
+        Sequence of detections for each image.
+    metadata : Sequence[Dict[str, Any]]
+        Sequence of custom metadata for each image.
+    """
     def __init__(self, imgs: Sequence[np.ndarray], dets: Sequence[TargetType],
                  metadata: Sequence[DatumMetadataType]) -> None:
         self.imgs = imgs

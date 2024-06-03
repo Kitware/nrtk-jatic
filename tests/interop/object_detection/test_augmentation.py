@@ -1,39 +1,15 @@
 import copy
 import numpy as np
 import pytest
-from PIL import Image
 from typing import Any, Dict, List
 
 from maite.protocols.object_detection import TargetBatchType
 from nrtk.interfaces.perturb_image import PerturbImage
 from nrtk.impls.perturb_image.generic.nop_perturber import NOPPerturber
 
-from nrtk_cdao.interop.dataset import JATICDetectionTarget
-from nrtk_cdao.interop.augmentation import JATICDetectionAugmentation
-
-
-class ResizePerturber(PerturbImage):
-    def __init__(self, w: int, h: int):
-        self.w = w
-        self.h = h
-
-    def perturb(
-        self,
-        image: np.ndarray,
-        additional_params: Dict[str, Any] = {}
-    ) -> np.ndarray:
-        """
-        Resize image.
-        """
-        img = Image.fromarray(image)
-        img = img.resize((self.w, self.h))
-        return np.array(img)
-
-    def get_config(self) -> Dict[str, Any]:
-        return {
-            "w": self.w,
-            "h": self.h
-        }
+from nrtk_cdao.interop.object_detection.dataset import JATICDetectionTarget
+from nrtk_cdao.interop.object_detection.augmentation import JATICDetectionAugmentation
+from tests.utils.test_utils import ResizePerturber
 
 
 class TestJATICDetectionAugmentation:
