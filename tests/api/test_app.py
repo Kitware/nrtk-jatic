@@ -9,13 +9,18 @@ from starlette.testclient import TestClient
 from typing import Generator
 from unittest.mock import MagicMock
 
-from nrtk_cdao.api.app import app
 from nrtk_cdao.api.schema import NrtkPerturbInputSchema
 from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
 
 from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG, LABEL_FILE, BAD_NRTK_CONFIG
+try:
+    from nrtk_cdao.api.app import app
+    is_usable = True
+except ImportError:
+    is_usable = False
 
 
+@pytest.mark.skipif(is_usable, reason="coco utils usable")
 @pytest.fixture
 def test_client() -> Generator:
     # Create a test client for the FastAPI application
@@ -23,6 +28,7 @@ def test_client() -> Generator:
         yield client
 
 
+@pytest.mark.skipif(is_usable, reason="coco utils usable")
 @mock.patch(
     "nrtk_cdao.api.app.nrtk_perturber",
     return_value=[
@@ -130,6 +136,7 @@ def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py
     assert len(os.listdir(os.path.join(str(image_dir)))) == 11
 
 
+@pytest.mark.skipif(is_usable, reason="coco utils usable")
 @mock.patch(
     "nrtk_cdao.api.app.nrtk_perturber",
     return_value=[
@@ -170,6 +177,7 @@ def test_bad_gsd_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path
     assert response.json()["detail"] == "Image metadata length mismatch, metadata needed for every image"
 
 
+@pytest.mark.skipif(is_usable, reason="coco utils usable")
 @mock.patch(
     "nrtk_cdao.api.app.nrtk_perturber",
     return_value=[
@@ -210,6 +218,7 @@ def test_no_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.pa
     assert response.json()["detail"] == "Config file at /bad/path/ was not found"
 
 
+@pytest.mark.skipif(is_usable, reason="coco utils usable")
 @mock.patch(
     "nrtk_cdao.api.app.nrtk_perturber",
     return_value=[

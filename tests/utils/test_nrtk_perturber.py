@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 import json
-import kwcoco
 from pathlib import Path
 from typing import List
 
@@ -11,33 +10,40 @@ from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
 from nrtk.impls.perturb_image_factory.generic.step import StepPerturbImageFactory
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
-from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
 from tests import DATASET_FOLDER
 
+try:
+    import kwcoco  # type: ignore
+    from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
+    is_usable = True
+except ImportError:
+    is_usable = False
 
-def _load_dataset(dataset_path: str, load_metadata: bool = True) -> COCOJATICObjectDetectionDataset:
-    coco_file = Path(dataset_path) / "annotations.json"
-    kwcoco_dataset = kwcoco.CocoDataset(coco_file)
+if is_usable:
+    def _load_dataset(dataset_path: str, load_metadata: bool = True) -> COCOJATICObjectDetectionDataset:
+        coco_file = Path(dataset_path) / "annotations.json"
+        kwcoco_dataset = kwcoco.CocoDataset(coco_file)
 
-    if load_metadata:
-        metadata_file = Path(dataset_path) / "image_metadata.json"
-        with open(metadata_file) as f:
-            metadata = json.load(f)
-    else:
-        metadata = [dict()] * len(kwcoco_dataset.imgs)
+        if load_metadata:
+            metadata_file = Path(dataset_path) / "image_metadata.json"
+            with open(metadata_file) as f:
+                metadata = json.load(f)
+        else:
+            metadata = [dict()] * len(kwcoco_dataset.imgs)
 
-    # Initialize dataset object
-    dataset = COCOJATICObjectDetectionDataset(
-        root=str(DATASET_FOLDER),
-        kwcoco_dataset=kwcoco_dataset,
-        image_metadata=metadata
-    )
+        # Initialize dataset object
+        dataset = COCOJATICObjectDetectionDataset(
+            root=str(DATASET_FOLDER),
+            kwcoco_dataset=kwcoco_dataset,
+            image_metadata=metadata
+        )
 
-    return dataset
+        return dataset
 
 
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 class TestNRTKPerturber:
     """
     These tests make use of the `tmpdir` fixture from `pytest`. Find more

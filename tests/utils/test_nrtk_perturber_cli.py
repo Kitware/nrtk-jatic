@@ -7,11 +7,13 @@ from unittest.mock import MagicMock
 from typing import ContextManager
 
 from maite.protocols.object_detection import Dataset
-from nrtk_cdao.utils.bin.nrtk_perturber_cli import nrtk_perturber_cli
 
 from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG
+from nrtk_cdao.utils.bin.nrtk_perturber_cli import nrtk_perturber_cli
+from nrtk_cdao.utils.bin.nrtk_perturber_cli import is_usable
 
 
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 class TestNRTKPerturberCLI:
     """
     These tests make use of the `tmpdir` fixture from `pytest`. Find more

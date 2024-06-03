@@ -1,5 +1,4 @@
 import json
-import kwcoco
 import numpy as np
 import py  # type: ignore
 import pytest
@@ -10,11 +9,19 @@ from typing import Any, ContextManager, Dict, List
 from maite.protocols.object_detection import Dataset
 
 from nrtk_cdao.interop.object_detection.dataset import (
-    JATICDetectionTarget, COCOJATICObjectDetectionDataset, JATICObjectDetectionDataset
+    JATICDetectionTarget, JATICObjectDetectionDataset
 )
-from nrtk_cdao.interop.object_detection.utils import dataset_to_coco
+from nrtk_cdao.interop.object_detection.utils import is_usable
+try:
+    import kwcoco  # type: ignore
+    from nrtk_cdao.interop.object_detection.utils import dataset_to_coco
+    from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
+except ImportError:
+    # Won't use above imports when not importable
+    pass
 
 
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 @pytest.mark.parametrize("dataset, img_filenames, categories, expectation", [
     (
         JATICObjectDetectionDataset(
