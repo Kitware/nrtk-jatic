@@ -26,8 +26,13 @@ def nrtk_perturber(
     """
 
     perturber_factory_config = perturber_factory.get_config()
-    perturb_factory_keys = perturber_factory_config["theta_keys"]
-    thetas = perturber_factory_config["thetas"]
+    if "theta_keys" in perturber_factory_config:  # pyBSM doesn't follow interface rules
+        perturb_factory_keys = perturber_factory_config["theta_keys"]
+        thetas = perturber_factory.thetas
+    else:
+        perturb_factory_keys = [perturber_factory.theta_key]
+        thetas = [perturber_factory.thetas]
+
     perturber_combinations = [dict(zip(perturb_factory_keys, v))
                               for v in itertools.product(*thetas)]
     logging.info(f"Perturber sweep values: {perturber_combinations}")

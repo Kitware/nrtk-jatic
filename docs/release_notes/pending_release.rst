@@ -86,6 +86,8 @@ CI/CD
 
 * Updated CI test matrix to support `py3.12`
 
+* Added additional entrypoint testing.
+
 Fixes
 -----
 
