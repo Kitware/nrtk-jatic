@@ -1,7 +1,6 @@
 import itertools
 import json
 import kwcoco
-import os
 from pathlib import Path
 from typing import List
 
@@ -11,15 +10,11 @@ from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
 from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
 
-from tests import DATA_DIR
-
-
-dataset_folder = os.path.join(DATA_DIR, 'VisDrone2019-DET-test-dev-TINY')
-config_file = os.path.join(DATA_DIR, 'nrtk_config.json')
+from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG
 
 
 def _load_dataset(dataset_path: str) -> COCOJATICObjectDetectionDataset:
-    coco_file = Path(dataset_path) / "annotations.json"
+    coco_file = Path(DATASET_FOLDER) / "annotations.json"
     kwcoco_dataset = kwcoco.CocoDataset(coco_file)
 
     metadata_file = Path(dataset_path) / "image_metadata.json"
@@ -28,7 +23,7 @@ def _load_dataset(dataset_path: str) -> COCOJATICObjectDetectionDataset:
 
     # Initialize dataset object
     dataset = COCOJATICObjectDetectionDataset(
-        root=dataset_folder,
+        root=str(DATASET_FOLDER),
         kwcoco_dataset=kwcoco_dataset,
         image_metadata=metadata
     )
@@ -59,11 +54,11 @@ class TestNRTKPybsmPerturber:
         """
         Test if the perturber returns the intended number of datasets.
         """
-        with open(config_file) as f:
+        with open(NRTK_PYBSM_CONFIG) as f:
             config = json.load(f)
         perturber_factory = from_config_dict(config["PerturberFactory"], PerturbImageFactory.get_impls())
 
-        dataset = _load_dataset(dataset_path=dataset_folder)
+        dataset = _load_dataset(dataset_path=str(DATASET_FOLDER))
 
         augmented_datasets = nrtk_perturber(
             maite_dataset=dataset,
@@ -74,7 +69,7 @@ class TestNRTKPybsmPerturber:
         img_dirs = _get_perturber_param_combinations(perturber_factory)
 
         # image ids that belong to each perturber sweep combination
-        img_paths = Path(dataset_folder) / "images"
+        img_paths = Path(DATASET_FOLDER) / "images"
         img_ids = [img_file.stem + img_file.suffix
                    for img_file in img_paths.iterdir()
                    if img_file.is_file()]

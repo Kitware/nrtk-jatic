@@ -51,6 +51,8 @@ API
 * Added `Dockerfile` and `compose.yaml` to containerize the `nrtk-cdao` package
   and host the base REST API and AUKUS REST API.
 
+* Added config file support for loading pyBSM factories for NRTKaaS.
+
 License
 
 * Add Apache 2.0 license
