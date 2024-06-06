@@ -94,3 +94,5 @@ Fixes
 * Numpy is used by the package but was never added to the list of dependencies and
   was instead installed indirectly from `nrtk`. Added `numpy` as a required
   dependency, which also has the side effect of solving resolution issues.
+
+* Updated `numpy` hinge for `Python 3.12`
