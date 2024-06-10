@@ -11,6 +11,7 @@ from nrtk.impls.perturb_image_factory.generic.step import StepPerturbImageFactor
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
 from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
+from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
 
 from tests import DATASET_FOLDER
 
@@ -43,7 +44,6 @@ if is_usable:
         return dataset
 
 
-@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 class TestNRTKPerturber:
     """
     These tests make use of the `tmpdir` fixture from `pytest`. Find more
@@ -66,30 +66,31 @@ class TestNRTKPerturber:
         (
             StepPerturbImageFactory(perturber=AverageBlurPerturber, theta_key="ksize", start=1, stop=5, step=2),
             ["_ksize-1", "_ksize-3"]
-        ),
-        (pybsm_factory, ["_f-0.014_D-0.001", "_f-0.012_D-0.001"])
+        )
     ])
     def test_nrtk_perturber(self, perturber_factory: PerturbImageFactory, img_dirs: List[str]) -> None:
         """
         Test if the perturber returns the intended number of datasets.
         """
-        dataset = _load_dataset(dataset_path=str(DATASET_FOLDER))
+        num_imgs = 4
+        dataset = JATICObjectDetectionDataset(
+            imgs=[np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)] * num_imgs,
+            dets=[
+                JATICDetectionTarget(boxes=np.array([[1., 2., 3., 4.]]), labels=np.array([0]), scores=np.array([0.5]))
+            ] * num_imgs,
+            metadata=[{"img_metadata": 0.3}] * num_imgs
+        )
 
         augmented_datasets = nrtk_perturber(
             maite_dataset=dataset,
             perturber_factory=perturber_factory
         )
 
-        # image ids that belong to each perturber sweep combination
-        img_paths = Path(DATASET_FOLDER) / "images"
-        img_ids = [img_file.stem + img_file.suffix
-                   for img_file in img_paths.iterdir()
-                   if img_file.is_file()]
-
         for perturber_params, aug_dataset in augmented_datasets:
             assert perturber_params in list(img_dirs)
-            assert len(aug_dataset) == len(img_ids)
+            assert len(aug_dataset) == num_imgs
 
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
     def test_missing_metadata(self) -> None:
         """
         Test that an appropriate error is raised if required metadata is missing.

@@ -13,13 +13,13 @@ from nrtk_cdao.utils.bin.nrtk_perturber_cli import nrtk_perturber_cli
 from nrtk_cdao.utils.bin.nrtk_perturber_cli import is_usable
 
 
-@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 class TestNRTKPerturberCLI:
     """
     These tests make use of the `tmpdir` fixture from `pytest`. Find more
     information here: https://docs.pytest.org/en/6.2.x/tmpdir.html
     """
 
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
     @mock.patch(
         'nrtk_cdao.utils.bin.nrtk_perturber_cli.nrtk_perturber',
         return_value=[
@@ -96,10 +96,11 @@ class TestNRTKPerturberCLI:
         ]
         dataset_to_coco_patch.assert_has_calls(calls)
 
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
     @pytest.mark.parametrize("config_file, expectation", [
         (NRTK_PYBSM_CONFIG,
             pytest.raises(ValueError, match="'img_gsd' must be present in image metadata for this perturber")),
-        # (blur_config_file, does_not_raise())  # TODO: Remove once plugfigurability issues are resolved
+        # (blur_config_file, does_not_raise())  # TODO: Uncomment once plugfigurability issues are resolved
     ])
     @mock.patch('pathlib.Path.is_file', side_effect=[True, False])
     def test_missing_metadata(
@@ -175,4 +176,18 @@ class TestNRTKPerturberCLI:
         # Check that config file was created
         assert output_config.check(file=1)
         # Check that no output was generated
+        assert not output_dir.check(dir=1)
+
+    @mock.patch("nrtk_cdao.utils.bin.nrtk_perturber_cli.is_usable", False)
+    def test_missing_deps(self, tmpdir: py.path.local) -> None:
+        """
+        Test that proper warning is displayed when required dependencies are not installed.
+        """
+        output_dir = tmpdir.join('out')
+
+        runner = CliRunner()
+
+        result = runner.invoke(nrtk_perturber_cli, [str(DATASET_FOLDER), str(output_dir), str(NRTK_PYBSM_CONFIG)])
+
+        assert result.output.startswith("This tool requires additional dependencies, please install `nrtk-cdao[tools]`")
         assert not output_dir.check(dir=1)

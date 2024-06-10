@@ -36,7 +36,7 @@ def build_factory(data: NrtkPerturbInputSchema) -> PerturbImageFactory:
 
 
 if not is_usable:
-    LOG.warning(f"{__name__} requires additional dependencies, please install 'xaitk-saliency[tools]'")
+    LOG.warning("load_COCOJATIC_dataset requires additional dependencies, please install 'nrtk-cdao[tools]'")
 else:
     def load_COCOJATIC_dataset(data: NrtkPerturbInputSchema) -> COCOJATICObjectDetectionDataset:
         """

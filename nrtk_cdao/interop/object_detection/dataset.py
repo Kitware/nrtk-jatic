@@ -52,7 +52,7 @@ def _coco_to_maite_detections(coco_annotation: List) -> TargetType:
 
 
 if not is_usable:
-    LOG.warning(f"{__name__} requires additional dependencies, please install 'xaitk-saliency[tools]'")
+    LOG.warning("COCOJATICObjectDetectionDataset requires additional dependencies, please install 'nrtk-cdao[tools]'")
 else:
     class COCOJATICObjectDetectionDataset(Dataset):
         """
