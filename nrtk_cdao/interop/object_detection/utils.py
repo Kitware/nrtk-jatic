@@ -1,5 +1,4 @@
 import json
-import kwcoco
 import logging
 import numpy as np
 from pathlib import Path
@@ -7,6 +6,12 @@ from PIL import Image  # type: ignore
 from typing import Any, Dict, List, Tuple
 
 from maite.protocols.object_detection import Dataset
+
+try:
+    import kwcoco  # type: ignore
+    is_usable = True
+except ImportError:
+    is_usable = False
 
 
 def _xywh_bbox_xform(x1: int, y1: int, x2: int, y2: int) -> Tuple[int, int, int, int]:
@@ -30,7 +35,8 @@ def dataset_to_coco(
     """
     if len(img_filenames) != len(dataset):
         raise ValueError(f"Image filename and dataset length mismatch ({len(img_filenames)} != {len(dataset)})")
-
+    if not is_usable:
+        raise ImportError("This tool requires additional dependencies, please install `nrtk-cdao[tools]`")
     annotations = kwcoco.CocoDataset()
     for cat in dataset_categories:
         annotations.add_category(name=cat["name"], supercategory=cat["supercategory"], id=cat["id"])

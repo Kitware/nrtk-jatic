@@ -106,11 +106,8 @@ default:
     - .test_preamble
     - .poetry_install
 
-.test_headless:
-  extends:
-    - .test_defaults
-  before_script:
-    - !reference [.test_defaults, before_script]
+.conditional_install:
+  opencv_headless:
     - |
       VERSION="$(poetry run pip list --format=json | poetry run ./scripts/pycv2_installed_version.py)"
       if [[ "$?" -eq 0 ]]
@@ -121,6 +118,14 @@ default:
       else
         echo "OpenCV-Python NOT installed, skipping."
       fi
+
+
+.test_headless:
+  extends:
+    - .test_defaults
+  before_script:
+    - !reference [.test_defaults, before_script]
+    - !reference [.conditional_install, opencv_headless]
 
 # Job to lint python code
 test-py-lint:
@@ -145,12 +150,15 @@ test-docs-build:
 
 # Job to run unittests via pytest
 test-pytest:
-  extends: .test_headless
+  extends: .test_defaults
   parallel:
     matrix:
       - PY_VERSION: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+        OPT_EXTRA: ["", "tools"]
   image: python:${PY_VERSION}
   script:
+    - poetry install --extras "$OPT_EXTRA"
+    - !reference [.conditional_install, opencv_headless]
     - poetry run pytest
 
 # Job to check the release notes folder

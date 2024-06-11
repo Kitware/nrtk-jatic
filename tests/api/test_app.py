@@ -9,11 +9,16 @@ from starlette.testclient import TestClient
 from typing import Generator
 from unittest.mock import MagicMock
 
-from nrtk_cdao.api.app import app
 from nrtk_cdao.api.schema import NrtkPerturbInputSchema
 from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
 
 from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG, LABEL_FILE, BAD_NRTK_CONFIG
+from nrtk_cdao.api.app import app
+
+from importlib.util import find_spec
+deps = ['kwcoco']
+specs = [find_spec(dep) for dep in deps]
+is_usable = all([spec is not None for spec in specs])
 
 
 @pytest.fixture
@@ -23,6 +28,7 @@ def test_client() -> Generator:
         yield client
 
 
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 @mock.patch(
     "nrtk_cdao.api.app.nrtk_perturber",
     return_value=[
@@ -130,6 +136,7 @@ def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py
     assert len(os.listdir(os.path.join(str(image_dir)))) == 11
 
 
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
 @mock.patch(
     "nrtk_cdao.api.app.nrtk_perturber",
     return_value=[
@@ -250,4 +257,32 @@ def test_bad_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.p
     assert (
         response.json()["detail"]
         == "Configuration dictionary given does not have an implementation type specification."
+    )
+
+
+@mock.patch("nrtk_cdao.api.app.is_usable", False)
+def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
+    """
+    Test that an exception is raised when required dependencies are not installed.
+    """
+    test_data = NrtkPerturbInputSchema(
+        id="0",
+        name="Example",
+        dataset_dir=str(DATASET_FOLDER),
+        label_file=str(LABEL_FILE),
+        output_dir=str(tmpdir),
+        image_metadata=[{"gsd": gsd} for gsd in range(11)],
+        config_file=str(NRTK_PYBSM_CONFIG),
+    )
+
+    # Send a POST request to the API endpoint
+    response = test_client.post("/", json=jsonable_encoder(test_data))
+
+    # Check response status code
+    assert response.status_code == 400
+
+    # Check that we got the correct error message
+    assert (
+        response.json()["detail"]
+        == "This tool requires additional dependencies, please install `nrtk-cdao[tools]`"
     )

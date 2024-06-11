@@ -2,10 +2,10 @@ import copy
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Any, Sequence
 from pathlib import Path
+import logging
 
 from PIL import Image  # type: ignore
 import numpy as np
-import kwcoco
 
 from maite.protocols.object_detection import (
     Dataset,
@@ -14,7 +14,15 @@ from maite.protocols.object_detection import (
     DatumMetadataType
 )
 
+try:
+    import kwcoco  # type: ignore
+    is_usable = True
+except ImportError:
+    is_usable = False
+
 OBJ_DETECTION_DATUM_T = Tuple[InputType, TargetType, DatumMetadataType]
+
+LOG = logging.getLogger(__name__)
 
 
 @dataclass
@@ -43,102 +51,106 @@ def _coco_to_maite_detections(coco_annotation: List) -> TargetType:
     return JATICDetectionTarget(boxes, labels, scores)
 
 
-class COCOJATICObjectDetectionDataset(Dataset):
-    """
-    Dataset class to convert a COCO dataset to a dataset
-    compliant with JATIC's Object Detection protocol.
+if not is_usable:
+    LOG.warning("COCOJATICObjectDetectionDataset requires additional dependencies, please install 'nrtk-cdao[tools]'")
+else:
+    class COCOJATICObjectDetectionDataset(Dataset):
+        """
+        Dataset class to convert a COCO dataset to a dataset
+        compliant with JATIC's Object Detection protocol.
 
-    Parameters
-    ----------
-    root : str
-        The root directory of the dataset.
-    kwcoco_dataset : kwcoco.CocoDataset
-        The kwcoco COCODataset object.
-    image_metadata : List[Dict[str, Any]]
-        A list of per-image metadata. Any metadata required by a perturber should be provided.
-    """
-    def __init__(self, root: str, kwcoco_dataset: kwcoco.CocoDataset, image_metadata: List[Dict[str, Any]],):
-        self._root: Path = Path(root)
-        image_dir = self._root / "images"
-        self.all_img_paths = [image_dir / val["file_name"]
+        Parameters
+        ----------
+        root : str
+            The root directory of the dataset.
+        kwcoco_dataset : kwcoco.CocoDataset
+            The kwcoco COCODataset object.
+        image_metadata : List[Dict[str, Any]]
+            A list of per-image metadata. Any metadata required by a perturber should be provided.
+        """
+
+        def __init__(self, root: str, kwcoco_dataset: kwcoco.CocoDataset, image_metadata: List[Dict[str, Any]],):
+            self._root: Path = Path(root)
+            image_dir = self._root / "images"
+            self.all_img_paths = [image_dir / val["file_name"]
+                                  for key, val in kwcoco_dataset.imgs.items()]
+            self.all_image_ids = sorted({p.stem for p in self.all_img_paths})
+
+            # Get all image filenames from the kwcoco object
+            anns_image_ids = [{'coco_image_id': val['id'], 'filename': val['file_name']}
                               for key, val in kwcoco_dataset.imgs.items()]
-        self.all_image_ids = sorted({p.stem for p in self.all_img_paths})
+            anns_image_ids = sorted(anns_image_ids, key=lambda d: d['filename'])
 
-        # Get all image filenames from the kwcoco object
-        anns_image_ids = [{'coco_image_id': val['id'], 'filename': val['file_name']}
-                          for key, val in kwcoco_dataset.imgs.items()]
-        anns_image_ids = sorted(anns_image_ids, key=lambda d: d['filename'])
+            # store sorted image paths
+            self._images = sorted([p for p in self.all_img_paths if p.stem in self.all_image_ids])
 
-        # store sorted image paths
-        self._images = sorted([p for p in self.all_img_paths if p.stem in self.all_image_ids])
+            self._annotations = {}
+            for image_id, anns_img_id in zip(self.all_image_ids, anns_image_ids):
+                image_annotations = [sub for sub in list(kwcoco_dataset.anns.values())
+                                     if sub['image_id'] == anns_img_id['coco_image_id']]
+                # Convert annotations to maite detections format
+                self._annotations[image_id] = _coco_to_maite_detections(image_annotations)
 
-        self._annotations = {}
-        for image_id, anns_img_id in zip(self.all_image_ids, anns_image_ids):
-            image_annotations = [sub for sub in list(kwcoco_dataset.anns.values())
-                                 if sub['image_id'] == anns_img_id['coco_image_id']]
-            # Convert annotations to maite detections format
-            self._annotations[image_id] = _coco_to_maite_detections(image_annotations)
+            self.classes = list(kwcoco_dataset.cats.values())
 
-        self.classes = list(kwcoco_dataset.cats.values())
+            self._image_metadata = copy.deepcopy(image_metadata)
+            if len(self._image_metadata) != len(self.all_img_paths):
+                raise ValueError("Image metadata length mismatch, metadata needed for every image")
 
-        self._image_metadata = copy.deepcopy(image_metadata)
-        if len(self._image_metadata) != len(self.all_img_paths):
-            raise ValueError("Image metadata length mismatch, metadata needed for every image")
+        def __len__(self) -> int:
+            """
+            Returns the number of images in the dataset.
+            """
+            return len(self._images)
 
-    def __len__(self) -> int:
-        """
-        Returns the number of images in the dataset.
-        """
-        return len(self._images)
+        def __getitem__(
+            self, index: int
+        ) -> OBJ_DETECTION_DATUM_T:
+            """
+            Returns the dataset object at the given index
+            """
+            image_path = self._images[index]
+            image = Image.open(image_path)
+            image_id = image_path.stem
+            width, height = image.size
+            annotation = self._annotations[image_id].labels
+            num_objects = np.asarray(annotation).shape[0]
+            uniq_objects = np.unique(annotation)
+            num_unique_classes = uniq_objects.shape[0]
+            unique_classes = [self.classes[int(idx)]['name']
+                              for idx in uniq_objects.tolist()]
 
-    def __getitem__(
-        self, index: int
-    ) -> OBJ_DETECTION_DATUM_T:
-        """
-        Returns the dataset object at the given index
-        """
-        image_path = self._images[index]
-        image = Image.open(image_path)
-        image_id = image_path.stem
-        width, height = image.size
-        annotation = self._annotations[image_id].labels
-        num_objects = np.asarray(annotation).shape[0]
-        uniq_objects = np.unique(annotation)
-        num_unique_classes = uniq_objects.shape[0]
-        unique_classes = [self.classes[int(idx)]['name']
-                          for idx in uniq_objects.tolist()]
+            self._image_metadata[index].update(dict(
+                id=image_id,
+                image_info=dict(
+                    width=width,
+                    height=height,
+                    num_objects=num_objects,
+                    num_unique_classes=num_unique_classes,
+                    unique_classes=unique_classes
+                )
+            ))
 
-        self._image_metadata[index].update(dict(
-            id=image_id,
-            image_info=dict(
-                width=width,
-                height=height,
-                num_objects=num_objects,
-                num_unique_classes=num_unique_classes,
-                unique_classes=unique_classes
+            input_img, dets, metadata = (
+                np.asarray(image),
+                self._annotations[image_id],
+                self._image_metadata[index]
             )
-        ))
 
-        input_img, dets, metadata = (
-            np.asarray(image),
-            self._annotations[image_id],
-            self._image_metadata[index]
-        )
+            return input_img, dets, metadata
 
-        return input_img, dets, metadata
+        def get_img_path_list(self) -> List[Path]:
+            """
+            Returns the sorted list of absolute paths
+            for the input images.
+            """
+            return sorted(self.all_img_paths)
 
-    def get_img_path_list(self) -> List[Path]:
-        """
-        Returns the sorted list of absolute paths
-        for the input images.
-        """
-        return sorted(self.all_img_paths)
-
-    def get_categories(self) -> List[Dict[str, Any]]:
-        """
-        Returns the list of categories for this dataset.
-        """
-        return self.classes
+        def get_categories(self) -> List[Dict[str, Any]]:
+            """
+            Returns the list of categories for this dataset.
+            """
+            return self.classes
 
 
 class JATICObjectDetectionDataset(Dataset):

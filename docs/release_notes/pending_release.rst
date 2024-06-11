@@ -76,6 +76,8 @@ Interoperability
 
 Utils
 
+* Moved kwcoco to poetry tools dependency
+
 * Added a CLI script to perform perturbations on a sample image set.
 
 Python Version Support
@@ -85,6 +87,8 @@ Python Version Support
 CI/CD
 
 * Updated CI test matrix to support `py3.12`
+
+* Added additional entrypoint testing.
 
 Fixes
 -----
