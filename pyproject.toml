@@ -10,7 +10,7 @@ name = "nrtk-cdao"
 # This package prefers to use the strict numbering standard when possible.
 version = "0.0.1"
 description = ""
-authors = ["Kitware, Inc. <TODO>"]
+authors = ["Kitware, Inc. <nrtk@kitware.com>"]
 readme = "README.md"
 packages = [{include = "nrtk_cdao"}]
 classifiers = [

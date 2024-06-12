@@ -24,6 +24,8 @@ Documentation
 
 * Added sphinx auto-documentation on JATIC interoperability for image classification.
 
+* Added email to pyproject.toml
+
 Examples
 
 * Added an example notebook exploring the current state of several augmentation
