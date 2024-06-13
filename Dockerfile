@@ -44,5 +44,6 @@ WORKDIR $PYSETUP_PATH/nrtk_cdao
 # quicker install as runtime deps are already installed
 RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
     --mount=type=cache,target=/root/.cache/pypoetry,sharing=locked \
-    poetry config virtualenvs.create false && poetry install --sync
+    poetry config virtualenvs.create false && poetry install --sync \
+    --extras="maite-cpu tools"
 

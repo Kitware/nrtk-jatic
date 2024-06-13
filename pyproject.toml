@@ -46,9 +46,13 @@ uvicorn = "^0.29.0"
 pydantic = ">=2.6.4"
 # Optional for tools extra
 kwcoco = { version = ">=0.2.18", optional = true}
+# Optional for maite-cpu
+torch = {version = ">=1.7,!=1.12.0", optional = true, source = "pytorch_cpu"}
+torchvision = {version = ">=0.10.0", optional = true, source = "pytorch_cpu"}
 
 [tool.poetry.extras]
 tools = ["kwcoco"]
+maite-cpu = ["torch", "torchvision"]
 
 [tool.poetry.group.dev.dependencies]
 # Linting
@@ -87,6 +91,14 @@ nrtk-perturber = "nrtk_cdao.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
 
 
 ###############################################################################
+
+[[tool.poetry.source]]
+# maite installs Torch with CUDA. In order to slim down installation for NRTKaaS
+# docker container, we override maite's default torch version with the CPU version
+name = "pytorch_cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
 [tool.pytest.ini_options]
 addopts = [
     "-lv",                              # Show local in trace-backs.
