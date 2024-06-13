@@ -6182,10 +6182,10 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-maite-cpu = []
+maite-cpu = ["torch", "torchvision"]
 tools = ["kwcoco"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "d22e847de8031131b921d19745d43d1da90f505cec266bda7118e4abb5234ad7"
+content-hash = "f9658c1d91a36d6ebfc5daf58b922198045b5dba8113428005f92a3ed37cef6f"
