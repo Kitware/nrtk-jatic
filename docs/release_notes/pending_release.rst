@@ -102,3 +102,5 @@ Fixes
   dependency, which also has the side effect of solving resolution issues.
 
 * Updated `numpy` hinge for `Python 3.12`
+
+* Updated git lfs to properly track large files in any directory.
