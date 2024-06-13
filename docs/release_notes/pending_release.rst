@@ -82,6 +82,8 @@ Utils
 
 * Added a CLI script to perform perturbations on a sample image set.
 
+* Added ``maite-cpu`` extras option for CPU version of MAITE/torch
+
 Python Version Support
 
 * Added support for `py3.12`
