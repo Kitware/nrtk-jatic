@@ -54,35 +54,48 @@ torchvision = {version = ">=0.10.0", optional = true, source = "pytorch_cpu"}
 tools = ["kwcoco"]
 maite-cpu = ["torch", "torchvision"]
 
-[tool.poetry.group.dev.dependencies]
 # Linting
+[tool.poetry.group.dev-linting]
+optional = true
+
+[tool.poetry.group.dev-linting.dependencies]
 flake8 = ">=6"
 flake8-mutable = ">=1.2.0"
-# Type checking
 mypy = ">=0.991"
 types-setuptools = ">=65.6.0.1"
-# Interoperability
-maite = { version = "^0.5.0", extras = ["test"] }
-# Testing
-coverage = ">=6.5.0"
-pytest = ">=7.2.0"
-pytest-cov = ">=4.0.0"
-responses = ">=0.25.0"
+types-PyYAML = ">=6.0.12.11"
 types-requests = ">=2.31.0.10"
-# Jupyter notebook testing
-jupyter = ">=1.0.0"
-papermill = ">=2.4.0"
+
 # Docs
+[tool.poetry.group.dev-docs]
+optional = true
+
+[tool.poetry.group.dev-docs.dependencies]
 Sphinx = ">=5.3.0"
 sphinx-rtd-theme = ">=1.1.1"
 sphinx-prompt = ">=1.5.0"
 livereload = ">=2.6.3"
-# Utility
-ipython = ">=8.6.0"
+
+# Testing
+[tool.poetry.group.dev-testing]
+optional = true
+
+[tool.poetry.group.dev-testing.dependencies]
+# Jupyter notebook testing
+notebook = ">=7.0.7"
+papermill = ">=2.4.0"
+# Testing
+coverage = ">=7.4.0"
+pytest = ">=7.2"
+pytest-cov = ">=4"
+
+[tool.poetry.group.dev.dependencies]
+# Interoperability
+maite = { version = "^0.5.0", extras = ["test"] }
+responses = ">=0.25.0"
 #JSON-Schema
 pydantic_settings = ">=2.2.1"
 pyyaml = ">=6.0.1"
-types-PyYAML = ">=6.0.12.11"
 
 [tool.poetry.scripts]
 nrtk-perturber = "nrtk_cdao.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
