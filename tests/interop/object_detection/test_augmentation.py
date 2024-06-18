@@ -7,8 +7,8 @@ from maite.protocols.object_detection import TargetBatchType
 from nrtk.interfaces.perturb_image import PerturbImage
 from nrtk.impls.perturb_image.generic.nop_perturber import NOPPerturber
 
-from nrtk_cdao.interop.object_detection.dataset import JATICDetectionTarget
-from nrtk_cdao.interop.object_detection.augmentation import JATICDetectionAugmentation
+from nrtk_jatic.interop.object_detection.dataset import JATICDetectionTarget
+from nrtk_jatic.interop.object_detection.augmentation import JATICDetectionAugmentation
 from tests.utils.test_utils import ResizePerturber
 
 

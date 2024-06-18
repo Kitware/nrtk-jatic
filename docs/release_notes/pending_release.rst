@@ -3,7 +3,7 @@ Pending Release Notes
 
 This is the initial release of this repository which hosts integration
 documentation, examples, and code related to integrating nrtk
-components with the CDAO needs and use-cases.
+components with the JATIC needs and use-cases.
 
 
 Updates / New Features
@@ -50,7 +50,7 @@ API
 * Added additional POST request specifically to accept the AUKUS json schema
   and call our main API with that data
 
-* Added `Dockerfile` and `compose.yaml` to containerize the `nrtk-cdao` package
+* Added `Dockerfile` and `compose.yaml` to containerize the `nrtk-jatic` package
   and host the base REST API and AUKUS REST API.
 
 * Added config file support for loading pyBSM factories for NRTKaaS.

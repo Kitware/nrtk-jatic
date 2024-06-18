@@ -16,20 +16,20 @@ import sys
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, str(Path(__file__).parent.parent.absolute()))
-import nrtk_cdao  # noqa: E402
+import nrtk_jatic  # noqa: E402
 
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'nrtk-cdao'
+project = 'nrtk-jatic'
 copyright = '2023, Kitware, Inc.'
 author = 'Kitware, Inc.'
-release = nrtk_cdao.__version__
+release = nrtk_jatic.__version__
 
-site_url = "https://jatic.pages.jatic.net/kitware/nrtk-cdao/"
-repo_url = "https://gitlab.jatic.net/jatic/kitware/nrtk-cdao"
-repo_name = "nrtk-cdao"
+site_url = "https://jatic.pages.jatic.net/kitware/nrtk-jatic/"
+repo_url = "https://gitlab.jatic.net/jatic/kitware/nrtk-jatic"
+repo_name = "nrtk-jatic"
 
 
 # -- General configuration ---------------------------------------------------

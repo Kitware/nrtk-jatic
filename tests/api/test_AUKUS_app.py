@@ -6,9 +6,9 @@ from pathlib import Path
 from starlette.testclient import TestClient
 from fastapi.encoders import jsonable_encoder
 
-from nrtk_cdao.api.schema import NrtkPerturbOutputSchema, DatasetSchema
-from nrtk_cdao.api.aukus_app import AUKUS_app, Settings
-from nrtk_cdao.api.aukus_schema import AukusDatasetSchema
+from nrtk_jatic.api.schema import NrtkPerturbOutputSchema, DatasetSchema
+from nrtk_jatic.api.aukus_app import AUKUS_app, Settings
+from nrtk_jatic.api.aukus_schema import AukusDatasetSchema
 from typing import Generator
 from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG
 

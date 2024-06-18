@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 ###############################################################################
 [tool.poetry]
-name = "nrtk-cdao"
+name = "nrtk-jatic"
 # REMEMBER: `distutils.version.*Version` types can be used to compare versions
 # from strings like this.
 # This package prefers to use the strict numbering standard when possible.
@@ -12,7 +12,7 @@ version = "0.0.1"
 description = ""
 authors = ["Kitware, Inc. <nrtk@kitware.com>"]
 readme = "README.md"
-packages = [{include = "nrtk_cdao"}]
+packages = [{include = "nrtk_jatic"}]
 classifiers = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
@@ -98,7 +98,7 @@ pydantic_settings = ">=2.2.1"
 pyyaml = ">=6.0.1"
 
 [tool.poetry.scripts]
-nrtk-perturber = "nrtk_cdao.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
+nrtk-perturber = "nrtk_jatic.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
 
 [tool.poetry.plugins."smqtk_plugins"]
 
@@ -117,14 +117,14 @@ addopts = [
     "-lv",                              # Show local in trace-backs.
     "--doctest-modules",                # Increased verbosity.
     "--tb=long",                        # Trace-back print mode.
-    "--cov=./nrtk_cdao",                # Cover our package specifically
+    "--cov=./nrtk_jatic",                # Cover our package specifically
     "--cov=./tests",                    # Also cover our tests for dead spots
     "--cov-report=term",                # Coverage report to terminal
     "--cov-report=xml:coverage.xml",    # for external tool reporting
 ]
 testpaths = [
     "tests",
-    "nrtk_cdao",
+    "nrtk_jatic",
 ]
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",

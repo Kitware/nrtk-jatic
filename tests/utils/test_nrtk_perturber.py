@@ -10,14 +10,14 @@ from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
 from nrtk.impls.perturb_image_factory.generic.step import StepPerturbImageFactory
 from nrtk.impls.perturb_image_factory.pybsm import CustomPybsmPerturbImageFactory
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
-from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
-from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
+from nrtk_jatic.utils.nrtk_perturber import nrtk_perturber
+from nrtk_jatic.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
 
 from tests import DATASET_FOLDER
 
 try:
     import kwcoco  # type: ignore
-    from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
+    from nrtk_jatic.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
     is_usable = True
 except ImportError:
     is_usable = False
@@ -90,7 +90,7 @@ class TestNRTKPerturber:
             assert perturber_params in list(img_dirs)
             assert len(aug_dataset) == num_imgs
 
-    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
     def test_missing_metadata(self) -> None:
         """
         Test that an appropriate error is raised if required metadata is missing.
