@@ -189,5 +189,7 @@ class TestNRTKPerturberCLI:
 
         result = runner.invoke(nrtk_perturber_cli, [str(DATASET_FOLDER), str(output_dir), str(NRTK_PYBSM_CONFIG)])
 
-        assert result.output.startswith("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
+        assert result.output.startswith(
+            "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
+        )
         assert not output_dir.check(dir=1)
