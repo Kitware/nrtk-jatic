@@ -66,14 +66,12 @@ notebooks:
       # Sequences combinatorically combine within a list entry
       - NOTEBOOK_DIR: "examples"
         NOTEBOOK_FILE: [
-          "coco_scorer.ipynb",
-          "perturbers.ipynb",
-          "simple_generic_generator.ipynb",
-          "simple_pybsm_generator.ipynb"
+          "augmentations.ipynb",
+          "daml/daml_example_notebook.ipynb",
         ]
-      - NOTEBOOK_DIR: "examples/pybsm"
+      - NOTEBOOK_DIR: "examples/gradio"
         NOTEBOOK_FILE: [
-          "pybsm_test.ipynb"
+          "nrtk-gradio.ipynb"
         ]
   # Using default container image defined above
   script:
