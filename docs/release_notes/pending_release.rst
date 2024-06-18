@@ -94,6 +94,10 @@ CI/CD
 
 * Added additional entrypoint testing.
 
+* Major overhaul of pipeline to improve efficiency and yml readability.
+
+* Added `publish` on tag to `PyPi`.
+
 Fixes
 -----
 
