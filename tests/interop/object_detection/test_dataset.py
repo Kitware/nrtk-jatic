@@ -1,0 +1,81 @@
+from dataclasses import dataclass
+import numpy as np
+import pytest
+from typing import Sequence
+
+from maite.protocols.object_detection import TargetType
+
+from nrtk_cdao.interop.object_detection.augmentation import JATICDetectionAugmentation
+from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset
+from tests.utils.test_utils import ResizePerturber
+
+
+@dataclass
+class JATICDetectionTarget:
+    boxes: np.ndarray
+    labels: np.ndarray
+    scores: np.ndarray
+
+
+class TestJATICImageClassificationDataset:
+    @pytest.mark.parametrize("dataset, expected_dets_out", [
+        (
+            JATICObjectDetectionDataset(
+                [np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8),
+                 np.random.randint(0, 255, (128, 128, 3), dtype=np.uint8)],
+                [JATICDetectionTarget(boxes=np.asarray([[0.0, 0.0, 100.0, 100.0],
+                                                        [0.0, 0.0, 100.0, 100.0]]),
+                                      labels=np.asarray([1, 1]),
+                                      scores=np.asarray([1, 1])),
+                 JATICDetectionTarget(boxes=np.asarray([[0.0, 0, 50.0, 50.0]]),
+                                      labels=np.asarray([0]),
+                                      scores=np.asarray([1]))],
+                [{"some_metadata": 0}, {"some_metadata": 1}]
+            ),
+            [[JATICDetectionTarget(boxes=np.asarray([[0.0, 0.0, 25.0, 200.0],
+                                                     [0.0, 0.0, 25.0, 200.0]]),
+                                   labels=np.asarray([1, 1]),
+                                   scores=np.asarray([1, 1]))],
+             [JATICDetectionTarget(boxes=np.asarray([[0.0, 0, 25.0, 200.0]]),
+                                   labels=np.asarray([0]),
+                                   scores=np.asarray([1]))]],
+        )
+    ])
+    def test_dataset_adapter(
+        self,
+        dataset: JATICObjectDetectionDataset,
+        expected_dets_out: Sequence[TargetType]
+    ) -> None:
+        """
+        Test that the dataset adapter takes in an input of varying size
+        images with corresponding detections and metadata and can be ingested
+        by the augmentation adapter object.
+        """
+        perturber = ResizePerturber(w=64, h=512)
+        augmentation = JATICDetectionAugmentation(augment=perturber)
+        for idx in range(len(dataset)):
+            img_in = dataset[idx][0]
+            det_in = dataset[idx][1]
+            md_in = dataset[idx][2]
+
+            # Get expected image and metadata from "normal" perturber
+            expected_img_out = perturber(np.asarray(img_in))
+            expected_md_out = dict(md_in)
+            expected_md_out["nrtk::perturber"] = perturber.get_config()
+
+            # Apply augmentation via adapter
+            img_out, det_out, md_out = augmentation((
+                np.expand_dims(img_in, axis=0),
+                [det_in],
+                [md_in]
+            ))
+            img_out = np.asarray(img_out)
+            expected_det_out = np.asarray(expected_dets_out[idx])
+
+            # Check that expectations hold
+            assert np.array_equal(img_out[0], expected_img_out)
+            for det, target in zip(det_out, expected_det_out):
+                assert np.array_equal(det.boxes, target.boxes)
+                assert np.array_equal(det.labels, target.labels)
+                assert np.array_equal(det.scores, target.scores)
+            assert md_out[0] == expected_md_out
