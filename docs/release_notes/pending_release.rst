@@ -98,6 +98,10 @@ CI/CD
 
 * Added `publish` on tag to `PyPi`.
 
+Other
+
+* Refactored package into 'src/nrtk_jatic instead of 'nrtk_jatic'
+
 Fixes
 -----
 

@@ -15,7 +15,7 @@ pip install .
 
 Alternatively, [Poetry](https://python-poetry.org/) can also be used:
 ```bash
-poetry install
+poetry install --sync --with dev-linting,dev-testing,dev-docs
 ```
 
 ## Getting Started
