@@ -4,12 +4,12 @@ import os
 from smqtk_core.configuration import from_config_dict
 
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
-from nrtk_cdao.api.schema import NrtkPerturbInputSchema
+from nrtk_jatic.api.schema import NrtkPerturbInputSchema
 import logging
 
 try:
     import kwcoco  # type: ignore
-    from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
+    from nrtk_jatic.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
     is_usable = True
 except ImportError:
     is_usable = False
@@ -36,7 +36,7 @@ def build_factory(data: NrtkPerturbInputSchema) -> PerturbImageFactory:
 
 
 if not is_usable:
-    LOG.warning("load_COCOJATIC_dataset requires additional dependencies, please install 'nrtk-cdao[tools]'")
+    LOG.warning("load_COCOJATIC_dataset requires additional dependencies, please install 'nrtk-jatic[tools]'")
 else:
     def load_COCOJATIC_dataset(data: NrtkPerturbInputSchema) -> COCOJATICObjectDetectionDataset:
         """
@@ -45,7 +45,7 @@ else:
         :param data: dictionary of Schema from schema.py
         """
         if not is_usable:
-            raise ImportError("This tool requires additional dependencies, please install `nrtk-cdao[tools]`")
+            raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
         kwcoco_dataset = kwcoco.CocoDataset(data.label_file)
 
         dataset = COCOJATICObjectDetectionDataset(

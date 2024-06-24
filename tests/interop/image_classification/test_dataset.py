@@ -4,8 +4,8 @@ from typing import Sequence
 
 from maite.protocols.image_classification import TargetType
 
-from nrtk_cdao.interop.image_classification.augmentation import JATICClassificationAugmentation
-from nrtk_cdao.interop.image_classification.dataset import JATICImageClassificationDataset
+from nrtk_jatic.interop.image_classification.augmentation import JATICClassificationAugmentation
+from nrtk_jatic.interop.image_classification.dataset import JATICImageClassificationDataset
 from tests.utils.test_utils import ResizePerturber
 
 

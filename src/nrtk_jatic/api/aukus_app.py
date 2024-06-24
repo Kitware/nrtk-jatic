@@ -6,14 +6,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from nrtk_cdao.api.schema import NrtkPerturbInputSchema
-from nrtk_cdao.api.aukus_schema import AukusDatasetSchema
+from nrtk_jatic.api.schema import NrtkPerturbInputSchema
+from nrtk_jatic.api.aukus_schema import AukusDatasetSchema
 
 
 class Settings(BaseSettings):
     NRTK_IP: Optional[str] = None
 
-    model_config = SettingsConfigDict(env_file=os.getcwd().split("nrtk-cdao")[0] + "nrtk-cdao/configs/AUKUS_app.env")
+    model_config = SettingsConfigDict(env_file=os.getcwd().split("nrtk-jatic")[0] + "nrtk-jatic/configs/AUKUS_app.env")
 
 
 settings = Settings()

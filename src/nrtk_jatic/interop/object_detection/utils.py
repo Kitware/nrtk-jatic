@@ -36,7 +36,7 @@ def dataset_to_coco(
     if len(img_filenames) != len(dataset):
         raise ValueError(f"Image filename and dataset length mismatch ({len(img_filenames)} != {len(dataset)})")
     if not is_usable:
-        raise ImportError("This tool requires additional dependencies, please install `nrtk-cdao[tools]`")
+        raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
     annotations = kwcoco.CocoDataset()
     for cat in dataset_categories:
         annotations.add_category(name=cat["name"], supercategory=cat["supercategory"], id=cat["id"])

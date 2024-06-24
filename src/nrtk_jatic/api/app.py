@@ -1,13 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from pathlib import Path
 
-from nrtk_cdao.api.converters import build_factory
-from nrtk_cdao.api.schema import NrtkPerturbInputSchema, NrtkPerturbOutputSchema, DatasetSchema
-from nrtk_cdao.interop.object_detection.utils import dataset_to_coco
-from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
+from nrtk_jatic.api.converters import build_factory
+from nrtk_jatic.api.schema import NrtkPerturbInputSchema, NrtkPerturbOutputSchema, DatasetSchema
+from nrtk_jatic.interop.object_detection.utils import dataset_to_coco
+from nrtk_jatic.utils.nrtk_perturber import nrtk_perturber
 
 try:
-    from nrtk_cdao.api.converters import load_COCOJATIC_dataset
+    from nrtk_jatic.api.converters import load_COCOJATIC_dataset
     is_usable = True
 except ImportError:
     is_usable = False
@@ -34,7 +34,7 @@ def handle_post(data: NrtkPerturbInputSchema) -> NrtkPerturbOutputSchema:
 
         # Load dataset
         if not is_usable:
-            raise ImportError("This tool requires additional dependencies, please install `nrtk-cdao[tools]`")
+            raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
         input_dataset = load_COCOJATIC_dataset(data)
 
         # Call nrtk_perturber

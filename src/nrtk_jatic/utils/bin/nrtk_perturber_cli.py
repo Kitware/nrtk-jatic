@@ -7,11 +7,11 @@ from typing import Any, Dict, List, TextIO
 from smqtk_core.configuration import from_config_dict, make_default_config
 
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
-from nrtk_cdao.utils.nrtk_perturber import nrtk_perturber
+from nrtk_jatic.utils.nrtk_perturber import nrtk_perturber
 
 try:
-    from nrtk_cdao.interop.object_detection.utils import dataset_to_coco
-    from nrtk_cdao.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
+    from nrtk_jatic.interop.object_detection.utils import dataset_to_coco
+    from nrtk_jatic.interop.object_detection.dataset import COCOJATICObjectDetectionDataset
     import kwcoco  # type: ignore
     is_usable = True
 except ImportError:
@@ -69,7 +69,7 @@ def nrtk_perturber_cli(
         raise ValueError("Could not identify annotations file. Expected at '[dataset_dir]/annotations.json'")
     logging.info(f"Loading kwcoco annotations from {coco_file}")
     if not is_usable:
-        print("This tool requires additional dependencies, please install `nrtk-cdao[tools]`")
+        print("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
         exit(-1)
     kwcoco_dataset = kwcoco.CocoDataset(coco_file)
 

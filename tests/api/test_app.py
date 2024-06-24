@@ -9,11 +9,11 @@ from starlette.testclient import TestClient
 from typing import Generator
 from unittest.mock import MagicMock
 
-from nrtk_cdao.api.schema import NrtkPerturbInputSchema
-from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
+from nrtk_jatic.api.schema import NrtkPerturbInputSchema
+from nrtk_jatic.interop.object_detection.dataset import JATICObjectDetectionDataset, JATICDetectionTarget
 
 from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG, LABEL_FILE, BAD_NRTK_CONFIG
-from nrtk_cdao.api.app import app
+from nrtk_jatic.api.app import app
 
 from importlib.util import find_spec
 deps = ['kwcoco']
@@ -28,9 +28,9 @@ def test_client() -> Generator:
         yield client
 
 
-@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
 @mock.patch(
-    "nrtk_cdao.api.app.nrtk_perturber",
+    "nrtk_jatic.api.app.nrtk_perturber",
     return_value=[
         (
             "perturb1",
@@ -136,9 +136,9 @@ def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py
     assert len(os.listdir(os.path.join(str(image_dir)))) == 11
 
 
-@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
 @mock.patch(
-    "nrtk_cdao.api.app.nrtk_perturber",
+    "nrtk_jatic.api.app.nrtk_perturber",
     return_value=[
         (
             "perturb1",
@@ -178,7 +178,7 @@ def test_bad_gsd_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path
 
 
 @mock.patch(
-    "nrtk_cdao.api.app.nrtk_perturber",
+    "nrtk_jatic.api.app.nrtk_perturber",
     return_value=[
         (
             "perturb1",
@@ -218,7 +218,7 @@ def test_no_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.pa
 
 
 @mock.patch(
-    "nrtk_cdao.api.app.nrtk_perturber",
+    "nrtk_jatic.api.app.nrtk_perturber",
     return_value=[
         (
             "perturb1",
@@ -260,7 +260,7 @@ def test_bad_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.p
     )
 
 
-@mock.patch("nrtk_cdao.api.app.is_usable", False)
+@mock.patch("nrtk_jatic.api.app.is_usable", False)
 def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
     """
     Test that an exception is raised when required dependencies are not installed.
@@ -284,5 +284,5 @@ def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
     # Check that we got the correct error message
     assert (
         response.json()["detail"]
-        == "This tool requires additional dependencies, please install `nrtk-cdao[tools]`"
+        == "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
     )

@@ -7,7 +7,7 @@ from maite.protocols.image_classification import TargetBatchType
 from nrtk.interfaces.perturb_image import PerturbImage
 from nrtk.impls.perturb_image.generic.nop_perturber import NOPPerturber
 
-from nrtk_cdao.interop.image_classification.augmentation import JATICClassificationAugmentation
+from nrtk_jatic.interop.image_classification.augmentation import JATICClassificationAugmentation
 from tests.utils.test_utils import ResizePerturber
 
 

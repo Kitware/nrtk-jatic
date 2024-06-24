@@ -8,13 +8,13 @@ from smqtk_core.configuration import to_config_dict
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
 
-from nrtk_cdao.api.converters import build_factory
-from nrtk_cdao.api.schema import NrtkPerturbInputSchema
+from nrtk_jatic.api.converters import build_factory
+from nrtk_jatic.api.schema import NrtkPerturbInputSchema
 
 from tests import DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG, BAD_NRTK_CONFIG, EMPTY_NRTK_CONFIG
 
 try:
-    from nrtk_cdao.api.converters import load_COCOJATIC_dataset
+    from nrtk_jatic.api.converters import load_COCOJATIC_dataset
     is_usable = True
 except ImportError:
     is_usable = False
@@ -132,7 +132,7 @@ class TestAPIConversionFunctions:
         with pytest.raises(ValueError):
             build_factory(schema)
 
-    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-cdao[tools]' not installed.")
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
     @pytest.mark.parametrize(
         "data",
         [

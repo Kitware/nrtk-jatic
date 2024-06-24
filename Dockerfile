@@ -38,8 +38,8 @@ ENV FASTAPI_ENV=development
 WORKDIR $PYSETUP_PATH
 
 # copy in our built poetry
-COPY . ./nrtk_cdao
-WORKDIR $PYSETUP_PATH/nrtk_cdao
+COPY . ./nrtk_jatic
+WORKDIR $PYSETUP_PATH/nrtk_jatic
 
 # quicker install as runtime deps are already installed
 RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \

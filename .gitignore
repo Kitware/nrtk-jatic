@@ -142,3 +142,7 @@ cython_debug/
 examples/data
 examples/gradio/*/*.yaml
 examples/gradio/*.yaml
+
+
+# ruff
+.ruff_cache

@@ -1,8 +1,8 @@
-# nrtk-cdao
+# nrtk-jatic
 
 ## Description
-The `nrtk-cdao` package is an extension of the Natural Robustness Toolkit 
-(NRTK) for CDAO. For more information, checkout the base [NRTK](https://gitlab.jatic.net/jatic/kitware/nrtk) 
+The `nrtk-jatic` package is an extension of the Natural Robustness Toolkit 
+(NRTK) for JATIC. For more information, checkout the base [NRTK](https://gitlab.jatic.net/jatic/kitware/nrtk) 
 package.
 
 ## Installation
@@ -15,12 +15,12 @@ pip install .
 
 Alternatively, [Poetry](https://python-poetry.org/) can also be used:
 ```bash
-poetry install
+poetry install --sync --with dev-linting,dev-testing,dev-docs
 ```
 
 ## Getting Started
 We provide a number of examples based on Jupyter notebooks in the `./examples/` directory to show usage
-of the `nrtk-cdao` package in a number of different contexts. For general examples, checkout NRTK\'s 
+of the `nrtk-jatic` package in a number of different contexts. For general examples, checkout NRTK\'s 
 [examples](https://gitlab.jatic.net/jatic/kitware/nrtk/-/tree/main/examples?ref_type=heads) directory.
 
 ## Documentation
