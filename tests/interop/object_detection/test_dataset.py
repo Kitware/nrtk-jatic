@@ -5,8 +5,8 @@ from typing import Sequence
 
 from maite.protocols.object_detection import TargetType
 
-from nrtk_cdao.interop.object_detection.augmentation import JATICDetectionAugmentation
-from nrtk_cdao.interop.object_detection.dataset import JATICObjectDetectionDataset
+from nrtk_jatic.interop.object_detection.augmentation import JATICDetectionAugmentation
+from nrtk_jatic.interop.object_detection.dataset import JATICObjectDetectionDataset
 from tests.utils.test_utils import ResizePerturber
 
 

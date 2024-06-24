@@ -159,7 +159,7 @@ convention = "google"
 max-doc-length = 120
 
 [tool.ruff.isort]
-known-first-party = ["nrtk"]
+known-first-party = ["nrtk_jatic"]
 
 [tool.ruff.per-file-ignores]
 # Add any files to be ignored here e.g. 

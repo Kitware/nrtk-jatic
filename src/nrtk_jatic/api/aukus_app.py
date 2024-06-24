@@ -13,8 +13,7 @@ from nrtk_jatic.api.aukus_schema import AukusDatasetSchema
 class Settings(BaseSettings):
     NRTK_IP: Optional[str] = None
 
-    # TODO: When repo name is changed from nrtk-cdao to nrtk-jatic, will need to change the following line
-    model_config = SettingsConfigDict(env_file=os.getcwd().split("nrtk-cdao")[0] + "nrtk-cdao/configs/AUKUS_app.env")
+    model_config = SettingsConfigDict(env_file=os.getcwd().split("nrtk-jatic")[0] + "nrtk-jatic/configs/AUKUS_app.env")
 
 
 settings = Settings()
