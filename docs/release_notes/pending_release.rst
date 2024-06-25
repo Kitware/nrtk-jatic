@@ -102,6 +102,8 @@ Other
 
 * Refactored package into 'src/nrtk_jatic instead of 'nrtk_jatic'
 
+* Saved a repeated return value in tests/api/test_app.py to a variable to save space
+
 Fixes
 -----
 
