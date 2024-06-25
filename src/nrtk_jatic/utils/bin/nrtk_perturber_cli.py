@@ -111,3 +111,7 @@ def nrtk_perturber_cli(
             img_filenames=img_filenames,
             dataset_categories=input_dataset.get_categories()
         )
+
+
+if __name__ == "__main__":
+    nrtk_perturber_cli()
