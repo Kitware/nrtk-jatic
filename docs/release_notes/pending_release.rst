@@ -50,8 +50,8 @@ API
 * Added additional POST request specifically to accept the AUKUS json schema
   and call our main API with that data
 
-* Added `Dockerfile` and `compose.yaml` to containerize the `nrtk-jatic` package
-  and host the base REST API and AUKUS REST API.
+* Added `Dockerfile` and `compose.yaml` to containerize the `nrtk-cdao` package
+  and run `nrtk-perturber-cli`.
 
 * Added config file support for loading pyBSM factories for NRTKaaS.
 
