@@ -98,6 +98,8 @@ CI/CD
 
 * Added `publish` on tag to `PyPi`.
 
+* Updated the `docs` building script to run properly on `main`.
+
 Other
 
 * Refactored package into 'src/nrtk_jatic instead of 'nrtk_jatic'
