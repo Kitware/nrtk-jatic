@@ -1,0 +1,166 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+###############################################################################
+[tool.poetry]
+name = "nrtk-jatic"
+# REMEMBER: `distutils.version.*Version` types can be used to compare versions
+# from strings like this.
+# This package prefers to use the strict numbering standard when possible.
+version = "0.1.0"
+description = ""
+authors = ["Kitware, Inc. <nrtk@kitware.com>"]
+readme = "README.md"
+packages = [{include = "nrtk_jatic", from="src"}]
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: Unix',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+]
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+# Python capped to <3.13 because of:
+# https://stackoverflow.com/questions/77431252/why-doesnt-poetry-select-the-good-version-of-my-dependency
+numpy = [
+    {version = ">=1.22,<1.25", python = "~3.8"}, # CVE-2021-34141
+    {version = ">=1.22,^1.25", python = ">=3.9,<3.12" }, # CVE-2021-34141
+    {version = "^1.26", python = ">=3.12,<3.13" } # numpy==1.26 is the first release supporting python 3.12
+]
+maite = "^0.5.0"
+nrtk = ">=0.6.0"
+# REST API deps
+fastapi = "^0.110.0"
+httpx = "^0.27.0"
+uvicorn = "^0.29.0"
+# JSON Schema
+pydantic = ">=2.6.4"
+# Optional for tools extra
+kwcoco = { version = ">=0.2.18", optional = true}
+# Optional for maite-cpu
+torch = {version = ">=1.7,!=1.12.0", optional = true, source = "pytorch_cpu"}
+torchvision = {version = ">=0.10.0", optional = true, source = "pytorch_cpu"}
+
+[tool.poetry.extras]
+tools = ["kwcoco"]
+maite-cpu = ["torch", "torchvision"]
+
+# Linting
+[tool.poetry.group.dev-linting]
+optional = true
+
+[tool.poetry.group.dev-linting.dependencies]
+flake8 = ">=6"
+flake8-mutable = ">=1.2.0"
+mypy = ">=0.991"
+types-setuptools = ">=65.6.0.1"
+types-PyYAML = ">=6.0.12.11"
+types-requests = ">=2.31.0.10"
+pre-commit = ">=2.20"
+ruff = "^0.1.0"
+black = ">=24.3.0"
+
+# Docs
+[tool.poetry.group.dev-docs]
+optional = true
+
+[tool.poetry.group.dev-docs.dependencies]
+Sphinx = ">=5.3.0"
+sphinx-rtd-theme = ">=1.1.1"
+sphinx-prompt = ">=1.5.0"
+livereload = ">=2.6.3"
+
+# Testing
+[tool.poetry.group.dev-testing]
+optional = true
+
+[tool.poetry.group.dev-testing.dependencies]
+# Jupyter notebook testing
+notebook = ">=7.0.7"
+papermill = ">=2.4.0"
+# Testing
+coverage = ">=7.4.0"
+pytest = ">=7.2"
+pytest-cov = ">=4"
+
+[tool.poetry.group.dev.dependencies]
+# Interoperability
+maite = { version = "^0.5.0", extras = ["test"] }
+responses = ">=0.25.0"
+#JSON-Schema
+pydantic_settings = ">=2.2.1"
+pyyaml = ">=6.0.1"
+
+[tool.poetry.scripts]
+nrtk-perturber = "nrtk_jatic.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
+
+[tool.poetry.plugins."smqtk_plugins"]
+
+
+###############################################################################
+
+[[tool.poetry.source]]
+# maite installs Torch with CUDA. In order to slim down installation for NRTKaaS
+# docker container, we override maite's default torch version with the CPU version
+name = "pytorch_cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
+[tool.pytest.ini_options]
+addopts = [
+    "-lv",                              # Show local in trace-backs.
+    "--doctest-modules",                # Increased verbosity.
+    "--tb=long",                        # Trace-back print mode.
+    "--cov=./src/nrtk_jatic",                # Cover our package specifically
+    "--cov=./tests",                    # Also cover our tests for dead spots
+    "--cov-report=term",                # Coverage report to terminal
+    "--cov-report=xml:coverage.xml",    # for external tool reporting
+]
+testpaths = [
+    "tests",
+    "nrtk_jatic",
+]
+doctest_optionflags = [
+    "NORMALIZE_WHITESPACE",
+    "IGNORE_EXCEPTION_DETAIL",
+]
+
+
+[tool.black]
+# The regular expression pattern must be written as a single line;
+# otherwise pytest-black fails to exclude the folders. For details see
+# https://github.com/shopkeep/pytest-black/issues/36
+exclude = '(/(\.git|.venv|.eggs|docs$)/)'
+
+
+[tool.ruff]
+select = ["E", "W", "F", "I", "D", "A", "B", "N", "YTT", "C4", "PT"]
+line-length = 120
+
+ignore = [
+    # -- Ignore these rules, since they contradict our coding standards
+    "C408",  # JATIC guidelines prefer "list()", rather than "[]", to create an empty list
+    "C416",  # JATIC guidelines prefer "dict()", rather than "{}", to create an empty dict
+]
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.ruff.pycodestyle]
+max-doc-length = 120
+
+[tool.ruff.isort]
+known-first-party = ["nrtk_jatic"]
+
+[tool.ruff.per-file-ignores]
+# Add any files to be ignored here e.g. 
+# "src/*.py" = ["D100"] # Missing docstring in public module

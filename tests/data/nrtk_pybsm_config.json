@@ -1,0 +1,51 @@
+{
+    "PerturberFactory": {
+        "type": "nrtk.impls.perturb_image_factory.pybsm.CustomPybsmPerturbImageFactory",
+        "nrtk.impls.perturb_image_factory.pybsm.CustomPybsmPerturbImageFactory": {
+            "sensor": {
+                "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
+                "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": {
+                    "name": "L32511x",
+                    "D": 0.004,
+                    "f": 0.014285714285714287,
+                    "px": 0.00002,
+                    "optTransWavelengths": [3.8e-7, 7.0e-7],
+                    "opticsTransmission": null,
+                    "eta": 0.4,
+                    "wx": null,
+                    "wy": null,
+                    "intTime": 0.03,
+                    "darkCurrent": 0.0,
+                    "readNoise": 25.0,
+                    "maxN": 96000.0,
+                    "bitdepth": 11.9,
+                    "maxWellFill": 0.005,
+                    "sx": 0.0,
+                    "sy": 0.0,
+                    "dax": 0.0001,
+                    "day": 0.0001,
+                    "qewavelengths": [3.0e-7, 4.0e-7, 5.0e-7, 6.0e-7, 7.0e-7, 8.0e-7, 9.0e-7, 1.0e-6, 1.1e-6],
+                    "qe": [0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]
+                }
+            },
+            "scenario": {
+                "type": "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario",
+                "nrtk.impls.perturb_image.pybsm.scenario.PybsmScenario": {
+                    "name": "niceday",
+                    "ihaze": 2,
+                    "altitude": 75,
+                    "groundRange": 0,
+                    "aircraftSpeed": 0.0,
+                    "targetReflectance": 0.15,
+                    "targetTemperature": 295.0,
+                    "backgroundReflectance": 0.07,
+                    "backgroundTemperature": 293.0,
+                    "haWindspeed": 21.0,
+                    "cn2at1m": 0
+                }
+            },
+            "theta_keys": ["f", "D", "px"],
+            "thetas": [[0.014, 0.012], [0.001, 0.003], [0.00002]]
+        }
+    }
+}

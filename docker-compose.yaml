@@ -1,0 +1,19 @@
+services:
+  base-api:
+      build: .    # common Dockerfile
+      image: nrtk-jatic
+      ports:
+          - "8080:80"
+      volumes:
+        - ./output:/root/output
+      command: ["poetry", "run", "uvicorn", "nrtk_jatic.api.app:app", "--host", "0.0.0.0", "--port", "80"]
+  AUKUS-api:
+      build: .    # common Dockerfile
+      image: nrtk-jatic
+      ports:
+          - "8081:90"
+      volumes:
+        - ./output:/root/output
+      environment:
+        - NRTK_IP=http://base-api:80/
+      command: ["poetry", "run", "uvicorn", "nrtk_jatic.api.aukus_app:AUKUS_app", "--host", "0.0.0.0", "--port", "90"]
