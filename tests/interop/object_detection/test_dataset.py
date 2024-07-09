@@ -44,7 +44,7 @@ class TestJATICImageClassificationDataset:
     def test_dataset_adapter(
         self,
         dataset: JATICObjectDetectionDataset,
-        expected_dets_out: Sequence[TargetType]
+        expected_dets_out: Sequence[Sequence[TargetType]]
     ) -> None:
         """
         Test that the dataset adapter takes in an input of varying size
@@ -65,12 +65,11 @@ class TestJATICImageClassificationDataset:
 
             # Apply augmentation via adapter
             img_out, det_out, md_out = augmentation((
-                np.expand_dims(img_in, axis=0),
+                [img_in],
                 [det_in],
                 [md_in]
             ))
-            img_out = np.asarray(img_out)
-            expected_det_out = np.asarray(expected_dets_out[idx])
+            expected_det_out = expected_dets_out[idx]
 
             # Check that expectations hold
             assert np.array_equal(img_out[0], expected_img_out)

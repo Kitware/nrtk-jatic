@@ -35,7 +35,6 @@ class JATICDetectionAugmentation(Augmentation):
         Apply augmentations to the given data batch.
         """
         imgs, anns, metadata = batch
-        imgs = np.asarray(imgs)
 
         # iterate over (parallel) elements in batch
         aug_imgs = []  # list of individual augmented inputs
@@ -45,8 +44,8 @@ class JATICDetectionAugmentation(Augmentation):
         for img, ann, md in zip(imgs, anns, metadata):
             # Perform augmentation
             aug_img = copy.deepcopy(img)
-            height, width = aug_img.shape[0:2]
-            aug_img = self.augment(aug_img, md)
+            height, width = aug_img.shape[0:2]  # type: ignore
+            aug_img = self.augment(np.asarray(aug_img), md)
             aug_height, aug_width = aug_img.shape[0:2]
             aug_imgs.append(aug_img)
 
@@ -71,4 +70,4 @@ class JATICDetectionAugmentation(Augmentation):
             aug_metadata.append(m_aug)
 
         # return batch of augmented inputs, resized bounding boxes and updated metadata
-        return np.stack(aug_imgs), aug_dets, aug_metadata
+        return aug_imgs, aug_dets, aug_metadata

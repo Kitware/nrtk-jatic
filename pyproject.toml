@@ -36,7 +36,7 @@ numpy = [
     {version = ">=1.22,^1.25", python = ">=3.9,<3.12" }, # CVE-2021-34141
     {version = "^1.26", python = ">=3.12,<3.13" } # numpy==1.26 is the first release supporting python 3.12
 ]
-maite = "^0.5.0"
+maite = "^0.6.0"
 nrtk = ">=0.6.0"
 # REST API deps
 fastapi = "^0.110.0"
@@ -94,7 +94,7 @@ pytest-cov = ">=4"
 
 [tool.poetry.group.dev.dependencies]
 # Interoperability
-maite = { version = "^0.5.0", extras = ["test"] }
+maite = {version = "^0.6.0", extras = ["test"]}
 responses = ">=0.25.0"
 #JSON-Schema
 pydantic_settings = ">=2.2.1"
@@ -120,7 +120,7 @@ addopts = [
     "-lv",                              # Show local in trace-backs.
     "--doctest-modules",                # Increased verbosity.
     "--tb=long",                        # Trace-back print mode.
-    "--cov=./src/nrtk_jatic",                # Cover our package specifically
+    "--cov=./src/nrtk_jatic",           # Cover our package specifically
     "--cov=./tests",                    # Also cover our tests for dead spots
     "--cov-report=term",                # Coverage report to terminal
     "--cov-report=xml:coverage.xml",    # for external tool reporting
