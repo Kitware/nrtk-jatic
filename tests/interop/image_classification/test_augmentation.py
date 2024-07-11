@@ -59,13 +59,10 @@ class TestJATICClassificationAugmentation:
 
         # Apply augmentation via adapter
         imgs_out, targets_out, md_out = augmentation((
-            np.expand_dims(img_in, axis=0),
+            [img_in],
             targets_in,
             md_in
         ))
-        imgs_out = np.asarray(imgs_out)
-        targets_out = np.asarray(targets_out)
-        expected_targets_out = np.asarray(expected_targets_out)
 
         # Check that expectations hold
         assert np.array_equal(imgs_out[0], expected_img_out)
@@ -74,9 +71,6 @@ class TestJATICClassificationAugmentation:
         for etgt, tgt_out in zip(expected_targets_out, targets_out):
             assert np.array_equal(etgt, tgt_out)
         assert md_out[0] == expected_md_out
-
-        targets_copy = np.asarray(targets_copy)
-        targets_in = np.asarray(targets_in)
 
         # Check that input data was not modified
         assert np.array_equal(img_in, img_copy)

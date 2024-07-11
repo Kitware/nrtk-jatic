@@ -61,7 +61,7 @@ def nrtk_perturber(
             aug_img, aug_det, aug_md = (
                 jatic_perturber(
                     batch=(
-                        np.expand_dims(maite_dataset[idx][0], axis=0),
+                        [maite_dataset[idx][0]],
                         [maite_dataset[idx][1]],
                         [maite_dataset[idx][2]]
                     )

@@ -34,8 +34,6 @@ class JATICClassificationAugmentation(Augmentation):
         Apply augmentations to the given data batch.
         """
         imgs, anns, metadata = batch
-        imgs = np.asarray(imgs)
-        anns = np.asarray(anns)
 
         # iterate over (parallel) elements in batch
         aug_imgs = []  # list of individual augmented inputs
@@ -45,7 +43,7 @@ class JATICClassificationAugmentation(Augmentation):
         for img, ann, md in zip(imgs, anns, metadata):
             # Perform augmentation
             aug_img = copy.deepcopy(img)
-            aug_img = self.augment(aug_img, md)
+            aug_img = self.augment(np.asarray(aug_img), md)
             aug_height, aug_width = aug_img.shape[0:2]
             aug_imgs.append(aug_img)
 
@@ -65,4 +63,4 @@ class JATICClassificationAugmentation(Augmentation):
             aug_metadata.append(m_aug)
 
         # return batch of augmented inputs, class labels and updated metadata
-        return np.stack(aug_imgs), np.array(aug_labels), aug_metadata
+        return aug_imgs, aug_labels, aug_metadata

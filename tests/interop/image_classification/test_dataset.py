@@ -53,15 +53,13 @@ class TestJATICImageClassificationDataset:
 
             # Apply augmentation via adapter
             img_out, lbl_out, md_out = augmentation((
-                np.expand_dims(img_in, axis=0),
-                lbl_in,
+                [img_in],
+                [lbl_in],
                 [md_in]
             ))
-            img_out = np.asarray(img_out)
-            lbl_out = np.asarray(lbl_out)
-            expected_lbl_out = np.asarray(expected_lbls_out[idx])
+            expected_lbl_out = expected_lbls_out[idx]
 
             # Check that expectations hold
             assert np.array_equal(img_out[0], expected_img_out)
-            assert np.array_equal(lbl_out, expected_lbl_out)
+            assert np.array_equal(lbl_out[0], expected_lbl_out)
             assert md_out[0] == expected_md_out

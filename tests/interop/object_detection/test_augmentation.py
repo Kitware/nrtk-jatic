@@ -76,11 +76,10 @@ class TestJATICDetectionAugmentation:
 
         # Apply augmentation via adapter
         imgs_out, targets_out, md_out = augmentation((
-            np.expand_dims(img_in, axis=0),
+            [img_in],
             targets_in,
             md_in
         ))
-        imgs_out = np.asarray(imgs_out)
 
         # Check that expectations hold
         assert np.array_equal(imgs_out[0], expected_img_out)
