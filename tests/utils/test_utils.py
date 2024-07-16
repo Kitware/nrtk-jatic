@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import numpy as np
 from PIL import Image
@@ -14,7 +14,7 @@ class ResizePerturber(PerturbImage):
     def perturb(
         self,
         image: np.ndarray,
-        additional_params: Dict[str, Any] = {}
+        additional_params: Optional[Dict[str, Any]] = None
     ) -> np.ndarray:
         """
         Resize image.

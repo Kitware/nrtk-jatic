@@ -3209,13 +3209,13 @@ test = ["pytest", "pytest-console-scripts", "pytest-jupyter", "pytest-tornasync"
 
 [[package]]
 name = "nrtk"
-version = "0.6.0"
+version = "0.10.0"
 description = "An open source toolkit for evaluating the natural robustness of computer vision algorithms."
 optional = false
 python-versions = "<4.0.0,>=3.8.1"
 files = [
-    {file = "nrtk-0.6.0-py3-none-any.whl", hash = "sha256:f12de8ee91cc1aa494900559bf0e08f2783ae3dd9b06cf96d84a8f94a3c64754"},
-    {file = "nrtk-0.6.0.tar.gz", hash = "sha256:5604066a2a5adf39b6892689409e099a45c109a731b0d4992719876bfa03c944"},
+    {file = "nrtk-0.10.0-py3-none-any.whl", hash = "sha256:7c7e92c406d1e9c6a44b74a0f03dd3cf9738d7602645853565457043ce66050c"},
+    {file = "nrtk-0.10.0.tar.gz", hash = "sha256:8c9f835605c33f8f410703a7d767ba92a19dbc53ed90f323f1668f2cfe375a64"},
 ]
 
 [package.dependencies]
@@ -3226,7 +3226,7 @@ numpy = [
 ]
 opencv-python = ">=4.6"
 Pillow = ">=10.3.0"
-pybsm = ">=0.4.3"
+pybsm = ">=0.5.1"
 pycocotools = ">=2.0.6"
 scikit-image = [
     {version = ">=0.21,<0.22", markers = "python_version >= \"3.8\" and python_version < \"3.12\""},
@@ -3956,13 +3956,13 @@ tests = ["pytest"]
 
 [[package]]
 name = "pybsm"
-version = "0.4.3"
+version = "0.5.1"
 description = "pyBSM is a Python-based tool for sensor modeling. It provides common components useful for simulating the image formation process through different imaging systems."
 optional = false
 python-versions = "<4.0.0,>=3.8.1"
 files = [
-    {file = "pybsm-0.4.3-py3-none-any.whl", hash = "sha256:1a2934a88c2fd80e3fe7c29ee5f4c1d8431f1f0f7f45e4c9ba05547235b30961"},
-    {file = "pybsm-0.4.3.tar.gz", hash = "sha256:42e2c4451e44f5bce468c11d1e52d03d951b482139eda48ea93c8a048dba56a0"},
+    {file = "pybsm-0.5.1-py3-none-any.whl", hash = "sha256:a5208140ee1a8d7cdf21c793ac21b3e91d63371ef2c14c5cd08bd69181ea0e8b"},
+    {file = "pybsm-0.5.1.tar.gz", hash = "sha256:ef6672ee5d496bc7d9d54fffe088fa58a0691a48578ab25bcb518588cca85593"},
 ]
 
 [package.dependencies]
@@ -6216,4 +6216,4 @@ tools = ["kwcoco"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "430f7bbdf871b697f61b807f40cec296145621204bd083286754ac65c18efece"
+content-hash = "a08b31645d8c5906a6a771ba34aa519a70a809f885933a24e3917490ca367519"

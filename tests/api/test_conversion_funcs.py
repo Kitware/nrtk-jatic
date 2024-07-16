@@ -35,31 +35,31 @@ class TestAPIConversionFunctions:
                     "config_file": str(NRTK_PYBSM_CONFIG),
                 },
                 {
-                    "theta_keys": ["f", "D", "px"],
+                    "theta_keys": ["f", "D", "p_x"],
                     "thetas": [[0.014, 0.012], [0.001, 0.003], [0.00002]],
                     "sensor": to_config_dict(
                         PybsmSensor(
                             name="L32511x",
                             D=0.004,
                             f=0.014285714285714287,
-                            px=0.00002,
-                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
+                            p_x=0.00002,
+                            opt_trans_wavelengths=np.asarray([3.8e-7, 7.0e-7]),
                             eta=0.4,
-                            intTime=0.03,
-                            readNoise=25.0,
-                            maxN=96000.0,
-                            bitdepth=11.9,
-                            maxWellFill=0.005,
-                            dax=0.0001,
-                            day=0.0001,
-                            qewavelengths=np.asarray(
+                            int_time=0.03,
+                            read_noise=25.0,
+                            max_n=96000.0,
+                            bit_depth=11.9,
+                            max_well_fill=0.005,
+                            da_x=0.0001,
+                            da_y=0.0001,
+                            qe_wavelengths=np.asarray(
                                 [3.0e-7, 4.0e-7, 5.0e-7, 6.0e-7, 7.0e-7, 8.0e-7, 9.0e-7, 1.0e-6, 1.1e-6]
                             ),
                             qe=np.asarray([0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]),
                         )
                     ),
                     "scenario": to_config_dict(
-                        PybsmScenario(name="niceday", ihaze=2, altitude=75, groundRange=0, cn2at1m=0)
+                        PybsmScenario(name="niceday", ihaze=2, altitude=75, ground_range=0, cn2_at_1m=0)
                     ),
                 },
             ),

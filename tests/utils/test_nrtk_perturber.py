@@ -51,13 +51,13 @@ class TestNRTKPerturber:
     """
     pybsm_factory = CustomPybsmPerturbImageFactory(
         sensor=PybsmSensor(
-            name="L32511x", D=0.004, f=0.014285714285714287, px=0.00002,
-            optTransWavelengths=np.array([3.8e-7, 7.0e-7]), eta=0.4, intTime=0.3, readNoise=25.0,
-            maxN=96000., bitdepth=11.9, maxWellFill=0.005, dax=0.0001, day=0.0001,
-            qewavelengths=np.array([3.0e-7, 4.0e-7, 5.0e-7, 6.0e-7, 7.0e-7, 8.0e-7, 9.0e-7, 1.0e-6, 1.1e-6]),
+            name="L32511x", D=0.004, f=0.014285714285714287, p_x=0.00002,
+            opt_trans_wavelengths=np.array([3.8e-7, 7.0e-7]), eta=0.4, int_time=0.3, read_noise=25.0,
+            max_n=96000., bit_depth=11.9, max_well_fill=0.005, da_x=0.0001, da_y=0.0001,
+            qe_wavelengths=np.array([3.0e-7, 4.0e-7, 5.0e-7, 6.0e-7, 7.0e-7, 8.0e-7, 9.0e-7, 1.0e-6, 1.1e-6]),
             qe=np.array([0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0])
         ),
-        scenario=PybsmScenario(name="niceday", ihaze=2, altitude=75, groundRange=0),
+        scenario=PybsmScenario(name="niceday", ihaze=2, altitude=75, ground_range=0),
         theta_keys=["f", "D"],
         thetas=[[0.014, 0.012], [0.001]]
     )
