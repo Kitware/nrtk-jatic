@@ -1,6 +1,7 @@
 import py  # type: ignore
 import pytest
 import unittest.mock as mock
+from contextlib import nullcontext as does_not_raise
 from click.testing import CliRunner
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -8,7 +9,7 @@ from typing import ContextManager
 
 from maite.protocols.object_detection import Dataset
 
-from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG
+from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG, NRTK_BLUR_CONFIG
 from nrtk_jatic.utils.bin.nrtk_perturber_cli import nrtk_perturber_cli
 from nrtk_jatic.utils.bin.nrtk_perturber_cli import is_usable
 
@@ -100,7 +101,7 @@ class TestNRTKPerturberCLI:
     @pytest.mark.parametrize("config_file, expectation", [
         (NRTK_PYBSM_CONFIG,
             pytest.raises(ValueError, match="'img_gsd' must be present in image metadata for this perturber")),
-        # (blur_config_file, does_not_raise())  # TODO: Uncomment once plugfigurability issues are resolved
+        (NRTK_BLUR_CONFIG, does_not_raise())
     ])
     @mock.patch('pathlib.Path.is_file', side_effect=[True, False])
     def test_missing_metadata(
