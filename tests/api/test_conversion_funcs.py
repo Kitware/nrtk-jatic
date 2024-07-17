@@ -1,20 +1,25 @@
-import pytest
-import numpy as np
 import os
-from typing import Dict, Any
+from typing import Any, Dict
 
-from smqtk_core.configuration import to_config_dict
-
+import numpy as np
+import pytest
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
+from smqtk_core.configuration import to_config_dict
 
 from nrtk_jatic.api.converters import build_factory
 from nrtk_jatic.api.schema import NrtkPerturbInputSchema
-
-from tests import DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG, BAD_NRTK_CONFIG, EMPTY_NRTK_CONFIG
+from tests import (
+    BAD_NRTK_CONFIG,
+    DATASET_FOLDER,
+    EMPTY_NRTK_CONFIG,
+    LABEL_FILE,
+    NRTK_PYBSM_CONFIG,
+)
 
 try:
     from nrtk_jatic.api.converters import load_COCOJATIC_dataset
+
     is_usable = True
 except ImportError:
     is_usable = False
@@ -22,7 +27,7 @@ except ImportError:
 
 class TestAPIConversionFunctions:
     @pytest.mark.parametrize(
-        "data, expected",
+        ("data", "expected"),
         [
             (
                 {
@@ -53,22 +58,40 @@ class TestAPIConversionFunctions:
                             da_x=0.0001,
                             da_y=0.0001,
                             qe_wavelengths=np.asarray(
-                                [3.0e-7, 4.0e-7, 5.0e-7, 6.0e-7, 7.0e-7, 8.0e-7, 9.0e-7, 1.0e-6, 1.1e-6]
+                                [
+                                    3.0e-7,
+                                    4.0e-7,
+                                    5.0e-7,
+                                    6.0e-7,
+                                    7.0e-7,
+                                    8.0e-7,
+                                    9.0e-7,
+                                    1.0e-6,
+                                    1.1e-6,
+                                ]
                             ),
-                            qe=np.asarray([0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]),
+                            qe=np.asarray(
+                                [0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]
+                            ),
                         )
                     ),
                     "scenario": to_config_dict(
-                        PybsmScenario(name="niceday", ihaze=2, altitude=75, ground_range=0, cn2_at_1m=0)
+                        PybsmScenario(
+                            name="niceday",
+                            ihaze=2,
+                            altitude=75,
+                            ground_range=0,
+                            cn2_at_1m=0,
+                        )
                     ),
                 },
             ),
         ],
     )
-    def test_build_factory(self, data: Dict[str, Any], expected: Dict[str, Any]) -> None:
-        """
-        Test if _build_pybsm_factory returns the expected factory.
-        """
+    def test_build_factory(
+        self, data: Dict[str, Any], expected: Dict[str, Any]
+    ) -> None:
+        """Test if _build_pybsm_factory returns the expected factory."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         factory = build_factory(schema)
         np.testing.assert_equal(factory.get_config(), expected)
@@ -90,9 +113,7 @@ class TestAPIConversionFunctions:
         ],
     )
     def test_build_factory_no_config(self, data: Dict[str, Any]) -> None:
-        """
-        Test if build_factory throws .
-        """
+        """Test if build_factory throws ."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         with pytest.raises(FileNotFoundError):
             build_factory(schema)
@@ -121,18 +142,18 @@ class TestAPIConversionFunctions:
                     "image_metadata": [],  # Not used in this test
                     "config_file": str(EMPTY_NRTK_CONFIG),
                 }
-            )
+            ),
         ],
     )
     def test_build_factory_bad_config(self, data: Dict[str, Any]) -> None:
-        """
-        Test if build_factory throws .
-        """
+        """Test if build_factory throws ."""
         schema = NrtkPerturbInputSchema.model_validate(data)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError):  # noqa: PT011
             build_factory(schema)
 
-    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
+    @pytest.mark.skipif(
+        not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed."
+    )
     @pytest.mark.parametrize(
         "data",
         [
@@ -149,14 +170,14 @@ class TestAPIConversionFunctions:
             )
         ],
     )
-    def test_load_COCOJATIC_dataset(self, data: Dict[str, Any]) -> None:
-        """
-        Test if load_COCOJATIC_dataset returns the expected dataset.
-        """
+    def test_load_COCOJATIC_dataset(self, data: Dict[str, Any]) -> None:  # noqa: N802
+        """Test if load_COCOJATIC_dataset returns the expected dataset."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         dataset = load_COCOJATIC_dataset(schema)
         # Check all images metadata for gsd
         for i in range(len(dataset)):
             assert dataset[i][2]["gsd"] == data["image_metadata"][i]["gsd"]
         # Check number of image matches
-        assert len(dataset) == len(os.listdir(os.path.join(data["dataset_dir"], "images")))
+        assert len(dataset) == len(
+            os.listdir(os.path.join(data["dataset_dir"], "images"))
+        )

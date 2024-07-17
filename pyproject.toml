@@ -67,7 +67,7 @@ types-PyYAML = ">=6.0.12.11"
 types-requests = ">=2.31.0.10"
 pre-commit = ">=2.20"
 ruff = "^0.1.0"
-black = ">=24.3.0"
+black = {version=">=24.3.0", extras=["jupyter"]}
 
 # Docs
 [tool.poetry.group.dev-docs]
@@ -150,6 +150,8 @@ ignore = [
     # -- Ignore these rules, since they contradict our coding standards
     "C408",  # JATIC guidelines prefer "list()", rather than "[]", to create an empty list
     "C416",  # JATIC guidelines prefer "dict()", rather than "{}", to create an empty dict
+    # -- Ignoring these "Missing Docstring" errors for now, we will fix later
+    "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107"
 ]
 
 [tool.ruff.pydocstyle]

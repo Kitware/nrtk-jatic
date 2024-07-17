@@ -1,13 +1,14 @@
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
 
 
-class AukusDataCollectionSchema(BaseModel):
+class AukusdataCollectionSchema(BaseModel):
     # header params
-    docType: str
-    docVersion: str
+    doc_type: str
+    doc_version: str
     ism: Dict[str, Any]
-    lastUpdateTime: str
+    last_update_time: str
     id: str
     name: str
     uri: str
@@ -17,19 +18,19 @@ class AukusDataCollectionSchema(BaseModel):
     description: str
 
     # Optional Data Collection Params
-    localRegion: Optional[str] = None
-    collectionDateTime: Optional[str] = None
-    dataEntries: Optional[int] = None
+    local_region: Optional[str] = None
+    collection_date_time: Optional[str] = None
+    data_entries: Optional[int] = None
     source: Optional[Dict[str, str]] = None
-    dataFormats: Optional[List[Dict[str, Any]]] = None
+    data_formats: Optional[List[Dict[str, Any]]] = None
 
 
 class AukusDatasetSchema(BaseModel):
     # header params
-    docType: str
-    docVersion: str
+    doc_type: str
+    doc_version: str
     ism: Dict[str, Any]
-    lastUpdateTime: str
+    last_update_time: str
     id: str
     name: str
     uri: str
@@ -37,14 +38,14 @@ class AukusDatasetSchema(BaseModel):
     # Required Dataset Params
     size: str
     description: str
-    dataCollections: List[AukusDataCollectionSchema]
-    dataFormat: str
+    data_collections: List[AukusdataCollectionSchema]
+    data_format: str
     labels: List[Dict[str, Any]]
 
     # NRTk specific param
-    nrtkConfig: str
+    nrtk_config: str
     image_metadata: List[Dict[str, Any]]
-    outputDir: str
+    output_dir: str
 
     # Optional Dataset Params
     tags: Optional[List[str]] = None

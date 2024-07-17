@@ -21,7 +21,7 @@ from tests import BAD_NRTK_CONFIG, DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG
 
 deps = ["kwcoco"]
 specs = [find_spec(dep) for dep in deps]
-is_usable = all([spec is not None for spec in specs])
+is_usable = all(spec is not None for spec in specs)
 
 TEST_RETURN_VALUE = (
     [  # repeated test return value for 3 tests, saved to var to save space
@@ -56,8 +56,7 @@ def test_client() -> Generator:
 def test_handle_post_pybsm(
     patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
 ) -> None:
-    """Check for an appropriate response to a "good" request.
-    """
+    """Check for an appropriate response to a "good" request."""
     # Test data to be sent in the POST request
     test_data = NrtkPerturbInputSchema(
         id="0",
@@ -164,8 +163,7 @@ def test_handle_post_pybsm(
 def test_bad_gsd_post(
     patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
 ) -> None:
-    """Test that an error response is appropriately propagated to the user.
-    """
+    """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
@@ -193,8 +191,7 @@ def test_bad_gsd_post(
 def test_no_config_post(
     patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
 ) -> None:
-    """Test that an error response is appropriately propagated to the user.
-    """
+    """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
@@ -238,8 +235,7 @@ def test_no_config_post(
 def test_bad_config_post(
     patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
 ) -> None:
-    """Test that an error response is appropriately propagated to the user.
-    """
+    """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
@@ -265,8 +261,7 @@ def test_bad_config_post(
 
 @mock.patch("nrtk_jatic.api.app.is_usable", False)
 def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
-    """Test that an exception is raised when required dependencies are not installed.
-    """
+    """Test that an exception is raised when required dependencies are not installed."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
