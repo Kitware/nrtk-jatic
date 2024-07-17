@@ -1,38 +1,37 @@
-from typing import Tuple
 import copy
+from typing import Tuple
 
 import numpy as np
-
-from nrtk.interfaces.perturb_image import PerturbImage
 from maite.protocols.image_classification import (
     Augmentation,
+    DatumMetadataBatchType,
     InputBatchType,
     TargetBatchType,
-    DatumMetadataBatchType
 )
+from nrtk.interfaces.perturb_image import PerturbImage
 
-IMG_CLASSIFICATION_BATCH_T = Tuple[InputBatchType, TargetBatchType, DatumMetadataBatchType]
+IMG_CLASSIFICATION_BATCH_T = Tuple[
+    InputBatchType, TargetBatchType, DatumMetadataBatchType
+]
 
 
 class JATICClassificationAugmentation(Augmentation):
-    """
-    Implementation of JATIC Augmentation for NRTK perturbers operating
-    on a MAITE-protocol compliant Image Classification dataset.
+    """Implementation of JATIC Augmentation for NRTK perturbers.
+
+    Implementation of JATIC Augmentation for NRTK perturbers operating on a MAITE-protocol
+    compliant Image Classification dataset.
 
     Parameters
     ----------
     augment : PerturbImage
         Augmentations to apply to an image.
     """
+
     def __init__(self, augment: PerturbImage):
         self.augment = augment
 
-    def __call__(self,
-                 batch: IMG_CLASSIFICATION_BATCH_T
-                 ) -> IMG_CLASSIFICATION_BATCH_T:
-        """
-        Apply augmentations to the given data batch.
-        """
+    def __call__(self, batch: IMG_CLASSIFICATION_BATCH_T) -> IMG_CLASSIFICATION_BATCH_T:
+        """Apply augmentations to the given data batch."""
         imgs, anns, metadata = batch
 
         # iterate over (parallel) elements in batch
@@ -54,10 +53,7 @@ class JATICClassificationAugmentation(Augmentation):
             m_aug.update(
                 {
                     "nrtk::perturber": self.augment.get_config(),
-                    "image_info": {
-                        "width": aug_width,
-                        "height": aug_height
-                    }
+                    "image_info": {"width": aug_width, "height": aug_height},
                 }
             )
             aug_metadata.append(m_aug)

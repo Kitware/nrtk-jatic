@@ -1,39 +1,37 @@
-from typing import Tuple
 import copy
+from typing import Tuple
 
 import numpy as np
-
-from nrtk.interfaces.perturb_image import PerturbImage
-from nrtk_jatic.interop.object_detection.dataset import JATICDetectionTarget
 from maite.protocols.object_detection import (
     Augmentation,
+    DatumMetadataBatchType,
     InputBatchType,
     TargetBatchType,
-    DatumMetadataBatchType
 )
+from nrtk.interfaces.perturb_image import PerturbImage
+
+from nrtk_jatic.interop.object_detection.dataset import JATICDetectionTarget
 
 OBJ_DETECTION_BATCH_T = Tuple[InputBatchType, TargetBatchType, DatumMetadataBatchType]
 
 
 class JATICDetectionAugmentation(Augmentation):
-    """
-    Implementation of JATIC Augmentation for NRTK perturbers operating
-    on a MAITE-protocol compliant Object Detection dataset.
+    """Implementation of JATIC Augmentation for NRTK perturbers.
+
+    Implementation of JATIC Augmentation for NRTK perturbers
+    operating on a MAITE-protocol compliant Object Detection dataset.
 
     Parameters
     ----------
     augment : PerturbImage
         Augmentations to apply to an image.
     """
+
     def __init__(self, augment: PerturbImage):
         self.augment = augment
 
-    def __call__(self,
-                 batch: OBJ_DETECTION_BATCH_T
-                 ) -> OBJ_DETECTION_BATCH_T:
-        """
-        Apply augmentations to the given data batch.
-        """
+    def __call__(self, batch: OBJ_DETECTION_BATCH_T) -> OBJ_DETECTION_BATCH_T:
+        """Apply augmentations to the given data batch."""
         imgs, anns, metadata = batch
 
         # iterate over (parallel) elements in batch
@@ -58,11 +56,7 @@ class JATICDetectionAugmentation(Augmentation):
             y_aug_boxes[:, 2] *= aug_width / width
             y_aug_boxes[:, 3] *= aug_height / height
             aug_dets.append(
-                JATICDetectionTarget(
-                    y_aug_boxes,
-                    y_aug_labels,
-                    y_aug_scores
-                )
+                JATICDetectionTarget(y_aug_boxes, y_aug_labels, y_aug_scores)
             )
 
             m_aug = copy.deepcopy(md)

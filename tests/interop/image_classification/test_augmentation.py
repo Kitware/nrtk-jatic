@@ -1,39 +1,36 @@
 import copy
-import numpy as np
-import pytest
 from typing import Any, Dict, List
 
+import numpy as np
+import pytest
 from maite.protocols.image_classification import TargetBatchType
-from nrtk.interfaces.perturb_image import PerturbImage
 from nrtk.impls.perturb_image.generic.nop_perturber import NOPPerturber
+from nrtk.interfaces.perturb_image import PerturbImage
 
-from nrtk_jatic.interop.image_classification.augmentation import JATICClassificationAugmentation
+from nrtk_jatic.interop.image_classification.augmentation import (
+    JATICClassificationAugmentation,
+)
 from tests.utils.test_utils import ResizePerturber
 
 
 class TestJATICClassificationAugmentation:
-    @pytest.mark.parametrize("perturber, targets_in, expected_targets_out", [
-        (
-            NOPPerturber(),
-            np.asarray([0]),
-            np.asarray([0])
-        ), (
-            ResizePerturber(w=64, h=512),
-            np.asarray([1]),
-            np.asarray([1])
-        )
-
-    ], ids=["no-op perturber", "resize"])
+    @pytest.mark.parametrize(
+        ("perturber", "targets_in", "expected_targets_out"),
+        [
+            (NOPPerturber(), np.asarray([0]), np.asarray([0])),
+            (ResizePerturber(w=64, h=512), np.asarray([1]), np.asarray([1])),
+        ],
+        ids=["no-op perturber", "resize"],
+    )
     def test_augmentation_adapter(
         self,
         perturber: PerturbImage,
         targets_in: TargetBatchType,
-        expected_targets_out: TargetBatchType
+        expected_targets_out: TargetBatchType,
     ) -> None:
-        """
-        Test that the adapter provides the same image perturbation result
-        as the core perturber and that labels and metadata are appropriately
-        updated.
+        """Test that the adapter provides the same image perturbation result as the core perturber.
+
+        Also tests that labels and metadata are appropriately updated.
         """
         augmentation = JATICClassificationAugmentation(augment=perturber)
         img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
@@ -52,24 +49,20 @@ class TestJATICClassificationAugmentation:
             {
                 "image_info": {
                     "width": expected_img_out.shape[1],
-                    "height": expected_img_out.shape[0]
+                    "height": expected_img_out.shape[0],
                 }
             }
         )
 
         # Apply augmentation via adapter
-        imgs_out, targets_out, md_out = augmentation((
-            [img_in],
-            targets_in,
-            md_in
-        ))
+        imgs_out, targets_out, md_out = augmentation(([img_in], targets_in, md_in))
 
         # Check that expectations hold
         assert np.array_equal(imgs_out[0], expected_img_out)
         assert np.array_equal(targets_out, expected_targets_out)
 
-        for etgt, tgt_out in zip(expected_targets_out, targets_out):
-            assert np.array_equal(etgt, tgt_out)
+        for expected_tgt, tgt_out in zip(expected_targets_out, targets_out):
+            assert np.array_equal(expected_tgt, tgt_out)
         assert md_out[0] == expected_md_out
 
         # Check that input data was not modified

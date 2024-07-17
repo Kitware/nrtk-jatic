@@ -1,5 +1,6 @@
+from typing import Any, Dict, List
+
 from pydantic import BaseModel
-from typing import List, Dict, Any
 
 
 class NrtkPerturbInputSchema(BaseModel):
@@ -27,8 +28,8 @@ class NrtkPerturbInputSchema(BaseModel):
                     "output_dir": "path/to/output/dir",
                     "label_file": "path/to/label_file",
                     "image_metadata": [{"gsd": gsd} for gsd in range(11)],
-                    "isFactory": True,
-                    "config": "path/to/config_file"
+                    "is_factory": True,
+                    "config": "path/to/config_file",
                 }
             ]
         }
@@ -46,7 +47,7 @@ class DatasetSchema(BaseModel):
                 {
                     "root_dir": "path/to/root/dir",
                     "label_file": "path/from/root_dir/to/label/file",
-                    "metadata_file": "path/from/root_dir/to/metadata/file"
+                    "metadata_file": "path/from/root_dir/to/metadata/file",
                 }
             ]
         }
@@ -66,9 +67,9 @@ class NrtkPerturbOutputSchema(BaseModel):
                         {
                             "root_dir": "path/to/root/dir0",
                             "label_file": "path/from/root_dir/to/label/file",
-                            "metadata_file": "path/from/root_dir/to/metadata/file"
+                            "metadata_file": "path/from/root_dir/to/metadata/file",
                         }
-                    ]
+                    ],
                 }
             ]
         }

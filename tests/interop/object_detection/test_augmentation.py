@@ -1,62 +1,71 @@
 import copy
-import numpy as np
-import pytest
 from typing import Any, Dict, List
 
+import numpy as np
+import pytest
 from maite.protocols.object_detection import TargetBatchType
-from nrtk.interfaces.perturb_image import PerturbImage
 from nrtk.impls.perturb_image.generic.nop_perturber import NOPPerturber
+from nrtk.interfaces.perturb_image import PerturbImage
 
-from nrtk_jatic.interop.object_detection.dataset import JATICDetectionTarget
 from nrtk_jatic.interop.object_detection.augmentation import JATICDetectionAugmentation
+from nrtk_jatic.interop.object_detection.dataset import JATICDetectionTarget
 from tests.utils.test_utils import ResizePerturber
 
 
 class TestJATICDetectionAugmentation:
-    @pytest.mark.parametrize("perturber, targets_in, expected_targets_out", [
-        (
-            NOPPerturber(),
-            [
-                JATICDetectionTarget(
-                    boxes=np.asarray([[1., 2., 3., 4.], [2., 4., 6., 8.]]),
-                    labels=np.asarray([0, 2]),
-                    scores=np.asarray([0.8, 0.86])
-                )
-            ],
-            [
-                JATICDetectionTarget(
-                    boxes=np.asarray([[1., 2., 3., 4.], [2., 4., 6., 8.]]),
-                    labels=np.asarray([0, 2]),
-                    scores=np.asarray([0.8, 0.86])
-                )
-            ]
-        ), (
-            ResizePerturber(w=64, h=512),
-            [
-                JATICDetectionTarget(
-                    boxes=np.asarray([[4., 8., 16., 32.], [2., 4., 6., 8.]]),
-                    labels=np.asarray([1, 5]),
-                    scores=np.asarray([0.8, 0.86])
-                )
-            ],
-            [
-                JATICDetectionTarget(
-                    boxes=np.asarray([[1., 16., 4., 64.], [0.5, 8., 1.5, 16.]]),
-                    labels=np.asarray([1, 5]),
-                    scores=np.asarray([0.8, 0.86])
-                )
-            ]
-        )
-
-    ], ids=["no-op perturber", "resize"])
+    @pytest.mark.parametrize(
+        ("perturber", "targets_in", "expected_targets_out"),
+        [
+            (
+                NOPPerturber(),
+                [
+                    JATICDetectionTarget(
+                        boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
+                        labels=np.asarray([0, 2]),
+                        scores=np.asarray([0.8, 0.86]),
+                    )
+                ],
+                [
+                    JATICDetectionTarget(
+                        boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
+                        labels=np.asarray([0, 2]),
+                        scores=np.asarray([0.8, 0.86]),
+                    )
+                ],
+            ),
+            (
+                ResizePerturber(w=64, h=512),
+                [
+                    JATICDetectionTarget(
+                        boxes=np.asarray(
+                            [[4.0, 8.0, 16.0, 32.0], [2.0, 4.0, 6.0, 8.0]]
+                        ),
+                        labels=np.asarray([1, 5]),
+                        scores=np.asarray([0.8, 0.86]),
+                    )
+                ],
+                [
+                    JATICDetectionTarget(
+                        boxes=np.asarray(
+                            [[1.0, 16.0, 4.0, 64.0], [0.5, 8.0, 1.5, 16.0]]
+                        ),
+                        labels=np.asarray([1, 5]),
+                        scores=np.asarray([0.8, 0.86]),
+                    )
+                ],
+            ),
+        ],
+        ids=["no-op perturber", "resize"],
+    )
     def test_augmentation_adapter(
         self,
         perturber: PerturbImage,
         targets_in: TargetBatchType,
-        expected_targets_out: TargetBatchType
+        expected_targets_out: TargetBatchType,
     ) -> None:
-        """
-        Test that the adapter provides the same image perturbation result
+        """Test that the augmentation adapter functions appropriately.
+
+        Tests that the adapter provides the same image perturbation result
         as the core perturber and that bboxes and metadata are appropriately
         updated.
         """
@@ -75,19 +84,15 @@ class TestJATICDetectionAugmentation:
         expected_md_out["nrtk::perturber"] = perturber.get_config()
 
         # Apply augmentation via adapter
-        imgs_out, targets_out, md_out = augmentation((
-            [img_in],
-            targets_in,
-            md_in
-        ))
+        imgs_out, targets_out, md_out = augmentation(([img_in], targets_in, md_in))
 
         # Check that expectations hold
         assert np.array_equal(imgs_out[0], expected_img_out)
         assert len(targets_out) == len(expected_targets_out)
-        for etgt, tgt_out in zip(expected_targets_out, targets_out):
-            assert np.array_equal(etgt.boxes, tgt_out.boxes)
-            assert np.array_equal(etgt.labels, tgt_out.labels)
-            assert np.array_equal(etgt.scores, tgt_out.scores)
+        for expected_tgt, tgt_out in zip(expected_targets_out, targets_out):
+            assert np.array_equal(expected_tgt.boxes, tgt_out.boxes)
+            assert np.array_equal(expected_tgt.labels, tgt_out.labels)
+            assert np.array_equal(expected_tgt.scores, tgt_out.scores)
         assert md_out[0] == expected_md_out
 
         # Check that input data was not modified

@@ -47,43 +47,43 @@ Optional Sensor Parameters
 - **f** (float)
   Focal length (m). Defualt value of 0.014.
 
-- **px** (float)
+- **p_x** (float)
   Detector center-to-center spacings (pitch) in the x and y directions (m). Defualt value of 0.0000074.
 
-- **optTransWavelengths** (numpy array)
+- **opt_trans_wavelengths** (numpy array)
   Spectral bandpass of the camera (m). At minimum, start and end wavelengths should be specified. Defualt value of [3.8e-7, 7.0e-7].
 
-- **opticsTransmission** (float)
+- **optics_transmission** (float)
   Full system in-band optical transmission (unitless). Loss due to any telescope obscuration should *not* be included in this optical transmission array.
 
 - **eta** (float)
   Relative linear obscuration (unitless).
 
-- **wx** and **wy** (float)
+- **w_x** and **w_y** (float)
   Detector width in the x and y directions (m).
 
 - **qe** (function of wavelength)
   Quantum efficiency as a function of wavelength (e-/photon).
 
-- **qewavelengths** (numpy array)
+- **qe_wavelengths** (numpy array)
   Wavelengths corresponding to the quantum efficiency array (m).
 
-- **darkCurrent** (float)
+- **dark_current** (float)
   Detector dark current (e-/s).
 
-- **maxN** (int)
+- **max_n** (int)
   Detector electron well capacity (e-).
 
-- **maxWellFill** (float)
+- **max_well_fill** (float)
   Desired well fill, i.e., maximum well size × desired fill fraction.
 
-- **bitdepth** (int)
+- **bit_depth** (int)
   Resolution of the detector ADC in bits (unitless).
 
-- **sx** and **sy** (float)
+- **s_x** and **sy** (float)
   Root-mean-squared jitter amplitudes in the x and y directions, respectively (rad).
 
-- **dax** and **day** (float)
+- **da_x** and **da_y** (float)
   Line-of-sight angular drift rate during one integration time in the x and y directions, respectively (rad/s).
 
 - **otherNoise** (float)
@@ -105,7 +105,7 @@ Optional Scenario Parameters
     - 24500
   Default value of 75.
 
-- **groundRange** (integer)
+- **ground_range** (integer)
   Distance on the ground between the target and sensor in meters. The following ground ranges are included in the database at each altitude until the ground range exceeds the distance to the spherical earth horizon:
     - 0, 100, 500 meters
     - 1000 to 20000 in 1000 meter steps
@@ -113,23 +113,23 @@ Optional Scenario Parameters
     - 85000 to 300000 in 5000 meter steps
   Default value of 0.
 
-- **aircraftSpeed** (float)
+- **aircraft_speed** (float)
   Ground speed of the aircraft in meters per second (m/s).
 
-- **targetReflectance** (float)
+- **target_reflectance** (float)
   Object reflectance (unitless).
 
-- **targetTemperature** (float)
+- **target_temperature** (float)
   Object temperature in Kelvin.
 
-- **backgroundReflectance** (float)
+- **background_reflectance** (float)
   Background reflectance (unitless).
 
-- **backgroundTemperature** (float)
+- **background_temperature** (float)
   Background temperature in Kelvin.
 
-- **haWindspeed** (float)
+- **ha_wind_speed** (float)
   High altitude windspeed in meters per second (m/s). Used to calculate the turbulence profile.
 
-- **cn2at1m** (float)
+- **cn2_at_1m** (float)
   Refractive index structure parameter "near the ground" (e.g., at h = 1 m). Used to calculate the turbulence profile.
