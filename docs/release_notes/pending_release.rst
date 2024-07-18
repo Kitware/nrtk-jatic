@@ -46,3 +46,5 @@ Other
 
 Fixes
 -----
+
+* Fixed an issue where if `opencv-python` was missing then the pipeline would fail.
