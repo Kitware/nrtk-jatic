@@ -11,7 +11,6 @@ include:
 
 sast:
   stage: security
-  needs: [pytest] # if unit tests don't pass, don't run
   dependencies: []
 
 dependency_scanning:
@@ -19,8 +18,7 @@ dependency_scanning:
   needs:
     - job: build:cache # pulls in cached dependencies for scanning
       artifacts: false
-    - job: pytest  # if unit tests don't pass, don't run
-      artifacts: false
+  dependencies: []
   before_script:
     - !reference [.shared-setup, before_script]
     - poetry install --sync --with dev-linting,dev-testing,dev-docs
@@ -32,5 +30,4 @@ dependency_scanning:
 
 secret_detection:
   stage: security
-  needs: [pytest] # if unit tests don't pass, don't run
   dependencies: []
