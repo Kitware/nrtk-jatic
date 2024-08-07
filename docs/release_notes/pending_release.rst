@@ -40,6 +40,8 @@ CI/CD
 
 * Added additional entrypoint testing.
 
+* Swapped out pipeline to use a shared pipeline.
+
 Other
 
 * Refactored package into 'src/nrtk_jatic instead of 'nrtk_jatic'
