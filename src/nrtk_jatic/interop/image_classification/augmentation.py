@@ -1,16 +1,16 @@
 import copy
-from typing import Tuple, Sequence, Optional
+from typing import Optional, Sequence, Tuple
 
 import numpy as np
+from maite.protocols import ArrayLike
 from maite.protocols.image_classification import (
     Augmentation,
     DatumMetadataBatchType,
     InputBatchType,
     TargetBatchType,
 )
-from maite.protocols import ArrayLike
-from nrtk.interfaces.perturb_image import PerturbImage
 from nrtk.interfaces.image_metric import ImageMetric
+from nrtk.interfaces.perturb_image import PerturbImage
 
 IMG_CLASSIFICATION_BATCH_T = Tuple[
     InputBatchType, TargetBatchType, DatumMetadataBatchType
@@ -84,8 +84,7 @@ class JATICClassificationAugmentationWithMetric(Augmentation):
         self.metric = metric
 
     def __call__(self, batch: IMG_CLASSIFICATION_BATCH_T) -> IMG_CLASSIFICATION_BATCH_T:
-        """Compute a specified image metric on the given batch"""
-
+        """Compute a specified image metric on the given batch."""
         imgs, anns, metadata = batch
         metric_aug_metadata = list()  # list of individual image-level metric metadata
 
@@ -107,17 +106,22 @@ class JATICClassificationAugmentationWithMetric(Augmentation):
                 img_2 = np.transpose(aug_img, (1, 2, 0))
 
             # Compute Image metric values
-            metric_aug_md = copy.deepcopy(aug_md)
             metric_value = self.metric(
                 img_1=img_1,
                 img_2=img_2,
-                additional_params=metric_aug_md
+                additional_params=aug_md
             )
+            metric_aug_md = copy.deepcopy(aug_md)
             metric_name = self.metric.__class__.__name__
             metric_aug_md.update({
                 "nrtk::" + metric_name: metric_value
             })
             metric_aug_metadata.append(metric_aug_md)
 
-        # return batch of original images, annotations and metric-updated metadata
-        return imgs, aug_anns, metric_aug_metadata
+        # return batch of augmented/original images, annotations and metric-updated metadata
+        if self.augmentations:
+            # type ignore was included to handle the dual Sequence[ArrrayLike] | List[None]
+            # case for the augmented images.
+            return aug_imgs, aug_anns, metric_aug_metadata  # type: ignore
+        else:
+            return imgs, aug_anns, metric_aug_metadata
