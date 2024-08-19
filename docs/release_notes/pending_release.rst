@@ -8,11 +8,21 @@ Features
 
 * Added a test to `test_nrtk_perturber_cli` that uses a generic factory config file.
 
-Dependencies1
+Interoperability
+
+* Added ``JATICClassificationAugmentationWithMetric`` workflow which performs 
+  image-metric computations in a JATIC Augmentation workflow for MAITE-compliant
+  image classification datasets.
+
+* Added ``JATICDetectionAugmentationWithMetric`` workflow which performs image-metric
+  computations in a JATIC Augmentation workflow for MAITE-compliant object detection
+  datasets.
+
+Dependencies
 
 * Update `maite` to ^0.6.0.
 
-* Update `nrtk` to >=0.10.0.
+* Update `nrtk` to >=0.11.0.
 
 CI/CD
 
