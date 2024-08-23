@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, Sequence, overload
 
+import numpy as np
 import csv
-from matplotlib.pyplot import cla
 from pathlib import Path
 from PIL import Image
 import torch
@@ -55,7 +55,8 @@ def _load_annotations(annotation_path: Path) -> pr.HasDataBoxesLabels:
             # change class label from 1...10 to 0...9
             label = int(row[5]) - 1
             labels.append(label)
-    return ObjectDetectionData(boxes=torch.stack(boxes).int(), labels=torch.tensor(labels).int(), scores=torch.ones((len(labels))).int())
+    return ObjectDetectionData(boxes=torch.stack(boxes).float(), labels=torch.tensor(labels).int(),
+                               scores=torch.ones((len(labels))).int())
 
 
 class VisDroneDataset:
@@ -106,8 +107,10 @@ class VisDroneDataset:
         annotation_dir = self._root / "annotations"
 
         # validate existence of image_dir and annotation_dir
-        assert image_dir.is_dir(), "Subdirectory `image` doesn't exist"
-        assert annotation_dir.is_dir(), "Subdirectory `annotation` doesn't exist"
+        if not image_dir.is_dir():
+            raise IndexError("Subdirectory `image` doesn't exist")
+        if not annotation_dir.is_dir():
+            raise IndexError("Subdirectory `annotation` doesn't exist")
 
         all_image_paths = list(image_dir.glob("**/*.jpg"))
         all_image_ids = {p.stem for p in all_image_paths}
@@ -122,10 +125,10 @@ class VisDroneDataset:
 
         # verify that all ids have image and annotation files
         for image_id in keep_ids:
-            assert image_id in all_image_ids, f"No image file for id: {image_id}"
-            assert (
-                image_id in all_annotation_ids
-            ), f"No annotation file for id: {image_id}"
+            if image_id not in all_image_ids:
+                raise IndexError(f"No image file for id: {image_id}")
+            if image_id not in all_annotation_ids:
+                raise IndexError(f"No annotation file for id: {image_id}")
 
         # store sorted image paths
         self._images = sorted([p for p in all_image_paths if p.stem in keep_ids])
@@ -138,7 +141,7 @@ class VisDroneDataset:
                 self._annotations[image_id] = _load_annotations(annotation_path)
 
         self._augmentation_func = None
-
+        self._reshape = False
         # load pre-computered brisque score
         self.brisque_scores = dict()
         with open(self._root / 'brisque.csv', mode='r') as bscore_file:
@@ -151,9 +154,15 @@ class VisDroneDataset:
 
     def set_augmentation(
         self,
-        agm: pr.Augmentation[..., pr.SupportsObjectDetection],  # just require that we take/return an object conforming to SupportsObjectDetection 
+        agm: pr.Augmentation[..., pr.SupportsObjectDetection],
     ) -> None:
         self._augmentation_func = agm
+
+    def set_reshape(
+        self,
+        value: bool
+    ) -> None:
+        self._reshape = value
 
     @overload
     def __getitem__(self, index: slice) -> VisDroneDataset:
@@ -169,6 +178,11 @@ class VisDroneDataset:
         if isinstance(index, int):
             image_path = self._images[index]
             image = Image.open(image_path)
+            if self._reshape:
+                img_array = np.array(image)
+                image = torch.from_numpy(img_array)
+            else:
+                image = pil_to_tensor(image)
             image_id = image_path.stem
             # num_objects = len(self._annotations[image_id].labels)
             # uniq_objects = torch.unique(self._annotations[image_id].labels)
@@ -176,23 +190,10 @@ class VisDroneDataset:
             # unique_classes = [VisDroneDataset.classes[idx] for idx in uniq_objects.tolist()]
 
             labeled_datum: pr.SupportsObjectDetection = (
-                pil_to_tensor(image),
+                image,
                 self._annotations[image_id],
                 {"id": image_id},
             )
-            '''
-            VisdroneDatumMetadata(
-                id=image_id,
-                image_info={
-                    "width": width,
-                    "height": height,
-                    "num_objects": num_objects,
-                    "num_unique_classes": num_unique_classes,
-                    "unique_classes": unique_classes,
-                    "brisque_score": self.brisque_scores[image_id],
-                },
-            ),
-            '''
             if self._augmentation_func is not None:
                 labeled_datum = self._augmentation_func(labeled_datum)
 

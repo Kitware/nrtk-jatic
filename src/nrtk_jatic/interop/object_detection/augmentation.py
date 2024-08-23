@@ -35,6 +35,7 @@ class JATICDetectionAugmentation(Augmentation):
     def __call__(self, batch: OBJ_DETECTION_BATCH_T) -> OBJ_DETECTION_BATCH_T:
         """Apply augmentations to the given data batch."""
         imgs, anns, metadata = batch
+
         # iterate over (parallel) elements in batch
         aug_imgs = list()  # list of individual augmented inputs
         aug_dets = list()  # list of individual object detection targets
@@ -52,10 +53,10 @@ class JATICDetectionAugmentation(Augmentation):
             y_aug_boxes = copy.deepcopy(np.asarray(ann.boxes))
             y_aug_labels = copy.deepcopy(np.asarray(ann.labels))
             y_aug_scores = copy.deepcopy(np.asarray(ann.scores))
-            y_aug_boxes[:, 0] *= aug_width // width
-            y_aug_boxes[:, 1] *= aug_height // height
-            y_aug_boxes[:, 2] *= aug_width // width
-            y_aug_boxes[:, 3] *= aug_height // height
+            y_aug_boxes[:, 0] *= aug_width / width
+            y_aug_boxes[:, 1] *= aug_height / height
+            y_aug_boxes[:, 2] *= aug_width / width
+            y_aug_boxes[:, 3] *= aug_height / height
             aug_dets.append(
                 JATICDetectionTarget(y_aug_boxes, y_aug_labels, y_aug_scores)
             )

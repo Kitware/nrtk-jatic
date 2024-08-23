@@ -18,6 +18,9 @@ Interoperability
   computations in a JATIC Augmentation workflow for MAITE-compliant object detection
   datasets.
 
+* Added ``compute_image_metric.ipynb`` notebook showcasing how image-metric computations
+  can be of use to a JATIC T&E engineer in their workflow.
+
 Dependencies
 
 * Update `maite` to ^0.6.0.
