@@ -13,6 +13,7 @@ description = ""
 authors = ["Kitware, Inc. <nrtk@kitware.com>"]
 readme = "README.md"
 packages = [{include = "nrtk_jatic", from="src"}]
+documentation = "https://nrtk-jatic.readthedocs.io/"
 classifiers = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
@@ -163,5 +164,5 @@ max-doc-length = 120
 known-first-party = ["nrtk_jatic"]
 
 [tool.ruff.per-file-ignores]
-# Add any files to be ignored here e.g. 
+# Add any files to be ignored here e.g.
 # "src/*.py" = ["D100"] # Missing docstring in public module

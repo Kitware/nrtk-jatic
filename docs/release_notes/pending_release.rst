@@ -10,7 +10,7 @@ Features
 
 Interoperability
 
-* Added ``JATICClassificationAugmentationWithMetric`` workflow which performs 
+* Added ``JATICClassificationAugmentationWithMetric`` workflow which performs
   image-metric computations in a JATIC Augmentation workflow for MAITE-compliant
   image classification datasets.
 
@@ -55,6 +55,10 @@ CI/CD
 Other
 
 * Refactored package into 'src/nrtk_jatic instead of 'nrtk_jatic'
+
+Documentation
+
+* Added ReadTheDocs configuration files
 
 Fixes
 -----
