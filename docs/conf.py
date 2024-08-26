@@ -26,11 +26,6 @@ copyright = "2023, Kitware, Inc."  # noqa: A001
 author = "Kitware, Inc."
 release = nrtk_jatic.__version__
 
-site_url = "https://jatic.pages.jatic.net/kitware/nrtk-jatic/"
-repo_url = "https://gitlab.jatic.net/jatic/kitware/nrtk-jatic"
-repo_name = "nrtk-jatic"
-
-
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
