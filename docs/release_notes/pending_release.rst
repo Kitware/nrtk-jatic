@@ -55,6 +55,8 @@ CI/CD
 
 * Swapped out pipeline to use a shared pipeline.
 
+* Added a mirroring job to replace builtin gitlab mirroring due to LFS issue.
+
 Other
 
 * Refactored package into 'src/nrtk_jatic instead of 'nrtk_jatic'
