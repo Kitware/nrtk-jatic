@@ -1,17 +1,16 @@
 from __future__ import annotations
 
+import csv
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, Sequence, overload
 
+import maite.protocols as pr
 import numpy as np
-import csv
-from pathlib import Path
-from PIL import Image
 import torch
+from PIL import Image
 from torchvision.ops.boxes import box_convert
 from torchvision.transforms.functional import pil_to_tensor
-
-import maite.protocols as pr
 
 
 @dataclass
@@ -60,8 +59,7 @@ def _load_annotations(annotation_path: Path) -> pr.HasDataBoxesLabels:
 
 
 class VisDroneDataset:
-    """
-    VisDrone Dataset.
+    """VisDrone Dataset.
 
     Parameters
     ----------
@@ -71,7 +69,7 @@ class VisDroneDataset:
         Sequence of image IDs (i.e. image filenames modulo extension) to
         restrict dataset to.
 
-    Methods
+    Methods:
     -------
     __len__() -> int
         Returns the number of images in the dataset.
