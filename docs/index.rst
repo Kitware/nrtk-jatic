@@ -14,6 +14,7 @@ This is an extension of the Natural Robustness Toolkit (NRTK) for JATIC. This do
    releasing
    jatic_interoperability
    api
+   containers
    schema
    miscellaneous
 

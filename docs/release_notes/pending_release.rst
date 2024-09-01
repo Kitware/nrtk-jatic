@@ -65,6 +65,10 @@ Documentation
 
 * Added ReadTheDocs configuration files
 
+* Added a `Containers` section to documentation
+
+* Added ``AUKUS.rst`` to Containers documentations
+
 Fixes
 -----
 
