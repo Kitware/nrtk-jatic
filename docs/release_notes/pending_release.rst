@@ -75,6 +75,8 @@ Documentation
 
 * Added ``AUKUS.rst`` to Containers documentations
 
+* Updated JATICDetectionAugmentation docstrings to clarify ground truth behavior
+
 Fixes
 -----
 

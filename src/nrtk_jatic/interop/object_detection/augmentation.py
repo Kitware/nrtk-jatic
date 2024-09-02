@@ -23,6 +23,13 @@ class JATICDetectionAugmentation(Augmentation):
     Implementation of JATIC Augmentation for NRTK perturbers
     operating on a MAITE-protocol compliant Object Detection dataset.
 
+    Given a set of ground truth labels alongside an image and image
+    metadata, JATICDetectionAugmentation will properly scale the
+    labels in accordance with the change in the image scale due to
+    applied pertubation. At this time JATICDetectionAugmentation does
+    not support any other augmentation to the labels such as cropping,
+    translation, or rotation.
+
     Parameters
     ----------
     augment : PerturbImage
