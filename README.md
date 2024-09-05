@@ -1,37 +1,45 @@
 # nrtk-jatic
 
-## Description
 The `nrtk-jatic` package is an extension of the Natural Robustness Toolkit
 (NRTK) for JATIC. For more information, checkout the base [NRTK](https://gitlab.jatic.net/jatic/kitware/nrtk)
 package.
 
+<!-- :auto installation: -->
 ## Installation
-The following steps assumes the source tree has been acquired locally.
+The following steps assume the source tree has been acquired locally.
 
 Install the current version via pip:
 ```bash
-pip install .
+pip install nrtk-jatic
 ```
 
-Alternatively, [Poetry](https://python-poetry.org/) can also be used:
+Alternatively, you can also use [Poetry](https://python-poetry.org/):
 ```bash
 poetry install --sync --with dev-linting,dev-testing,dev-docs
 ```
 
+See [here for more installation documentation](
+https://nrtk-jatic.readthedocs.io/en/latest/installation.html).
+<!-- :auto installation: -->
+
+<!-- :auto getting-started: -->
 ## Getting Started
 We provide a number of examples based on Jupyter notebooks in the `./examples/` directory to show usage
 of the `nrtk-jatic` package in a number of different contexts. For general examples, checkout NRTK\'s
 [examples](https://gitlab.jatic.net/jatic/kitware/nrtk/-/tree/main/examples?ref_type=heads) directory.
+of the `nrtk-jatic` package in a number of different contexts.
+<!-- :auto getting-started: -->
 
+<!-- :auto documentation: -->
 ## Documentation
 Documentation snapshots for releases as well as the latest master are hosted on
-[ReadTheDocs]((https://nrtk-jatic.readthedocs.io/en/latest/)).
+[ReadTheDocs](https://nrtk-jatic.readthedocs.io/en/latest/).
 
 The sphinx-based documentation may also be built locally for the most
 up-to-date reference:
 ```bash
 # Install dependencies
-poetry install --sync --with dev-testing,dev-docs
+poetry install --sync --with dev-linting,dev-testing,dev-docs 
 # Navigate to the documentation root.
 cd docs
 # Build the docs.
@@ -39,34 +47,48 @@ poetry run make html
 # Open in your favorite browser!
 firefox _build/html/index.html
 ```
+<!-- :auto documentation: -->
 
-# Developer tools
+<!-- :auto developer-tools: -->
+## Developer tools
 
-**pre-commit hooks**
-pre-commit hooks are used to ensure that any code meets all linting and formatting guidelines required.
-After installing, this will always run before committing to ensure that any commits are following the standards,
-but you can also manually run the check without committing. If you want to commit despite there being errors, you
-can add `--no-verify` to your commit command.
-Installing pre-commit hooks:
+**pre-commit hooks**  
+pre-commit hooks are used to ensure that any code meets all linting and formatting guidelines required. After installing, this will always run before committing to ensure that any commits are following the standards, but you can also manually run the check without committing. If you want to commit despite there being errors, you can add `--no-verify` to your commit command.
+
+Installing pre-commit hooks:  
 ```bash
-# Ensure that all dependencies are installed
+# Ensure that all dependencies are installed  
 poetry install --sync --with dev-linting,dev-testing,dev-docs
-# Initialize pre-commit for the repository
-poetry run pre-commit install
-# Run pre-commit check on all files
+# Initialize pre-commit for the repository  
+poetry run pre-commit install  
+# Run pre-commit check on all files  
 poetry run pre-commit run --all-files
 ```
+<!-- :auto developer-tools: -->
 
+<!-- :auto contributing: -->
 ## Contributing
-
 - We follow the general guidelines outlined in the
 [JATIC Software Development Plan](https://gitlab.jatic.net/jatic/docs/sdp/-/blob/main/Branch,%20Merge,%20Release%20Strategy.md).
-- The Git Flow branching strategy is used.
-- See `docs/releasing/release_process.rst` for detailed release information.
-- See `CONTRIBUTING.md` for additional contributing information.
+- We use the Git Flow branching strategy.
+- See [docs/release_process.rst](./docs/release_process.rst) for detailed release information.
+- See [CONTRIBUTING.md](./CONTRIBUTING.md) for additional contributing information.
+<!-- :auto contributing: -->
 
+<!-- :auto license: -->
 ## License
-Apache 2.0
+[Apache 2.0](./LICENSE)
+<!-- :auto license: -->
 
-**POC**: Brian Hu @brian.hu
-**DPOC**: Brandon RichardWebster @b.richardwebster
+<!-- :auto contacts: -->
+## Contacts
+
+**Principal Investigator**: Brian Hu (Kitware) @brian.hu
+
+**Product Owner**: Austin Whitesell (MITRE) @awhitesell
+
+**Scrum Master / Tech Lead**: Brandon RichardWebster (Kitware) @b.richardwebster
+
+**Deputy Tech Lead**: Emily Veenhuis (Kitware) @emily.veenhuis
+
+<!-- :auto contacts: -->
