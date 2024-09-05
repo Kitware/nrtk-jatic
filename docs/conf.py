@@ -26,6 +26,7 @@ copyright = "2023, Kitware, Inc."  # noqa: A001
 author = "Kitware, Inc."
 release = nrtk_jatic.__version__
 
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -33,6 +34,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
     "sphinx-prompt",
+    "sphinx_copybutton",
 ]
 
 suppress_warnings = [
