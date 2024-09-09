@@ -8,7 +8,6 @@ build-backend = "poetry.core.masonry.api"
 ###############################################################################
 [tool.poetry]
 name = "nrtk-jatic"
-authors = ["Kitware, Inc. <nrtk@kitware.com>"]
 readme = "README.md"
 packages = [{include = "nrtk_jatic", from="src"}]
 documentation = "https://nrtk-jatic.readthedocs.io/"
@@ -27,6 +26,7 @@ classifiers = [
 ]
 # :auto package-meta:
 # package-specific meta, don't put this in "generated package-meta"
+authors = ["Kitware, Inc. <nrtk@kitware.com>"]
 version = "0.1.1"
 description = ""
 
