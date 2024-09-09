@@ -25,8 +25,6 @@ https://nrtk-jatic.readthedocs.io/en/latest/installation.html).
 <!-- :auto getting-started: -->
 ## Getting Started
 We provide a number of examples based on Jupyter notebooks in the `./examples/` directory to show usage
-of the `nrtk-jatic` package in a number of different contexts. For general examples, checkout NRTK\'s
-[examples](https://gitlab.jatic.net/jatic/kitware/nrtk/-/tree/main/examples?ref_type=heads) directory.
 of the `nrtk-jatic` package in a number of different contexts.
 <!-- :auto getting-started: -->
 
