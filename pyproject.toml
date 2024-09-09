@@ -5,9 +5,9 @@ build-backend = "poetry.core.masonry.api"
 # :auto build-system:
 
 # :auto package-meta:
-###############################################################################
 [tool.poetry]
 name = "nrtk-jatic"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{include = "nrtk_jatic", from="src"}]
 documentation = "https://nrtk-jatic.readthedocs.io/"
@@ -15,6 +15,7 @@ classifiers = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
     'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: Apache Software License',
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: Unix',
     'Programming Language :: Python :: 3',
@@ -135,7 +136,7 @@ addopts = [
     "-lv",                              # Show local in trace-backs.
     "--doctest-modules",                # Increased verbosity.
     "--tb=long",                        # Trace-back print mode.
-    "--cov=./src/nrtk_jatic",                 # Cover our package specifically
+    "--cov=./src/nrtk_jatic",          # Cover our package specifically
     "--cov=./tests",                    # Also cover our tests for dead spots
     "--cov-report=term",                # Coverage report to terminal
     "--cov-report=xml:coverage.xml",    # for external tool reporting
