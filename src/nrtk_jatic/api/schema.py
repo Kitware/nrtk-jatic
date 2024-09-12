@@ -17,7 +17,7 @@ class NrtkPerturbInputSchema(BaseModel):
     # NRTK Perturber
     config_file: str
 
-    class Config:
+    class Config:  # noqa: D106
         arbitrary_types_allowed = True
         schema_extra = {
             "examples": [
@@ -40,7 +40,7 @@ class DatasetSchema(BaseModel):
     label_file: str
     metadata_file: str
 
-    class Config:
+    class Config:  # noqa: D106
         arbitrary_types_allowed = True
         schema_extra = {
             "examples": [
@@ -57,7 +57,7 @@ class NrtkPerturbOutputSchema(BaseModel):
     message: str
     datasets: List[DatasetSchema]
 
-    class Config:
+    class Config:  # noqa: D106
         arbitrary_types_allowed = True
         schema_extra = {
             "examples": [

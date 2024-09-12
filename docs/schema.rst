@@ -93,24 +93,24 @@ Optional Scenario Parameters
 ============================
 - **ihaze** (integer)
   MODTRAN code for visibility. Valid options are:
-    - 1: Rural extinction with 23 km visibility
-    - 2: Rural extinction with 5 km visibility
+  - 1: Rural extinction with 23 km visibility
+  - 2: Rural extinction with 5 km visibility
   Default value of 2.
 
 - **altitude** (integer)
   Sensor height above ground level in meters. The database includes the following altitude options:
-    - 2, 32.55, 75, 150, 225, 500 meters
-    - 1000 to 12000 in 1000 meter steps
-    - 14000 to 20000 in 2000 meter steps
-    - 24500
+  - 2, 32.55, 75, 150, 225, 500 meters
+  - 1000 to 12000 in 1000 meter steps
+  - 14000 to 20000 in 2000 meter steps
+  - 24500
   Default value of 75.
 
 - **ground_range** (integer)
   Distance on the ground between the target and sensor in meters. The following ground ranges are included in the database at each altitude until the ground range exceeds the distance to the spherical earth horizon:
-    - 0, 100, 500 meters
-    - 1000 to 20000 in 1000 meter steps
-    - 22000 to 80000 in 2000 meter steps
-    - 85000 to 300000 in 5000 meter steps
+  - 0, 100, 500 meters
+  - 1000 to 20000 in 1000 meter steps
+  - 22000 to 80000 in 2000 meter steps
+  - 85000 to 300000 in 5000 meter steps
   Default value of 0.
 
 - **aircraft_speed** (float)

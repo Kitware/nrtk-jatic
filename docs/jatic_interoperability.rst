@@ -2,35 +2,10 @@
 JATIC Interoperability
 ######################
 
-----------------
-Object Detection
-----------------
+.. autosummary::
+   :toctree: _implementations/interop
+   :template: custom-module-template.rst
+   :recursive:
 
-JATICDetectionAugmentation
---------------------------
-.. autoclass:: nrtk_jatic.interop.object_detection.augmentation.JATICDetectionAugmentation
-   :members:
-
-JATICObjectDetectionDataset
--------------------------------
-.. autoclass:: nrtk_jatic.interop.object_detection.dataset.JATICObjectDetectionDataset
-   :members:
-
-COCOJATICObjectDetectionDataset
--------------------------------
-.. autoclass:: nrtk_jatic.interop.object_detection.dataset.COCOJATICObjectDetectionDataset
-   :members:
-
---------------------
-Image Classification
---------------------
-
-JATICClassificationAugmentation
--------------------------------
-.. autoclass:: nrtk_jatic.interop.image_classification.augmentation.JATICClassificationAugmentation
-   :members:
-
-JATICImageClassificationDataset
--------------------------------
-.. autoclass:: nrtk_jatic.interop.image_classification.dataset.JATICImageClassificationDataset
-   :members:
+   nrtk_jatic.interop.object_detection
+   nrtk_jatic.interop.image_classification
