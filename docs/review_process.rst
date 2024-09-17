@@ -1,5 +1,5 @@
 Steps of the nrtk-jatic Release Process
-=================================
+=======================================
 Three types of releases are expected to occur:
   - major
   - minor

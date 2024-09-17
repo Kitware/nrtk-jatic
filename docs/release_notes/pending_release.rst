@@ -63,6 +63,8 @@ CI/CD
 
 * Updates to dependencies to support the new CI/CD.
 
+* Updated config for `black` to set max line length to 120
+
 Other
 
 * Refactored package into 'src/nrtk_jatic instead of 'nrtk_jatic'
