@@ -1,8 +1,27 @@
 # nrtk-jatic
 
 The `nrtk-jatic` package is an extension of the Natural Robustness Toolkit
-(NRTK) for JATIC. For more information, checkout the base [NRTK](https://gitlab.jatic.net/jatic/kitware/nrtk)
-package.
+([NRTK](https://github.com/Kitware/nrtk)) containing implementations
+and examples in compliance with protocols from the Modular AI Trustworthy Engineering
+([MAITE](https://github.com/mit-ll-ai-technology/maite)) library.
+These packages (among others) are developed under the
+[Joint AI Test Infrastructure Capability (JATIC) program](https://cdao.pages.jatic.net/public/)
+for AI Test & Evaluation (T&E) and AI Assurance.
+
+## Interoperability - Implementations and Examples
+
+The `nrtk-jatic` package consists of implementations and utilities that ensure
+interoperability of `nrtk` functionality with `maite`. The scripts under
+`src/nrtk_jatic/interop` consist of protocol implementations that are compliant
+with `maite`'s dataset and augmentation protocols. The `src/nrtk_jatic/utils`
+folder houses generic util scripts and the NRTK CLI entrypoint script.
+Finally, the `examples` folder consists of Jupyter notebooks showing
+end-to-end ML T&E workflows demonstrating natural robustness testing of computer vision models with `nrtk`, 
+and integrations of `nrtk` with other JATIC tools, 
+by using the interoperability standards provided by `maite`
+
+Additional information about JATIC and its design principles can be found
+[here](https://cdao.pages.jatic.net/public/program/design-principles/).
 
 <!-- :auto installation: -->
 ## Installation
