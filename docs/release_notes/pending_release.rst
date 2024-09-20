@@ -85,6 +85,8 @@ Documentation
 * Added support for `sphinx-click` to generate documentation for python
   `click` functions.
 
+* Updated README to include a section on `Interoperability`.
+
 Fixes
 -----
 
