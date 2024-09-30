@@ -1,4 +1,4 @@
-Steps of the NRTK Release Process
+Steps of the nrtk-jatic Release Process
 =================================
 Three types of releases are expected to occur:
   - major
@@ -173,7 +173,7 @@ Draft a New Release on GitLab
 After creating and pushing a new version tag, a GitLab "release" should be
 made.
 
-a. Navigate to the GitLab `Releases page`_ for the nrtk repository.
+a. Navigate to the GitLab `Releases page`_ for the nrtk-jatic repository.
 
 b. Click the "Create a new release" button (or go `here
    <gitlab-new-release-page_>`_).
@@ -196,6 +196,6 @@ more details.
 
 
 .. _Poetry's version command: https://python-poetry.org/docs/cli/#version
-.. _Releases page: https://gitlab.jatic.net/jatic/kitware/nrtk/-/releases
-.. _gitlab-new-release-page: https://gitlab.jatic.net/jatic/kitware/nrtk/-/releases/new
+.. _Releases page: https://gitlab.jatic.net/jatic/kitware/nrtk-jatic/-/releases
+.. _gitlab-new-release-page: https://gitlab.jatic.net/jatic/kitware/nrtk-jatic/-/releases/new
 .. _gitlab-release-using-cicd: https://docs.gitlab.com/ee/user/project/releases/#creating-a-release-by-using-a-cicd-job
