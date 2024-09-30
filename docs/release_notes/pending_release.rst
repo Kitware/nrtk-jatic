@@ -87,6 +87,8 @@ Documentation
 
 * Updated README to include a section on `Interoperability`.
 
+* Restored and improved review process documentation.
+
 Fixes
 -----
 

@@ -16,8 +16,8 @@ interoperability of `nrtk` functionality with `maite`. The scripts under
 with `maite`'s dataset and augmentation protocols. The `src/nrtk_jatic/utils`
 folder houses generic util scripts and the NRTK CLI entrypoint script.
 Finally, the `examples` folder consists of Jupyter notebooks showing
-end-to-end ML T&E workflows demonstrating natural robustness testing of computer vision models with `nrtk`, 
-and integrations of `nrtk` with other JATIC tools, 
+end-to-end ML T&E workflows demonstrating natural robustness testing of computer vision models with `nrtk`,
+and integrations of `nrtk` with other JATIC tools,
 by using the interoperability standards provided by `maite`
 
 Additional information about JATIC and its design principles can be found
