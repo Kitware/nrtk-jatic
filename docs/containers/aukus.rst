@@ -9,7 +9,7 @@ created.
 
 Given a COCO dataset and an NRTK factory configuration file, the AUKUS container is able to
 generate perturbed images for each image in the dataset. Each perturbed image will be saved
-to a given output directory as an individual image file. Once all perturbed images are saved, 
+to a given output directory as an individual image file. Once all perturbed images are saved,
 the container will terminate.
 
 How to Use

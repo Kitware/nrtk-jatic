@@ -51,10 +51,12 @@ Optional Sensor Parameters
   Detector center-to-center spacings (pitch) in the x and y directions (m). Defualt value of 0.0000074.
 
 - **opt_trans_wavelengths** (numpy array)
-  Spectral bandpass of the camera (m). At minimum, start and end wavelengths should be specified. Defualt value of [3.8e-7, 7.0e-7].
+  Spectral bandpass of the camera (m). At minimum, start and end wavelengths should be specified. Defualt value of
+  [3.8e-7, 7.0e-7].
 
 - **optics_transmission** (float)
-  Full system in-band optical transmission (unitless). Loss due to any telescope obscuration should *not* be included in this optical transmission array.
+  Full system in-band optical transmission (unitless). Loss due to any telescope obscuration should *not* be included
+  in this optical transmission array.
 
 - **eta** (float)
   Relative linear obscuration (unitless).
@@ -87,7 +89,8 @@ Optional Sensor Parameters
   Line-of-sight angular drift rate during one integration time in the x and y directions, respectively (rad/s).
 
 - **otherNoise** (float)
-  A catch-all for noise terms that are not explicitly included elsewhere (read noise, photon noise, dark current, quantization noise, etc.).
+  A catch-all for noise terms that are not explicitly included elsewhere (read noise, photon noise, dark current,
+  quantization noise, etc.).
 
 Optional Scenario Parameters
 ============================
@@ -106,7 +109,8 @@ Optional Scenario Parameters
   Default value of 75.
 
 - **ground_range** (integer)
-  Distance on the ground between the target and sensor in meters. The following ground ranges are included in the database at each altitude until the ground range exceeds the distance to the spherical earth horizon:
+  Distance on the ground between the target and sensor in meters. The following ground ranges are included in the
+  database at each altitude until the ground range exceeds the distance to the spherical earth horizon:
   - 0, 100, 500 meters
   - 1000 to 20000 in 1000 meter steps
   - 22000 to 80000 in 2000 meter steps
