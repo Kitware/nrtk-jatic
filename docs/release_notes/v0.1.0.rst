@@ -50,8 +50,8 @@ API
 * Added additional POST request specifically to accept the AUKUS json schema
   and call our main API with that data
 
-* Added `Dockerfile` and `compose.yaml` to containerize the `nrtk-cdao` package
-  and run `nrtk-perturber-cli`.
+* Added ``Dockerfile`` and ``compose.yaml`` to containerize the ``nrtk-cdao`` package
+  and run ``nrtk-perturber-cli``.
 
 * Added config file support for loading pyBSM factories for NRTKaaS.
 
@@ -86,19 +86,19 @@ Utils
 
 Python Version Support
 
-* Added support for `py3.12`
+* Added support for ``py3.12``
 
 CI/CD
 
-* Updated CI test matrix to support `py3.12`
+* Updated CI test matrix to support ``py3.12``
 
 * Added additional entrypoint testing.
 
 * Major overhaul of pipeline to improve efficiency and yml readability.
 
-* Added `publish` on tag to `PyPi`.
+* Added ``publish`` on tag to ``PyPi``.
 
-* Updated the `docs` building script to run properly on `main`.
+* Updated the ``docs`` building script to run properly on ``main``.
 
 Other
 
@@ -109,12 +109,12 @@ Other
 Fixes
 -----
 
-* Updated to use `nrtk>=0.5.3` which patched an issue with `numpy` dependency resolution.
+* Updated to use ``nrtk>=0.5.3`` which patched an issue with ``numpy`` dependency resolution.
 
 * Numpy is used by the package but was never added to the list of dependencies and
-  was instead installed indirectly from `nrtk`. Added `numpy` as a required
+  was instead installed indirectly from ``nrtk``. Added ``numpy`` as a required
   dependency, which also has the side effect of solving resolution issues.
 
-* Updated `numpy` hinge for `Python 3.12`
+* Updated ``numpy`` hinge for ``Python 3.12``
 
 * Updated git lfs to properly track large files in any directory.
