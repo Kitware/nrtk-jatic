@@ -7,7 +7,7 @@ from maite.testing.pyright import list_error_messages, pyright_analyze
     ("filepath", "expected_num_errors"),
     [
         ("examples/augmentations.ipynb", 0),
-        ("examples/jatic-perturbations.ipynb", 0),
+        ("examples/jatic-perturbations-saliency.ipynb", 0),
         ("examples/daml/daml_example_notebook.ipynb", 0),
         ("examples/gradio/nrtk-gradio.ipynb", 0),
     ],
