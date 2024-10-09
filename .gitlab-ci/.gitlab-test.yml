@@ -22,7 +22,8 @@ notebooks:
       - NOTEBOOK_DIR: "examples"
         NOTEBOOK_FILE: [
           "augmentations.ipynb",
-          "daml/daml_example_notebook.ipynb",
+          "jatic-perturbations-saliency.ipynb",
+          # "daml/daml_example_notebook.ipynb", broken notebook
         ]
       - NOTEBOOK_DIR: "examples/gradio"
         NOTEBOOK_FILE: [

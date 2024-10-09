@@ -8,6 +8,8 @@ Features
 
 * Added a test to ``test_nrtk_perturber_cli`` that uses a generic factory config file.
 
+* Added ``jatic-perturbations-saliency`` example notebook to show integration with ``xaitk-saliency``.
+
 Interoperability
 
 * Added ``JATICClassificationAugmentationWithMetric`` workflow which performs
