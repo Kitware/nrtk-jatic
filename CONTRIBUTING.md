@@ -4,8 +4,8 @@
 Here we describe at a high level how to contribute to `nrtk-jatic`.
 See the [`nrtk-jatic` README](README.md) file for additional information.
 
-1.  Navigate to the official `nrtk-jatic` repository maintained [on JATIC GitLab](
-    https://gitlab.jatic.net/jatic/kitware/nrtk-jatic).
+1.  Navigate to the official `nrtk-jatic` repository maintained [on Kitware Github](
+    https://github.com/kitware/nrtk-jatic).
 
 2.  Fork `nrtk-jatic` into your GitLab user namespace and clone that onto
     your system.
