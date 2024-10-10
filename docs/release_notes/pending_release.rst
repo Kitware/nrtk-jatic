@@ -4,6 +4,10 @@ Pending Release Notes
 Updates / New Features
 ----------------------
 
+Build
+
+* New minimum supported python changed to ``python = "^3.9"`` due to 3.8 EOL.
+
 Features
 
 * Added a test to ``test_nrtk_perturber_cli`` that uses a generic factory config file.
@@ -28,6 +32,10 @@ Dependencies
 * Update ``maite`` to ^0.6.0.
 
 * Update ``nrtk`` to >=0.11.0.
+
+* Updated python minimum requirement to 3.9 (up from 3.8.1) due to 3.8 EOL. This included updates to certain
+  dependencies with bifurcations, an update to pinned versions for development/CI, and removal of 3.8 from CI.
+
 
 CI/CD
 
