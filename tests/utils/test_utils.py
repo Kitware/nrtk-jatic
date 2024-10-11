@@ -10,9 +10,7 @@ class ResizePerturber(PerturbImage):
         self.w = w
         self.h = h
 
-    def perturb(
-        self, image: np.ndarray, additional_params: Optional[Dict[str, Any]] = None
-    ) -> np.ndarray:
+    def perturb(self, image: np.ndarray, additional_params: Optional[Dict[str, Any]] = None) -> np.ndarray:
         """Resize image."""
         if additional_params is None:
             additional_params = {}

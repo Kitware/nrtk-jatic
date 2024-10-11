@@ -70,9 +70,7 @@ class TestAPIConversionFunctions:
                                     1.1e-6,
                                 ]
                             ),
-                            qe=np.asarray(
-                                [0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]
-                            ),
+                            qe=np.asarray([0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]),
                         )
                     ),
                     "scenario": to_config_dict(
@@ -88,9 +86,7 @@ class TestAPIConversionFunctions:
             ),
         ],
     )
-    def test_build_factory(
-        self, data: Dict[str, Any], expected: Dict[str, Any]
-    ) -> None:
+    def test_build_factory(self, data: Dict[str, Any], expected: Dict[str, Any]) -> None:
         """Test if _build_pybsm_factory returns the expected factory."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         factory = build_factory(schema)
@@ -151,9 +147,7 @@ class TestAPIConversionFunctions:
         with pytest.raises(ValueError):  # noqa: PT011
             build_factory(schema)
 
-    @pytest.mark.skipif(
-        not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed."
-    )
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
     @pytest.mark.parametrize(
         "data",
         [
@@ -178,6 +172,4 @@ class TestAPIConversionFunctions:
         for i in range(len(dataset)):
             assert dataset[i][2]["gsd"] == data["image_metadata"][i]["gsd"]
         # Check number of image matches
-        assert len(dataset) == len(
-            os.listdir(os.path.join(data["dataset_dir"], "images"))
-        )
+        assert len(dataset) == len(os.listdir(os.path.join(data["dataset_dir"], "images")))

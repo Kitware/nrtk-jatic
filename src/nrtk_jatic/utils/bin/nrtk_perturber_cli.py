@@ -59,9 +59,7 @@ def nrtk_perturber_cli(
     """
     if generate_config_file:
         config: Dict[str, Any] = dict()
-        config["PerturberFactory"] = make_default_config(
-            PerturbImageFactory.get_impls()
-        )
+        config["PerturberFactory"] = make_default_config(PerturbImageFactory.get_impls())
         json.dump(config, generate_config_file, indent=4)
 
         exit()
@@ -74,14 +72,10 @@ def nrtk_perturber_cli(
     # Load COCO dataset
     coco_file = Path(dataset_dir) / "annotations.json"
     if not coco_file.is_file():
-        raise ValueError(
-            "Could not identify annotations file. Expected at '[dataset_dir]/annotations.json'"
-        )
+        raise ValueError("Could not identify annotations file. Expected at '[dataset_dir]/annotations.json'")
     logging.info(f"Loading kwcoco annotations from {coco_file}")
     if not is_usable:
-        print(
-            "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
-        )
+        print("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
         exit(-1)
     kwcoco_dataset = kwcoco.CocoDataset(coco_file)
 
@@ -89,12 +83,9 @@ def nrtk_perturber_cli(
     metadata_file = Path(dataset_dir) / "image_metadata.json"
     if not metadata_file.is_file():
         logging.warn(
-            "Could not identify metadata file, assuming no metadata. "
-            "Expected at '[dataset_dir]/image_metadata.json'"
+            "Could not identify metadata file, assuming no metadata. " "Expected at '[dataset_dir]/image_metadata.json'"
         )
-        metadata: List[Dict[str, Any]] = [
-            dict() for _ in range(len(kwcoco_dataset.imgs))
-        ]
+        metadata: List[Dict[str, Any]] = [dict() for _ in range(len(kwcoco_dataset.imgs))]
     else:
         logging.info(f"Loading metadata from {metadata_file}")
         with open(metadata_file) as f:
@@ -102,9 +93,7 @@ def nrtk_perturber_cli(
 
     # Load config
     config = json.load(config_file)
-    perturber_factory = from_config_dict(
-        config["PerturberFactory"], PerturbImageFactory.get_impls()
-    )
+    perturber_factory = from_config_dict(config["PerturberFactory"], PerturbImageFactory.get_impls())
 
     # Initialize dataset object
     input_dataset = COCOJATICObjectDetectionDataset(
@@ -112,15 +101,11 @@ def nrtk_perturber_cli(
     )
 
     # Augment input dataset
-    augmented_datasets = nrtk_perturber(
-        maite_dataset=input_dataset, perturber_factory=perturber_factory
-    )
+    augmented_datasets = nrtk_perturber(maite_dataset=input_dataset, perturber_factory=perturber_factory)
 
     # Save each augmented dataset to its own directory
     output_path = Path(output_dir)
-    img_filenames = [
-        Path(img_path.name) for img_path in input_dataset.get_img_path_list()
-    ]
+    img_filenames = [Path(img_path.name) for img_path in input_dataset.get_img_path_list()]
     for perturb_params, aug_dataset in augmented_datasets:
         dataset_to_coco(
             dataset=aug_dataset,

@@ -82,28 +82,27 @@ class TestJATICClassificationAugmentationWithMetric:
     md_in = [{"some_metadata": 1}]
     md_aug_nop_pertuber = [
         {
-            'nrtk::perturber': {},
+            "nrtk::perturber": {},
             "some_metadata": 1,
             "image_info": {
                 "width": np.transpose(img_in, (2, 0, 1)).shape[1],
-                "height": np.transpose(img_in, (2, 0, 1)).shape[0]
-            }
+                "height": np.transpose(img_in, (2, 0, 1)).shape[0],
+            },
         }
     ]
 
     @pytest.mark.parametrize(
-        ("augmentations", "targets_in", "expected_targets_out",
-         "metric_input_img2", "metric_metadata", "expectation"),
+        ("augmentations", "targets_in", "expected_targets_out", "metric_input_img2", "metric_metadata", "expectation"),
         [
-            (
-                None, [np.asarray([0])], [np.asarray([0])],
-                None, md_in, does_not_raise()
-            ),
+            (None, [np.asarray([0])], [np.asarray([0])], None, md_in, does_not_raise()),
             (
                 [JATICClassificationAugmentation(NOPPerturber())],
-                [np.asarray([0])], [np.asarray([0])], img_in,
-                md_aug_nop_pertuber, does_not_raise()
-            )
+                [np.asarray([0])],
+                [np.asarray([0])],
+                img_in,
+                md_aug_nop_pertuber,
+                does_not_raise(),
+            ),
         ],
         ids=["None", "no-op perturber"],
     )
@@ -114,7 +113,7 @@ class TestJATICClassificationAugmentationWithMetric:
         expected_targets_out: TargetBatchType,
         metric_input_img2: np.ndarray,
         metric_metadata: List[Dict[str, Any]],
-        expectation: ContextManager
+        expectation: ContextManager,
     ) -> None:
         """Test that the augmentation adapter works with the Image Metric workflow.
 
@@ -125,8 +124,7 @@ class TestJATICClassificationAugmentationWithMetric:
         perturber = NOPPerturber()
         metric_patch = MagicMock(spec=ImageMetric, return_value=1.0)
         metric_augmentation = JATICClassificationAugmentationWithMetric(
-            augmentations=augmentations,
-            metric=metric_patch
+            augmentations=augmentations, metric=metric_patch
         )
 
         # Get copies to check for modification
@@ -139,11 +137,9 @@ class TestJATICClassificationAugmentationWithMetric:
 
         with expectation:
             # Apply augmentation via adapter
-            imgs_out, targets_out, md_out = metric_augmentation((
-                [np.transpose(self.img_in, (2, 0, 1))],
-                targets_in,
-                self.md_in
-            ))
+            imgs_out, targets_out, md_out = metric_augmentation(
+                ([np.transpose(self.img_in, (2, 0, 1))], targets_in, self.md_in)
+            )
 
             # Check if mocked metric was called with appropriate inputs
             kwargs = metric_patch.call_args.kwargs

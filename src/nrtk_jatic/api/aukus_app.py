@@ -15,9 +15,7 @@ from nrtk_jatic.api.schema import NrtkPerturbInputSchema
 class Settings(BaseSettings):
     NRTK_IP: Optional[str] = None
 
-    model_config = SettingsConfigDict(
-        env_file=os.getcwd().split("nrtk-jatic")[0] + "nrtk-jatic/configs/AUKUS_app.env"
-    )
+    model_config = SettingsConfigDict(env_file=os.getcwd().split("nrtk-jatic")[0] + "nrtk-jatic/configs/AUKUS_app.env")
 
 
 settings = Settings()
@@ -27,17 +25,13 @@ AUKUS_app = FastAPI()
 @AUKUS_app.post("/")
 def handle_aukus_post(data: AukusDatasetSchema) -> List[AukusDatasetSchema]:
     if data.data_format != "COCO":
-        raise HTTPException(
-            status_code=400, detail="Labels provided in incorrect format."
-        )
+        raise HTTPException(status_code=400, detail="Labels provided in incorrect format.")
     if not settings.NRTK_IP:
         raise HTTPException(status_code=400, detail="Provide NRTK_IP in AUKUS_app.env.")
 
     # Read NRTK configuration file and add relevant data to internalJSON
     if not os.path.isfile(data.nrtk_config):
-        raise HTTPException(
-            status_code=400, detail="Provided NRTK config is not a valid file."
-        )
+        raise HTTPException(status_code=400, detail="Provided NRTK config is not a valid file.")
 
     annotation_file = Path(data.uri) / data.labels[0]["iri"]
 

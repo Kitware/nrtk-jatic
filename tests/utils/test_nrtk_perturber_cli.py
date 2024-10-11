@@ -19,9 +19,7 @@ class TestNRTKPerturberCLI:
     Find more information here: https://docs.pytest.org/en/6.2.x/tmpdir.html
     """
 
-    @pytest.mark.skipif(
-        not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed."
-    )
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
     @mock.patch(
         "nrtk_jatic.utils.bin.nrtk_perturber_cli.nrtk_perturber",
         return_value=[
@@ -31,9 +29,7 @@ class TestNRTKPerturberCLI:
             ("_f-0.014_D-0.003_px-2e-05", MagicMock(spec=Dataset)),
         ],
     )
-    @mock.patch(
-        "nrtk_jatic.utils.bin.nrtk_perturber_cli.dataset_to_coco", return_value=None
-    )
+    @mock.patch("nrtk_jatic.utils.bin.nrtk_perturber_cli.dataset_to_coco", return_value=None)
     def test_nrtk_perturber(
         self,
         dataset_to_coco_patch: MagicMock,
@@ -95,9 +91,7 @@ class TestNRTKPerturberCLI:
         ]
         dataset_to_coco_patch.assert_has_calls(calls)
 
-    @pytest.mark.skipif(
-        not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed."
-    )
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
     @pytest.mark.parametrize(
         ("config_file", "expectation"),
         [
@@ -140,9 +134,7 @@ class TestNRTKPerturberCLI:
         assert "Could not identify metadata file, assuming no metadata." in caplog.text
 
     @mock.patch("pathlib.Path.is_file", return_value=False)
-    def test_missing_annotations(
-        self, is_file_patch: MagicMock, tmpdir: py.path.local
-    ) -> None:
+    def test_missing_annotations(self, is_file_patch: MagicMock, tmpdir: py.path.local) -> None:
         """Check that an exception is appropriately raised if the annotations file is missing."""
         output_dir = tmpdir.join("out")
 

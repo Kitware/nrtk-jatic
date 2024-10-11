@@ -31,20 +31,14 @@ def build_factory(data: NrtkPerturbInputSchema) -> PerturbImageFactory:
     with open(data.config_file) as config_file:
         config = json.load(config_file)
         if "PerturberFactory" not in config.keys():
-            raise ValueError(
-                f'Config file at {data.config_file} does not have "PerturberFactory" key'
-            )
-        perturber_factory = from_config_dict(
-            config["PerturberFactory"], PerturbImageFactory.get_impls()
-        )
+            raise ValueError(f'Config file at {data.config_file} does not have "PerturberFactory" key')
+        perturber_factory = from_config_dict(config["PerturberFactory"], PerturbImageFactory.get_impls())
 
     return perturber_factory
 
 
 if not is_usable:
-    LOG.warning(
-        "load_COCOJATIC_dataset requires additional dependencies, please install 'nrtk-jatic[tools]'"
-    )
+    LOG.warning("load_COCOJATIC_dataset requires additional dependencies, please install 'nrtk-jatic[tools]'")
 else:
 
     def load_COCOJATIC_dataset(  # noqa: N802
@@ -55,9 +49,7 @@ else:
         :param data: dictionary of Schema from schema.py
         """
         if not is_usable:
-            raise ImportError(
-                "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
-            )
+            raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
         kwcoco_dataset = kwcoco.CocoDataset(data.label_file)
 
         dataset = COCOJATICObjectDetectionDataset(
