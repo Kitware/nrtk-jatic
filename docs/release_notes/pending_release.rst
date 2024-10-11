@@ -105,3 +105,7 @@ Fixes
 -----
 
 * Fixed an issue where if ``opencv-python`` was missing then the pipeline would fail.
+
+* Optional dependencies were setup in a way that ``opencv`` was missing when
+  ``pybsm`` was installed, this has been fixed so ``opencv`` can be installed
+  via ``pybsm`` install or as standalone for ``nrtk`` on its own.
