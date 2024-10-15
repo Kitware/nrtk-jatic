@@ -19,7 +19,6 @@ classifiers = [
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: Unix',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
@@ -33,18 +32,25 @@ description = ""
 
 [tool.poetry.dependencies]
 # :auto python-version:
-python = "^3.8.1"
+python = "^3.9"
 # :auto python-version:
 
 # Python capped to <3.13 because of:
 # https://stackoverflow.com/questions/77431252/why-doesnt-poetry-select-the-good-version-of-my-dependency
-numpy = [
-    {version = ">=1.22,<1.25", python = "~3.8"}, # CVE-2021-34141
-    {version = ">=1.22,^1.25", python = ">=3.9,<3.12" }, # CVE-2021-34141
-    {version = "^1.26", python = ">=3.12,<3.13" } # numpy==1.26 is the first release supporting python 3.12
-]
+numpy = {version = ">=1.22,<2.0", python = ">=3.9,<3.13" } # CVE-2021-34141
 maite = "^0.6.0"
-nrtk = ">=0.11.0"
+
+# This does not work with poetry install but does work with pip. Poetry
+# has a PR working on it and hopefully won't be too far into the future
+# https://github.com/python-poetry/poetry/pull/9553
+nrtk = [
+    {version = ">=0.14.0"},
+    {version = ">=0.14.0", extras=["pybsm-graphics"], markers = "extra == 'pybsm-graphics'", optional = true},
+    {version = ">=0.14.0", extras=["pybsm-headless"], markers = "extra == 'pybsm-headless'", optional = true},
+    {version = ">=0.14.0", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
+    {version = ">=0.14.0", extras=["headless"], markers = "extra == 'headless'", optional = true},
+]
+
 # REST API deps
 fastapi = "^0.110.0"
 httpx = "^0.27.0"
@@ -58,7 +64,7 @@ responses = ">=0.25.0"
 #JSON-Schema
 
 # Optional for tools extra
-kwcoco = { version = ">=0.2.18", optional = true}
+kwcoco = {version = ">=0.2.18", optional = true}
 # Optional for maite-cpu
 torch = {version = ">=1.7,!=1.12.0", optional = true, source = "pytorch_cpu"}
 torchvision = {version = ">=0.10.0", optional = true, source = "pytorch_cpu"}
@@ -66,6 +72,11 @@ torchvision = {version = ">=0.10.0", optional = true, source = "pytorch_cpu"}
 [tool.poetry.extras]
 tools = ["kwcoco"]
 maite-cpu = ["torch", "torchvision"]
+# these use the "markers" check in nrtk optional extras
+pybsm-graphics = ["nrtk"]
+pybsm-headless = ["nrtk"]
+graphics = ["nrtk"]
+headless = ["nrtk"]
 
 # :auto dev-linting:
 # Linting
@@ -201,7 +212,7 @@ known-first-party = ["nrtk_jatic"]
 
 # :auto mypy:
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 disallow_untyped_defs = true
 ignore_errors = false
 ignore_missing_imports = true

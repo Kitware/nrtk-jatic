@@ -39,22 +39,15 @@ def handle_post(data: NrtkPerturbInputSchema) -> NrtkPerturbOutputSchema:
 
         # Load dataset
         if not is_usable:
-            raise ImportError(
-                "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
-            )
+            raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
         input_dataset = load_COCOJATIC_dataset(data)
 
         # Call nrtk_perturber
-        augmented_datasets = nrtk_perturber(
-            maite_dataset=input_dataset, perturber_factory=perturber_factory
-        )
+        augmented_datasets = nrtk_perturber(maite_dataset=input_dataset, perturber_factory=perturber_factory)
 
         # Format output
         datasets_out = list()
-        img_filenames = [
-            Path("images") / img_path.name
-            for img_path in input_dataset.get_img_path_list()
-        ]
+        img_filenames = [Path("images") / img_path.name for img_path in input_dataset.get_img_path_list()]
         for perturb_params, aug_dataset in augmented_datasets:
             full_output_dir = Path(data.output_dir) / perturb_params
             dataset_to_coco(

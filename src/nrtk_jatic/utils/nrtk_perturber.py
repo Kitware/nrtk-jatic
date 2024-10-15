@@ -10,9 +10,7 @@ from nrtk_jatic.interop.object_detection.augmentation import JATICDetectionAugme
 from nrtk_jatic.interop.object_detection.dataset import JATICObjectDetectionDataset
 
 
-def nrtk_perturber(
-    maite_dataset: Dataset, perturber_factory: PerturbImageFactory
-) -> Iterable[Tuple[str, Dataset]]:
+def nrtk_perturber(maite_dataset: Dataset, perturber_factory: PerturbImageFactory) -> Iterable[Tuple[str, Dataset]]:
     """Generate augmented dataset(s) of type maite.protocols.object_detection.Dataset.
 
     Generate augmented dataset(s) of type maite.protocols.object_detection.Dataset
@@ -31,9 +29,7 @@ def nrtk_perturber(
         perturb_factory_keys = [perturber_factory.theta_key]
         thetas = [perturber_factory.thetas]
 
-    perturber_combinations = [
-        dict(zip(perturb_factory_keys, v)) for v in itertools.product(*thetas)
-    ]
+    perturber_combinations = [dict(zip(perturb_factory_keys, v)) for v in itertools.product(*thetas)]
     logging.info(f"Perturber sweep values: {perturber_combinations}")
 
     # Iterate through the different perturber factory parameter combinations and
@@ -41,12 +37,8 @@ def nrtk_perturber(
     logging.info("Starting perturber sweep")
     augmented_datasets: List[Dataset] = []
     output_perturb_params: List[str] = []
-    for i, (perturber_combo, perturber) in enumerate(
-        zip(perturber_combinations, perturber_factory)
-    ):
-        output_perturb_params.append(
-            "".join("_{!s}-{!s}".format(k, v) for k, v in perturber_combo.items())
-        )
+    for i, (perturber_combo, perturber) in enumerate(zip(perturber_combinations, perturber_factory)):
+        output_perturb_params.append("".join("_{!s}-{!s}".format(k, v) for k, v in perturber_combo.items()))
 
         logging.info(f"Starting perturbation for {output_perturb_params[i]}")
 
@@ -72,7 +64,5 @@ def nrtk_perturber(
             aug_dets.append(aug_det[0])
             aug_metadata.append(aug_md[0])
 
-        augmented_datasets.append(
-            JATICObjectDetectionDataset(aug_imgs, aug_dets, aug_metadata)
-        )
+        augmented_datasets.append(JATICObjectDetectionDataset(aug_imgs, aug_dets, aug_metadata))
     return zip(output_perturb_params, augmented_datasets)

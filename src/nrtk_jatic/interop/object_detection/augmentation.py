@@ -64,9 +64,7 @@ class JATICDetectionAugmentation(Augmentation):
             y_aug_boxes[:, 1] *= aug_height / height
             y_aug_boxes[:, 2] *= aug_width / width
             y_aug_boxes[:, 3] *= aug_height / height
-            aug_dets.append(
-                JATICDetectionTarget(y_aug_boxes, y_aug_labels, y_aug_scores)
-            )
+            aug_dets.append(JATICDetectionTarget(y_aug_boxes, y_aug_labels, y_aug_scores))
 
             m_aug = copy.deepcopy(md)
             m_aug.update({"nrtk::perturber": self.augment.get_config()})
@@ -117,16 +115,10 @@ class JATICDetectionAugmentationWithMetric(Augmentation):
                 img_2 = np.transpose(aug_img, (1, 2, 0))
 
             # Compute Image metric values
-            metric_value = self.metric(
-                img_1=img_1,
-                img_2=img_2,
-                additional_params=aug_md
-            )
+            metric_value = self.metric(img_1=img_1, img_2=img_2, additional_params=aug_md)
             metric_aug_md = copy.deepcopy(aug_md)
             metric_name = self.metric.__class__.__name__
-            metric_aug_md.update({
-                "nrtk::" + metric_name: metric_value
-            })
+            metric_aug_md.update({"nrtk::" + metric_name: metric_value})
             metric_aug_metadata.append(metric_aug_md)
 
         # return batch of augmented/original images, detections and metric-updated metadata

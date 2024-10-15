@@ -43,23 +43,19 @@ class TestJATICDetectionAugmentation:
                 ResizePerturber(w=64, h=512),
                 [
                     JATICDetectionTarget(
-                        boxes=np.asarray(
-                            [[4.0, 8.0, 16.0, 32.0], [2.0, 4.0, 6.0, 8.0]]
-                        ),
+                        boxes=np.asarray([[4.0, 8.0, 16.0, 32.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([1, 5]),
                         scores=np.asarray([0.8, 0.86]),
                     )
                 ],
                 [
                     JATICDetectionTarget(
-                        boxes=np.asarray(
-                            [[1.0, 16.0, 4.0, 64.0], [0.5, 8.0, 1.5, 16.0]]
-                        ),
+                        boxes=np.asarray([[1.0, 16.0, 4.0, 64.0], [0.5, 8.0, 1.5, 16.0]]),
                         labels=np.asarray([1, 5]),
                         scores=np.asarray([0.8, 0.86]),
                     )
                 ],
-            )
+            ),
         ],
         ids=["no-op perturber", "resize"],
     )
@@ -114,11 +110,10 @@ class TestJATICDetectionAugmentation:
 class TestJATICDetectionAugmentationWithMetric:
     img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
     md_in = [{"some_metadata": 1}]
-    md_aug_nop_pertuber = [{'nrtk::perturber': {}, "some_metadata": 1}]
+    md_aug_nop_pertuber = [{"nrtk::perturber": {}, "some_metadata": 1}]
 
     @pytest.mark.parametrize(
-        ("augmentations", "targets_in", "expected_targets_out",
-         "metric_input_img2", "metric_metadata", "expectation"),
+        ("augmentations", "targets_in", "expected_targets_out", "metric_input_img2", "metric_metadata", "expectation"),
         [
             (
                 None,
@@ -138,7 +133,7 @@ class TestJATICDetectionAugmentationWithMetric:
                 ],
                 None,
                 md_in,
-                does_not_raise()
+                does_not_raise(),
             ),
             (
                 [JATICDetectionAugmentation(NOPPerturber())],
@@ -158,8 +153,8 @@ class TestJATICDetectionAugmentationWithMetric:
                 ],
                 img_in,
                 md_aug_nop_pertuber,
-                does_not_raise()
-            )
+                does_not_raise(),
+            ),
         ],
         ids=["None", "no-op perturber"],
     )
@@ -170,7 +165,7 @@ class TestJATICDetectionAugmentationWithMetric:
         expected_targets_out: TargetBatchType,
         metric_input_img2: np.ndarray,
         metric_metadata: List[Dict[str, Any]],
-        expectation: ContextManager
+        expectation: ContextManager,
     ) -> None:
         """Test that the augmentation adapter works with the Image Metric workflow.
 
@@ -180,10 +175,7 @@ class TestJATICDetectionAugmentationWithMetric:
         """
         perturber = NOPPerturber()
         metric_patch = MagicMock(spec=ImageMetric, return_value=1.0)
-        metric_augmentation = JATICDetectionAugmentationWithMetric(
-            augmentations=augmentations,
-            metric=metric_patch
-        )
+        metric_augmentation = JATICDetectionAugmentationWithMetric(augmentations=augmentations, metric=metric_patch)
 
         # Get copies to check for modification
         img_copy = np.copy(self.img_in)
@@ -195,11 +187,9 @@ class TestJATICDetectionAugmentationWithMetric:
 
         with expectation:
             # Apply augmentation via adapter
-            imgs_out, targets_out, md_out = metric_augmentation((
-                [np.transpose(self.img_in, (2, 0, 1))],
-                targets_in,
-                self.md_in
-            ))
+            imgs_out, targets_out, md_out = metric_augmentation(
+                ([np.transpose(self.img_in, (2, 0, 1))], targets_in, self.md_in)
+            )
 
             # Check if mocked metric was called with appropriate inputs
             kwargs = metric_patch.call_args.kwargs

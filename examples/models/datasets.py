@@ -26,7 +26,7 @@ class ObjectDetectionData:
     def __next__(self):
         if self.n < len(self.boxes):
             self.n += 1
-            return self.boxes[self.n-1], self.labels[self.n-1], self.scores[self.n-1]
+            return self.boxes[self.n - 1], self.labels[self.n - 1], self.scores[self.n - 1]
         else:
             raise StopIteration
 
@@ -54,8 +54,9 @@ def _load_annotations(annotation_path: Path) -> pr.HasDataBoxesLabels:
             # change class label from 1...10 to 0...9
             label = int(row[5]) - 1
             labels.append(label)
-    return ObjectDetectionData(boxes=torch.stack(boxes).float(), labels=torch.tensor(labels).int(),
-                               scores=torch.ones((len(labels))).int())
+    return ObjectDetectionData(
+        boxes=torch.stack(boxes).float(), labels=torch.tensor(labels).int(), scores=torch.ones((len(labels))).int()
+    )
 
 
 class VisDroneDataset:
@@ -80,16 +81,16 @@ class VisDroneDataset:
     """
 
     classes = (
-        'pedestrian',
-        'people',
-        'bicycle',
-        'car',
-        'van',
-        'truck',
-        'tricycle',
-        'awning-tricycle',
-        'bus',
-        'motor',
+        "pedestrian",
+        "people",
+        "bicycle",
+        "car",
+        "van",
+        "truck",
+        "tricycle",
+        "awning-tricycle",
+        "bus",
+        "motor",
     )
 
     def __init__(self, root: Path | str, subset_ids: Sequence[str] | None = None):
@@ -142,7 +143,7 @@ class VisDroneDataset:
         self._reshape = False
         # load pre-computered brisque score
         self.brisque_scores = dict()
-        with open(self._root / 'brisque.csv', mode='r') as bscore_file:
+        with open(self._root / "brisque.csv", mode="r") as bscore_file:
             reader = csv.reader(bscore_file)
             next(reader)  # skip header
             self.brisque_scores = {rows[0]: rows[1] for rows in reader}
@@ -156,23 +157,16 @@ class VisDroneDataset:
     ) -> None:
         self._augmentation_func = agm
 
-    def set_reshape(
-        self,
-        value: bool
-    ) -> None:
+    def set_reshape(self, value: bool) -> None:
         self._reshape = value
 
     @overload
-    def __getitem__(self, index: slice) -> VisDroneDataset:
-        ...
+    def __getitem__(self, index: slice) -> VisDroneDataset: ...
 
     @overload
-    def __getitem__(self, index: int) -> pr.SupportsObjectDetection:
-        ...
+    def __getitem__(self, index: int) -> pr.SupportsObjectDetection: ...
 
-    def __getitem__(
-        self, index: int | slice
-    ) -> VisDroneDataset | pr.SupportsObjectDetection:
+    def __getitem__(self, index: int | slice) -> VisDroneDataset | pr.SupportsObjectDetection:
         if isinstance(index, int):
             image_path = self._images[index]
             image = Image.open(image_path)
@@ -198,7 +192,5 @@ class VisDroneDataset:
             return labeled_datum
         elif isinstance(index, slice):
             images_subset = self._images[index]
-            dataset_subset = VisDroneDataset(
-                root=self._root, subset_ids=[p.stem for p in images_subset]
-            )
+            dataset_subset = VisDroneDataset(root=self._root, subset_ids=[p.stem for p in images_subset])
             return dataset_subset

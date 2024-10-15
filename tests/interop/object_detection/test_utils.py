@@ -67,9 +67,7 @@ except ImportError:
                 {"id": 0, "name": "cat0", "supercategory": None},
                 {"id": 1, "name": "cat1", "supercategory": None},
             ],
-            pytest.raises(
-                ValueError, match=r"Image filename and dataset length mismatch"
-            ),
+            pytest.raises(ValueError, match=r"Image filename and dataset length mismatch"),
         ),
     ],
 )

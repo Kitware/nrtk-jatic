@@ -34,18 +34,12 @@ def dataset_to_coco(
         Each dictionary should contain the following keys: id, name, supercategory.
     """
     if len(img_filenames) != len(dataset):
-        raise ValueError(
-            f"Image filename and dataset length mismatch ({len(img_filenames)} != {len(dataset)})"
-        )
+        raise ValueError(f"Image filename and dataset length mismatch ({len(img_filenames)} != {len(dataset)})")
     if not is_usable:
-        raise ImportError(
-            "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
-        )
+        raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
     annotations = kwcoco.CocoDataset()
     for cat in dataset_categories:
-        annotations.add_category(
-            name=cat["name"], supercategory=cat["supercategory"], id=cat["id"]
-        )
+        annotations.add_category(name=cat["name"], supercategory=cat["supercategory"], id=cat["id"])
     mod_metadata = list()
 
     for i in range(len(dataset)):

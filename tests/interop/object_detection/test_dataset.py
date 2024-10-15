@@ -29,9 +29,7 @@ class TestJATICImageClassificationDataset:
                     ],
                     [
                         JATICDetectionTarget(
-                            boxes=np.asarray(
-                                [[0.0, 0.0, 100.0, 100.0], [0.0, 0.0, 100.0, 100.0]]
-                            ),
+                            boxes=np.asarray([[0.0, 0.0, 100.0, 100.0], [0.0, 0.0, 100.0, 100.0]]),
                             labels=np.asarray([1, 1]),
                             scores=np.asarray([1, 1]),
                         ),
@@ -46,9 +44,7 @@ class TestJATICImageClassificationDataset:
                 [
                     [
                         JATICDetectionTarget(
-                            boxes=np.asarray(
-                                [[0.0, 0.0, 25.0, 200.0], [0.0, 0.0, 25.0, 200.0]]
-                            ),
+                            boxes=np.asarray([[0.0, 0.0, 25.0, 200.0], [0.0, 0.0, 25.0, 200.0]]),
                             labels=np.asarray([1, 1]),
                             scores=np.asarray([1, 1]),
                         )

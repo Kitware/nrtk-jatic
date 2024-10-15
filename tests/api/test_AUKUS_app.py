@@ -21,9 +21,7 @@ def test_aukus_client() -> Generator:
 
 
 @responses.activate
-def test_handle_aukus_post(
-    test_aukus_client: TestClient, tmpdir: py.path.local
-) -> None:
+def test_handle_aukus_post(test_aukus_client: TestClient, tmpdir: py.path.local) -> None:
     aukus_dataset = AukusDatasetSchema(
         doc_type="Dataset Metadata",
         doc_version="0.1",
@@ -84,9 +82,7 @@ def test_handle_aukus_post(
         assert dataset["uri"] == str(base_path)
 
 
-def test_bad_data_format_post(
-    test_aukus_client: TestClient, tmpdir: py.path.local
-) -> None:
+def test_bad_data_format_post(test_aukus_client: TestClient, tmpdir: py.path.local) -> None:
     aukus_dataset = AukusDatasetSchema(
         doc_type="Dataset Metadata",
         doc_version="0.1",
@@ -123,9 +119,7 @@ def test_bad_data_format_post(
     assert response.json()["detail"] == "Labels provided in incorrect format."
 
 
-def test_bad_nrtk_config_post(
-    test_aukus_client: TestClient, tmpdir: py.path.local
-) -> None:
+def test_bad_nrtk_config_post(test_aukus_client: TestClient, tmpdir: py.path.local) -> None:
     aukus_dataset = AukusDatasetSchema(
         doc_type="Dataset Metadata",
         doc_version="0.1",

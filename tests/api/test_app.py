@@ -23,25 +23,23 @@ deps = ["kwcoco"]
 specs = [find_spec(dep) for dep in deps]
 is_usable = all(spec is not None for spec in specs)
 
-TEST_RETURN_VALUE = (
-    [  # repeated test return value for 3 tests, saved to var to save space
-        (
-            "perturb1",
-            JATICObjectDetectionDataset(
-                imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 11,
-                dets=[
-                    JATICDetectionTarget(
-                        boxes=np.random.rand(2, 4),
-                        labels=np.random.rand(2),
-                        scores=np.random.rand(2),
-                    )
-                ]
-                * 11,
-                metadata=[{}] * 11,
-            ),
-        )
-    ]
-)
+TEST_RETURN_VALUE = [  # repeated test return value for 3 tests, saved to var to save space
+    (
+        "perturb1",
+        JATICObjectDetectionDataset(
+            imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 11,
+            dets=[
+                JATICDetectionTarget(
+                    boxes=np.random.rand(2, 4),
+                    labels=np.random.rand(2),
+                    scores=np.random.rand(2),
+                )
+            ]
+            * 11,
+            metadata=[{}] * 11,
+        ),
+    )
+]
 
 
 @pytest.fixture()
@@ -53,9 +51,7 @@ def test_client() -> Generator:
 
 @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
 @mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_handle_post_pybsm(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
+def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
     """Check for an appropriate response to a "good" request."""
     # Test data to be sent in the POST request
     test_data = NrtkPerturbInputSchema(
@@ -96,6 +92,7 @@ def test_handle_post_pybsm(
                 "max_n": 96000.0,
                 "bit_depth": 11.9,
                 "max_well_fill": 0.005,
+                "n_tdi": 1.0,
                 "s_x": 0.0,
                 "s_y": 0.0,
                 "da_x": 0.0001,
@@ -160,9 +157,7 @@ def test_handle_post_pybsm(
 
 @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
 @mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_bad_gsd_post(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
+def test_bad_gsd_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
     """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
@@ -181,16 +176,11 @@ def test_bad_gsd_post(
     assert response.status_code == 400
 
     # Check that we got the correct error message
-    assert (
-        response.json()["detail"]
-        == "Image metadata length mismatch, metadata needed for every image"
-    )
+    assert response.json()["detail"] == "Image metadata length mismatch, metadata needed for every image"
 
 
 @mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_no_config_post(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
+def test_no_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
     """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
@@ -232,9 +222,7 @@ def test_no_config_post(
         )
     ],
 )
-def test_bad_config_post(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
+def test_bad_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
     """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
@@ -279,7 +267,4 @@ def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
     assert response.status_code == 400
 
     # Check that we got the correct error message
-    assert (
-        response.json()["detail"]
-        == "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
-    )
+    assert response.json()["detail"] == "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"

@@ -12,9 +12,7 @@ from maite.protocols.image_classification import (
 from nrtk.interfaces.image_metric import ImageMetric
 from nrtk.interfaces.perturb_image import PerturbImage
 
-IMG_CLASSIFICATION_BATCH_T = Tuple[
-    InputBatchType, TargetBatchType, DatumMetadataBatchType
-]
+IMG_CLASSIFICATION_BATCH_T = Tuple[InputBatchType, TargetBatchType, DatumMetadataBatchType]
 
 
 class JATICClassificationAugmentation(Augmentation):
@@ -78,8 +76,7 @@ class JATICClassificationAugmentationWithMetric(Augmentation):
         Image metric to be applied for a given image.
     """
 
-    def __init__(self, augmentations: Optional[Sequence[Augmentation]],
-                 metric: ImageMetric) -> None:
+    def __init__(self, augmentations: Optional[Sequence[Augmentation]], metric: ImageMetric) -> None:
         self.augmentations = augmentations
         self.metric = metric
 
@@ -106,16 +103,10 @@ class JATICClassificationAugmentationWithMetric(Augmentation):
                 img_2 = np.transpose(aug_img, (1, 2, 0))
 
             # Compute Image metric values
-            metric_value = self.metric(
-                img_1=img_1,
-                img_2=img_2,
-                additional_params=aug_md
-            )
+            metric_value = self.metric(img_1=img_1, img_2=img_2, additional_params=aug_md)
             metric_aug_md = copy.deepcopy(aug_md)
             metric_name = self.metric.__class__.__name__
-            metric_aug_md.update({
-                "nrtk::" + metric_name: metric_value
-            })
+            metric_aug_md.update({"nrtk::" + metric_name: metric_value})
             metric_aug_metadata.append(metric_aug_md)
 
         # return batch of augmented/original images, annotations and metric-updated metadata
