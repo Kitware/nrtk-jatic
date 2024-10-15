@@ -21,27 +21,25 @@ from tests import BAD_NRTK_CONFIG, DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG
 
 deps = ["kwcoco"]
 specs = [find_spec(dep) for dep in deps]
-is_usable = all([spec is not None for spec in specs])
+is_usable = all(spec is not None for spec in specs)
 
-TEST_RETURN_VALUE = (
-    [  # repeated test return value for 3 tests, saved to var to save space
-        (
-            "perturb1",
-            JATICObjectDetectionDataset(
-                imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 11,
-                dets=[
-                    JATICDetectionTarget(
-                        boxes=np.random.rand(2, 4),
-                        labels=np.random.rand(2),
-                        scores=np.random.rand(2),
-                    )
-                ]
-                * 11,
-                metadata=[{}] * 11,
-            ),
-        )
-    ]
-)
+TEST_RETURN_VALUE = [  # repeated test return value for 3 tests, saved to var to save space
+    (
+        "perturb1",
+        JATICObjectDetectionDataset(
+            imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 11,
+            dets=[
+                JATICDetectionTarget(
+                    boxes=np.random.rand(2, 4),
+                    labels=np.random.rand(2),
+                    scores=np.random.rand(2),
+                )
+            ]
+            * 11,
+            metadata=[{}] * 11,
+        ),
+    )
+]
 
 
 @pytest.fixture()
@@ -53,11 +51,8 @@ def test_client() -> Generator:
 
 @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
 @mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_handle_post_pybsm(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
-    """Check for an appropriate response to a "good" request.
-    """
+def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
+    """Check for an appropriate response to a "good" request."""
     # Test data to be sent in the POST request
     test_data = NrtkPerturbInputSchema(
         id="0",
@@ -78,30 +73,31 @@ def test_handle_post_pybsm(
 
     factory_config = kwargs["perturber_factory"].get_config()
     assert factory_config == {
-        "theta_keys": ["f", "D", "px"],
+        "theta_keys": ["f", "D", "p_x"],
         "sensor": {
             "type": "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor",
             "nrtk.impls.perturb_image.pybsm.sensor.PybsmSensor": {
                 "name": "L32511x",
                 "D": 0.004,
                 "f": 0.014285714285714287,
-                "px": 2e-05,
-                "optTransWavelengths": [3.8e-07, 7e-07],
-                "opticsTransmission": [1.0, 1.0],
+                "p_x": 2e-05,
+                "opt_trans_wavelengths": [3.8e-07, 7e-07],
+                "optics_transmission": [1.0, 1.0],
                 "eta": 0.4,
-                "wx": 2e-05,
-                "wy": 2e-05,
-                "intTime": 0.03,
-                "darkCurrent": 0.0,
-                "readNoise": 25.0,
-                "maxN": 96000.0,
-                "bitdepth": 11.9,
-                "maxWellFill": 0.005,
-                "sx": 0.0,
-                "sy": 0.0,
-                "dax": 0.0001,
-                "day": 0.0001,
-                "qewavelengths": [
+                "w_x": 2e-05,
+                "w_y": 2e-05,
+                "int_time": 0.03,
+                "dark_current": 0.0,
+                "read_noise": 25.0,
+                "max_n": 96000.0,
+                "bit_depth": 11.9,
+                "max_well_fill": 0.005,
+                "n_tdi": 1.0,
+                "s_x": 0.0,
+                "s_y": 0.0,
+                "da_x": 0.0001,
+                "da_y": 0.0001,
+                "qe_wavelengths": [
                     3e-07,
                     4e-07,
                     5e-07,
@@ -121,14 +117,14 @@ def test_handle_post_pybsm(
                 "name": "niceday",
                 "ihaze": 2,
                 "altitude": 75,
-                "groundRange": 0,
-                "aircraftSpeed": 0.0,
-                "targetReflectance": 0.15,
-                "targetTemperature": 295.0,
-                "backgroundReflectance": 0.07,
-                "backgroundTemperature": 293.0,
-                "haWindspeed": 21.0,
-                "cn2at1m": 0,
+                "ground_range": 0,
+                "aircraft_speed": 0.0,
+                "target_reflectance": 0.15,
+                "target_temperature": 295.0,
+                "background_reflectance": 0.07,
+                "background_temperature": 293.0,
+                "ha_wind_speed": 21.0,
+                "cn2_at_1m": 0,
             },
         },
         "thetas": [[0.014, 0.012], [0.001, 0.003], [2e-05]],
@@ -161,11 +157,8 @@ def test_handle_post_pybsm(
 
 @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
 @mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_bad_gsd_post(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
-    """Test that an error response is appropriately propagated to the user.
-    """
+def test_bad_gsd_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
+    """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
@@ -183,18 +176,12 @@ def test_bad_gsd_post(
     assert response.status_code == 400
 
     # Check that we got the correct error message
-    assert (
-        response.json()["detail"]
-        == "Image metadata length mismatch, metadata needed for every image"
-    )
+    assert response.json()["detail"] == "Image metadata length mismatch, metadata needed for every image"
 
 
 @mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_no_config_post(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
-    """Test that an error response is appropriately propagated to the user.
-    """
+def test_no_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
+    """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
@@ -235,11 +222,8 @@ def test_no_config_post(
         )
     ],
 )
-def test_bad_config_post(
-    patch: MagicMock, test_client: TestClient, tmpdir: py.path.local
-) -> None:
-    """Test that an error response is appropriately propagated to the user.
-    """
+def test_bad_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
+    """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
@@ -265,8 +249,7 @@ def test_bad_config_post(
 
 @mock.patch("nrtk_jatic.api.app.is_usable", False)
 def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
-    """Test that an exception is raised when required dependencies are not installed.
-    """
+    """Test that an exception is raised when required dependencies are not installed."""
     test_data = NrtkPerturbInputSchema(
         id="0",
         name="Example",
@@ -284,7 +267,4 @@ def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
     assert response.status_code == 400
 
     # Check that we got the correct error message
-    assert (
-        response.json()["detail"]
-        == "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
-    )
+    assert response.json()["detail"] == "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"

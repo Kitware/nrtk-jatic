@@ -1,21 +1,21 @@
 import copy
-from dataclasses import dataclass
-from typing import Dict, List, Tuple, Any, Sequence
-from pathlib import Path
 import logging
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Sequence, Tuple
 
-from PIL import Image  # type: ignore
 import numpy as np
-
 from maite.protocols.object_detection import (
     Dataset,
+    DatumMetadataType,
     InputType,
     TargetType,
-    DatumMetadataType
 )
+from PIL import Image  # type: ignore
 
 try:
     import kwcoco  # type: ignore
+
     is_usable = True
 except ImportError:
     is_usable = False
@@ -27,6 +27,8 @@ LOG = logging.getLogger(__name__)
 
 @dataclass
 class JATICDetectionTarget:
+    """Dataclass for the datum-level JATIC output detection format."""
+
     boxes: np.ndarray
     labels: np.ndarray
     scores: np.ndarray
@@ -44,8 +46,7 @@ def _coco_to_maite_detections(coco_annotation: List) -> TargetType:
         # convert box from xywh in xyxy format
         boxes[i, :] = np.asarray(_xyxy_bbox_xform(x=box[0], y=box[1], w=box[2], h=box[3]))
 
-    labels = np.stack([int(anns["category_id"])
-                      for anns in coco_annotation])
+    labels = np.stack([int(anns["category_id"]) for anns in coco_annotation])
     scores = np.ones(num_anns)
 
     return JATICDetectionTarget(boxes, labels, scores)
@@ -54,10 +55,9 @@ def _coco_to_maite_detections(coco_annotation: List) -> TargetType:
 if not is_usable:
     LOG.warning("COCOJATICObjectDetectionDataset requires additional dependencies, please install 'nrtk-jatic[tools]'")
 else:
+
     class COCOJATICObjectDetectionDataset(Dataset):
-        """
-        Dataset class to convert a COCO dataset to a dataset
-        compliant with JATIC's Object Detection protocol.
+        """Dataset class to convert a COCO dataset to a dataset compliant with JATIC's Object Detection protocol.
 
         Parameters
         ----------
@@ -69,25 +69,31 @@ else:
             A list of per-image metadata. Any metadata required by a perturber should be provided.
         """
 
-        def __init__(self, root: str, kwcoco_dataset: kwcoco.CocoDataset, image_metadata: List[Dict[str, Any]],):
+        def __init__(
+            self,
+            root: str,
+            kwcoco_dataset: kwcoco.CocoDataset,
+            image_metadata: List[Dict[str, Any]],
+        ):
             self._root: Path = Path(root)
             image_dir = self._root / "images"
-            self.all_img_paths = [image_dir / val["file_name"]
-                                  for key, val in kwcoco_dataset.imgs.items()]
+            self.all_img_paths = [image_dir / val["file_name"] for key, val in kwcoco_dataset.imgs.items()]
             self.all_image_ids = sorted({p.stem for p in self.all_img_paths})
 
             # Get all image filenames from the kwcoco object
-            anns_image_ids = [{'coco_image_id': val['id'], 'filename': val['file_name']}
-                              for key, val in kwcoco_dataset.imgs.items()]
-            anns_image_ids = sorted(anns_image_ids, key=lambda d: d['filename'])
+            anns_image_ids = [
+                {"coco_image_id": val["id"], "filename": val["file_name"]} for key, val in kwcoco_dataset.imgs.items()
+            ]
+            anns_image_ids = sorted(anns_image_ids, key=lambda d: d["filename"])
 
             # store sorted image paths
             self._images = sorted([p for p in self.all_img_paths if p.stem in self.all_image_ids])
 
             self._annotations = {}
             for image_id, anns_img_id in zip(self.all_image_ids, anns_image_ids):
-                image_annotations = [sub for sub in list(kwcoco_dataset.anns.values())
-                                     if sub['image_id'] == anns_img_id['coco_image_id']]
+                image_annotations = [
+                    sub for sub in list(kwcoco_dataset.anns.values()) if sub["image_id"] == anns_img_id["coco_image_id"]
+                ]
                 # Convert annotations to maite detections format
                 self._annotations[image_id] = _coco_to_maite_detections(image_annotations)
 
@@ -98,17 +104,11 @@ else:
                 raise ValueError("Image metadata length mismatch, metadata needed for every image")
 
         def __len__(self) -> int:
-            """
-            Returns the number of images in the dataset.
-            """
+            """Returns the number of images in the dataset."""
             return len(self._images)
 
-        def __getitem__(
-            self, index: int
-        ) -> OBJ_DETECTION_DATUM_T:
-            """
-            Returns the dataset object at the given index
-            """
+        def __getitem__(self, index: int) -> OBJ_DETECTION_DATUM_T:
+            """Returns the dataset object at the given index."""
             image_path = self._images[index]
             image = Image.open(image_path)
             image_id = image_path.stem
@@ -117,46 +117,40 @@ else:
             num_objects = np.asarray(annotation).shape[0]
             uniq_objects = np.unique(annotation)
             num_unique_classes = uniq_objects.shape[0]
-            unique_classes = [self.classes[int(idx)]['name']
-                              for idx in uniq_objects.tolist()]
+            unique_classes = [self.classes[int(idx)]["name"] for idx in uniq_objects.tolist()]
 
-            self._image_metadata[index].update(dict(
-                id=image_id,
-                image_info=dict(
-                    width=width,
-                    height=height,
-                    num_objects=num_objects,
-                    num_unique_classes=num_unique_classes,
-                    unique_classes=unique_classes
+            self._image_metadata[index].update(
+                dict(
+                    id=image_id,
+                    image_info=dict(
+                        width=width,
+                        height=height,
+                        num_objects=num_objects,
+                        num_unique_classes=num_unique_classes,
+                        unique_classes=unique_classes,
+                    ),
                 )
-            ))
+            )
 
             input_img, dets, metadata = (
                 np.asarray(image),
                 self._annotations[image_id],
-                self._image_metadata[index]
+                self._image_metadata[index],
             )
 
             return input_img, dets, metadata
 
         def get_img_path_list(self) -> List[Path]:
-            """
-            Returns the sorted list of absolute paths
-            for the input images.
-            """
+            """Returns the sorted list of absolute paths for the input images."""
             return sorted(self.all_img_paths)
 
         def get_categories(self) -> List[Dict[str, Any]]:
-            """
-            Returns the list of categories for this dataset.
-            """
+            """Returns the list of categories for this dataset."""
             return self.classes
 
 
 class JATICObjectDetectionDataset(Dataset):
-    """
-    Implementation of the JATIC Object Detection dataset wrapper for
-    dataset images of varying sizes.
+    """Implementation of the JATIC Object Detection dataset wrapper for dataset images of varying sizes.
 
     Parameters
     ----------
@@ -167,8 +161,13 @@ class JATICObjectDetectionDataset(Dataset):
     metadata : Sequence[Dict[str, Any]]
         Sequence of custom metadata for each image.
     """
-    def __init__(self, imgs: Sequence[np.ndarray], dets: Sequence[TargetType],
-                 metadata: Sequence[DatumMetadataType]) -> None:
+
+    def __init__(
+        self,
+        imgs: Sequence[np.ndarray],
+        dets: Sequence[TargetType],
+        metadata: Sequence[DatumMetadataType],
+    ) -> None:
         self.imgs = imgs
         self.dets = dets
         self.metadata = metadata
@@ -176,8 +175,6 @@ class JATICObjectDetectionDataset(Dataset):
     def __len__(self) -> int:
         return len(self.imgs)
 
-    def __getitem__(self,
-                    index: int
-                    ) -> OBJ_DETECTION_DATUM_T:
+    def __getitem__(self, index: int) -> OBJ_DETECTION_DATUM_T:
 
         return self.imgs[index], self.dets[index], self.metadata[index]

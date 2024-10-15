@@ -1,5 +1,5 @@
 ###############################################################################
-# Stage -- Security Scanning
+# Stage -- Build
 ###############################################################################
 # 
 # Overrides:
@@ -9,7 +9,6 @@
 #
 ###############################################################################
 
-dependency_scanning:
-  before_script:
-    - !reference [.shared-setup, before_script]
+build:cache:
+  script:
     - poetry install --sync --only main,dev-linting,dev-testing,dev-docs --extras tools

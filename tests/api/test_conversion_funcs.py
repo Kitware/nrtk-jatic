@@ -1,20 +1,25 @@
-import pytest
-import numpy as np
 import os
-from typing import Dict, Any
+from typing import Any, Dict
 
-from smqtk_core.configuration import to_config_dict
-
+import numpy as np
+import pytest
 from nrtk.impls.perturb_image.pybsm.scenario import PybsmScenario
 from nrtk.impls.perturb_image.pybsm.sensor import PybsmSensor
+from smqtk_core.configuration import to_config_dict
 
 from nrtk_jatic.api.converters import build_factory
 from nrtk_jatic.api.schema import NrtkPerturbInputSchema
-
-from tests import DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG, BAD_NRTK_CONFIG, EMPTY_NRTK_CONFIG
+from tests import (
+    BAD_NRTK_CONFIG,
+    DATASET_FOLDER,
+    EMPTY_NRTK_CONFIG,
+    LABEL_FILE,
+    NRTK_PYBSM_CONFIG,
+)
 
 try:
     from nrtk_jatic.api.converters import load_COCOJATIC_dataset
+
     is_usable = True
 except ImportError:
     is_usable = False
@@ -22,7 +27,7 @@ except ImportError:
 
 class TestAPIConversionFunctions:
     @pytest.mark.parametrize(
-        "data, expected",
+        ("data", "expected"),
         [
             (
                 {
@@ -35,40 +40,54 @@ class TestAPIConversionFunctions:
                     "config_file": str(NRTK_PYBSM_CONFIG),
                 },
                 {
-                    "theta_keys": ["f", "D", "px"],
+                    "theta_keys": ["f", "D", "p_x"],
                     "thetas": [[0.014, 0.012], [0.001, 0.003], [0.00002]],
                     "sensor": to_config_dict(
                         PybsmSensor(
                             name="L32511x",
                             D=0.004,
                             f=0.014285714285714287,
-                            px=0.00002,
-                            optTransWavelengths=np.asarray([3.8e-7, 7.0e-7]),
+                            p_x=0.00002,
+                            opt_trans_wavelengths=np.asarray([3.8e-7, 7.0e-7]),
                             eta=0.4,
-                            intTime=0.03,
-                            readNoise=25.0,
-                            maxN=96000.0,
-                            bitdepth=11.9,
-                            maxWellFill=0.005,
-                            dax=0.0001,
-                            day=0.0001,
-                            qewavelengths=np.asarray(
-                                [3.0e-7, 4.0e-7, 5.0e-7, 6.0e-7, 7.0e-7, 8.0e-7, 9.0e-7, 1.0e-6, 1.1e-6]
+                            int_time=0.03,
+                            read_noise=25.0,
+                            max_n=96000.0,
+                            bit_depth=11.9,
+                            max_well_fill=0.005,
+                            da_x=0.0001,
+                            da_y=0.0001,
+                            qe_wavelengths=np.asarray(
+                                [
+                                    3.0e-7,
+                                    4.0e-7,
+                                    5.0e-7,
+                                    6.0e-7,
+                                    7.0e-7,
+                                    8.0e-7,
+                                    9.0e-7,
+                                    1.0e-6,
+                                    1.1e-6,
+                                ]
                             ),
                             qe=np.asarray([0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]),
                         )
                     ),
                     "scenario": to_config_dict(
-                        PybsmScenario(name="niceday", ihaze=2, altitude=75, groundRange=0, cn2at1m=0)
+                        PybsmScenario(
+                            name="niceday",
+                            ihaze=2,
+                            altitude=75,
+                            ground_range=0,
+                            cn2_at_1m=0,
+                        )
                     ),
                 },
             ),
         ],
     )
     def test_build_factory(self, data: Dict[str, Any], expected: Dict[str, Any]) -> None:
-        """
-        Test if _build_pybsm_factory returns the expected factory.
-        """
+        """Test if _build_pybsm_factory returns the expected factory."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         factory = build_factory(schema)
         np.testing.assert_equal(factory.get_config(), expected)
@@ -90,9 +109,7 @@ class TestAPIConversionFunctions:
         ],
     )
     def test_build_factory_no_config(self, data: Dict[str, Any]) -> None:
-        """
-        Test if build_factory throws .
-        """
+        """Test if build_factory throws ."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         with pytest.raises(FileNotFoundError):
             build_factory(schema)
@@ -121,15 +138,13 @@ class TestAPIConversionFunctions:
                     "image_metadata": [],  # Not used in this test
                     "config_file": str(EMPTY_NRTK_CONFIG),
                 }
-            )
+            ),
         ],
     )
     def test_build_factory_bad_config(self, data: Dict[str, Any]) -> None:
-        """
-        Test if build_factory throws .
-        """
+        """Test if build_factory throws ."""
         schema = NrtkPerturbInputSchema.model_validate(data)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError):  # noqa: PT011
             build_factory(schema)
 
     @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
@@ -149,10 +164,8 @@ class TestAPIConversionFunctions:
             )
         ],
     )
-    def test_load_COCOJATIC_dataset(self, data: Dict[str, Any]) -> None:
-        """
-        Test if load_COCOJATIC_dataset returns the expected dataset.
-        """
+    def test_load_COCOJATIC_dataset(self, data: Dict[str, Any]) -> None:  # noqa: N802
+        """Test if load_COCOJATIC_dataset returns the expected dataset."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         dataset = load_COCOJATIC_dataset(schema)
         # Check all images metadata for gsd

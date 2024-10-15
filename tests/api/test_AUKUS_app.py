@@ -1,19 +1,19 @@
+from pathlib import Path
+from typing import Generator
+
 import py  # type: ignore
 import pytest
 import responses
-
-from pathlib import Path
-from starlette.testclient import TestClient
 from fastapi.encoders import jsonable_encoder
+from starlette.testclient import TestClient
 
-from nrtk_jatic.api.schema import NrtkPerturbOutputSchema, DatasetSchema
 from nrtk_jatic.api.aukus_app import AUKUS_app, Settings
 from nrtk_jatic.api.aukus_schema import AukusDatasetSchema
-from typing import Generator
+from nrtk_jatic.api.schema import DatasetSchema, NrtkPerturbOutputSchema
 from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG
 
 
-@pytest.fixture
+@pytest.fixture()
 def test_aukus_client() -> Generator:
     # Create a test client for the FastAPI application
     with TestClient(AUKUS_app) as client:
@@ -22,22 +22,33 @@ def test_aukus_client() -> Generator:
 
 @responses.activate
 def test_handle_aukus_post(test_aukus_client: TestClient, tmpdir: py.path.local) -> None:
-    Aukus_Dataset = AukusDatasetSchema(
-        docType="Dataset Metadata",
-        docVersion="0.1",
-        ism={"ownerProducer": ["USA"], "disseminationControls": ["U"], "classification": "U", "releasableTo": ["USA"]},
-        lastUpdateTime="2024-04-08T12:00:00.0Z",
+    aukus_dataset = AukusDatasetSchema(
+        doc_type="Dataset Metadata",
+        doc_version="0.1",
+        ism={
+            "ownerProducer": ["USA"],
+            "disseminationControls": ["U"],
+            "classification": "U",
+            "releasableTo": ["USA"],
+        },
+        last_update_time="2024-04-08T12:00:00.0Z",
         id="test_id",
         name="UnityExample",
         uri=str(DATASET_FOLDER),
         size="11",
         description="AUKUS Test",
-        dataCollections=[],
-        dataFormat="COCO",
-        nrtkConfig=str(NRTK_PYBSM_CONFIG),
+        data_collections=[],
+        data_format="COCO",
+        nrtk_config=str(NRTK_PYBSM_CONFIG),
         image_metadata=[{"gsd": gsd} for gsd in range(11)],
-        outputDir=str(tmpdir),
-        labels=[{"name": "AUKUS", "iri": "annotations/COCO_annotations_VisDrone_TINY.json", "objectCount": 100}],
+        output_dir=str(tmpdir),
+        labels=[
+            {
+                "name": "AUKUS",
+                "iri": "annotations/COCO_annotations_VisDrone_TINY.json",
+                "objectCount": 100,
+            }
+        ],
         tags=["training", "synthetic"],
     )
 
@@ -58,7 +69,7 @@ def test_handle_aukus_post(test_aukus_client: TestClient, tmpdir: py.path.local)
             )
         ),
     )
-    response = test_aukus_client.post("/", json=jsonable_encoder(Aukus_Dataset))
+    response = test_aukus_client.post("/", json=jsonable_encoder(aukus_dataset))
 
     # Check if the response status code is 200 OK
     assert response.status_code == 200
@@ -72,52 +83,74 @@ def test_handle_aukus_post(test_aukus_client: TestClient, tmpdir: py.path.local)
 
 
 def test_bad_data_format_post(test_aukus_client: TestClient, tmpdir: py.path.local) -> None:
-    Aukus_Dataset = AukusDatasetSchema(
-        docType="Dataset Metadata",
-        docVersion="0.1",
-        ism={"ownerProducer": ["USA"], "disseminationControls": ["U"], "classification": "U", "releasableTo": ["USA"]},
-        lastUpdateTime="2024-04-08T12:00:00.0Z",
+    aukus_dataset = AukusDatasetSchema(
+        doc_type="Dataset Metadata",
+        doc_version="0.1",
+        ism={
+            "ownerProducer": ["USA"],
+            "disseminationControls": ["U"],
+            "classification": "U",
+            "releasableTo": ["USA"],
+        },
+        last_update_time="2024-04-08T12:00:00.0Z",
         id="test_id",
         name="UnityExample",
         uri=str(DATASET_FOLDER),
         size="11",
         description="AUKUS Test",
-        dataCollections=[],
-        dataFormat="YOLO",
-        nrtkConfig=str(NRTK_PYBSM_CONFIG),
+        data_collections=[],
+        data_format="YOLO",
+        nrtk_config=str(NRTK_PYBSM_CONFIG),
         image_metadata=[{"gsd": gsd} for gsd in range(11)],
-        outputDir=str(tmpdir),
-        labels=[{"name": "AUKUS", "iri": "annotations/COCO_annotations_VisDrone_TINY.json", "objectCount": 100}],
+        output_dir=str(tmpdir),
+        labels=[
+            {
+                "name": "AUKUS",
+                "iri": "annotations/COCO_annotations_VisDrone_TINY.json",
+                "objectCount": 100,
+            }
+        ],
         tags=["training", "synthetic"],
     )
 
-    response = test_aukus_client.post("/", json=jsonable_encoder(Aukus_Dataset))
+    response = test_aukus_client.post("/", json=jsonable_encoder(aukus_dataset))
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Labels provided in incorrect format."
 
 
-def test_bad_NRTK_config_post(test_aukus_client: TestClient, tmpdir: py.path.local) -> None:
-    Aukus_Dataset = AukusDatasetSchema(
-        docType="Dataset Metadata",
-        docVersion="0.1",
-        ism={"ownerProducer": ["USA"], "disseminationControls": ["U"], "classification": "U", "releasableTo": ["USA"]},
-        lastUpdateTime="2024-04-08T12:00:00.0Z",
+def test_bad_nrtk_config_post(test_aukus_client: TestClient, tmpdir: py.path.local) -> None:
+    aukus_dataset = AukusDatasetSchema(
+        doc_type="Dataset Metadata",
+        doc_version="0.1",
+        ism={
+            "ownerProducer": ["USA"],
+            "disseminationControls": ["U"],
+            "classification": "U",
+            "releasableTo": ["USA"],
+        },
+        last_update_time="2024-04-08T12:00:00.0Z",
         id="test_id",
         name="UnityExample",
         uri=str(DATASET_FOLDER),
         size="11",
         description="AUKUS Test",
-        dataCollections=[],
-        dataFormat="COCO",
-        nrtkConfig="",
+        data_collections=[],
+        data_format="COCO",
+        nrtk_config="",
         image_metadata=[{"gsd": gsd} for gsd in range(11)],
-        outputDir=str(tmpdir),
-        labels=[{"name": "AUKUS", "iri": "annotations/COCO_annotations_VisDrone_TINY.json", "objectCount": 100}],
+        output_dir=str(tmpdir),
+        labels=[
+            {
+                "name": "AUKUS",
+                "iri": "annotations/COCO_annotations_VisDrone_TINY.json",
+                "objectCount": 100,
+            }
+        ],
         tags=["training", "synthetic"],
     )
 
-    response = test_aukus_client.post("/", json=jsonable_encoder(Aukus_Dataset))
+    response = test_aukus_client.post("/", json=jsonable_encoder(aukus_dataset))
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Provided NRTK config is not a valid file."

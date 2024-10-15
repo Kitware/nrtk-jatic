@@ -1,7 +1,7 @@
 Review Process
 **************
 
-The process for reviewing and integrating branches into nrtk is described
+The process for reviewing and integrating branches into nrtk-jatic is described
 below.
 
 For guidelines on contributing, see ``CONTRIBUTING.md``.
@@ -18,7 +18,7 @@ Merge Request (MR)
 ==================
 An MR is initiated by a user intending to integrate a branch from their forked
 repository.
-Before the branch is integrated into the nrtk master branch, it must
+Before the branch is integrated into the nrtk-jatic master branch, it must
 first go through a series of checks and a review to ensure that the branch is
 consistent with the rest of the repository and doesn't contain any issues.
 
@@ -48,7 +48,6 @@ must request it and leave their branch marked as a ``Draft``.
 Closed
 ^^^^^^
 Indicates that the MR is resolved or discarded.
-
 
 Continuous Integration
 ======================
@@ -91,6 +90,15 @@ pytest``.
 
 Passage of these checks is strictly required.
 
+Regression Tests
+^^^^^^^^^^^^^^^^
+Regression test snapshots are generated using
+`syrupy <https://github.com/syrupy-project/syrupy>`_. To generate new snapshots,
+run ``poetry run pytest --snapshot-update path/to/test_file.py``. Ensure the full
+filepath is included so that irrelevant snapshots are not erroneously updated.
+Once a snapshot is generated, regression test results will be included in the
+``test-pytest`` job.
+
 Code Coverage (``test-coverage-percent``)
 -----------------------------------------
 This job checks that the lines of code covered by our Unit Tests checks meet or
@@ -114,7 +122,6 @@ or run for an extended period of time.
 
 Passage of these checks is strictly required.
 
-
 Human Review
 ============
 Once the automatic checks are either resolved or addressed, the submitted MR
@@ -132,6 +139,37 @@ ensure that there are no outstanding issues.
 
 If an MR is not a draft and has an appropriate amount of approving reviews, it
 may be merged at any time.
+
+If an MR fully resolves an issue, the text
+``Closes nrtk-jatic#<issue number>`` should be included in the MR description,
+so that the issue will be automatically closed upon merge.
+
+For internal development, the following review procedure shall be used:
+
+1. The author will label the merge request as "status::for review", move the
+   associated issue(s) to the for review column on the issue board, and request
+   a review from a peer reviewer. Once the review process begins, the issue(s)
+   should remain in the for review column, review status will only be updated
+   on the MR itself, unless the scope of the issue significantly changes.
+
+2. Peer reviewer will provide comments or suggested changes and re-label the
+   merge request as "status::in progress". If no work is needed, the reviewer
+   will instead approve the MR and request a review from a maintainer.
+
+3. Author will address the comments provided by the peer reviewer and then
+   re-label the merge request as "status::for review" and re-request a peer
+   review.
+
+4. Peer reviewer will repeat the process starting at step 2, as needed.
+
+5. Maintainer will provide comments or suggested changes and re-label the merge
+   request as in progress. If the MR needs no work, then the maintainer will
+   instead approve the MR and :ref:`resolve the branch<Resolving a Branch>`.
+
+6. If additional changes are requested, the author will address the comments
+   provided by the maintainer and then label the MR as ready for review and
+   re-request maintainer review; repeating the procedure starting at step 5, as
+   needed.
 
 Notebooks
 ---------
@@ -156,5 +194,5 @@ merged.
 
 Close
 -----
-If it is decided that the MR will not be integrated into ``nrtk``, then
+If it is decided that the MR will not be integrated into ``nrtk-jatic``, then
 it can be closed through GitLab.

@@ -1,3 +1,4 @@
+# :auto shared:
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -71,6 +72,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/_implementations
 
 # PyBuilder
 .pybuilder/
@@ -138,11 +140,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# ruff
+.ruff_cache
+# :auto shared:
+
 # Example notebooks
 examples/data
 examples/gradio/*/*.yaml
 examples/gradio/*.yaml
-
-
-# ruff
-.ruff_cache

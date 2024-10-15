@@ -1,9 +1,8 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import numpy as np
-from PIL import Image
-
 from nrtk.interfaces.perturb_image import PerturbImage
+from PIL import Image
 
 
 class ResizePerturber(PerturbImage):
@@ -11,20 +10,13 @@ class ResizePerturber(PerturbImage):
         self.w = w
         self.h = h
 
-    def perturb(
-        self,
-        image: np.ndarray,
-        additional_params: Dict[str, Any] = {}
-    ) -> np.ndarray:
-        """
-        Resize image.
-        """
+    def perturb(self, image: np.ndarray, additional_params: Optional[Dict[str, Any]] = None) -> np.ndarray:
+        """Resize image."""
+        if additional_params is None:
+            additional_params = {}
         img = Image.fromarray(image)
         img = img.resize((self.w, self.h))
         return np.array(img)
 
     def get_config(self) -> Dict[str, Any]:
-        return {
-            "w": self.w,
-            "h": self.h
-        }
+        return {"w": self.w, "h": self.h}

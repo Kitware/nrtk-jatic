@@ -2,9 +2,9 @@
 #
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
-from pathlib import Path
 import sys
-
+from pathlib import Path
+from typing import List
 
 # -- Path setup --------------------------------------------------------------
 
@@ -18,18 +18,13 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.absolute()))
 import nrtk_jatic  # noqa: E402
 
-
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'nrtk-jatic'
-copyright = '2023, Kitware, Inc.'
-author = 'Kitware, Inc.'
+project = "nrtk-jatic"
+copyright = "2023, Kitware, Inc."  # noqa: A001
+author = "Kitware, Inc."
 release = nrtk_jatic.__version__
-
-site_url = "https://jatic.pages.jatic.net/kitware/nrtk-jatic/"
-repo_url = "https://gitlab.jatic.net/jatic/kitware/nrtk-jatic"
-repo_name = "nrtk-jatic"
 
 
 # -- General configuration ---------------------------------------------------
@@ -38,7 +33,10 @@ repo_name = "nrtk-jatic"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
+    "sphinx.ext.autosummary",
     "sphinx-prompt",
+    "sphinx_copybutton",
+    "sphinx_click",
 ]
 
 suppress_warnings = [
@@ -48,12 +46,14 @@ suppress_warnings = [
     "autosectionlabel.*",
 ]
 
-templates_path = []  # ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+# Autosummary templates reference link:
+# https://github.com/JamesALeedham/Sphinx-Autosummary-Recursion/tree/master
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = []  # ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path: List[str] = list()  # ['_static']
