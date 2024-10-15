@@ -27,7 +27,7 @@ classifiers = [
 # :auto package-meta:
 # package-specific meta, don't put this in "generated package-meta"
 authors = ["Kitware, Inc. <nrtk@kitware.com>"]
-version = "0.1.1"
+version = "0.2.0"
 description = ""
 
 [tool.poetry.dependencies]
