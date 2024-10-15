@@ -1,6 +1,10 @@
 v0.2.0
 ======
 
+Dropped support for ``python = "3.8"``, numerous updates to dependencies, new ``maite``
+operability, changes to CI/CD to be more inline with JATIC program requirements,
+documentation updates, and fixes with ``opencv-python`` and ``opencv-python-headless`` conflicts.
+
 Updates / New Features
 ----------------------
 
