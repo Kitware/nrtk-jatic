@@ -6015,4 +6015,4 @@ tools = ["kwcoco"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "41c4d78d1b0d52fac0aaa2b7e161738260859e948cdc48e2eb839e87d6030c15"
+content-hash = "3bf1f71fc12e9683712b53260df23c71dbd4e7df5c42d084ce686377afe4de6f"

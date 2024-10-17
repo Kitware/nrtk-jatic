@@ -1,13 +1,13 @@
-# Contributing to `nrtk-jatic`
+# Contributing to `NRTK-JATIC`
 
 ## Making a Contribution
-Here we describe at a high level how to contribute to `nrtk-jatic`.
-See the [`nrtk-jatic` README](README.md) file for additional information.
+Here we describe at a high level how to contribute to `pyBSM`.
+See the [`NRTK-JATIC` README](README.md) file for additional information.
 
-1.  Navigate to the official `nrtk-jatic` repository maintained [on Kitware Github](
-    https://github.com/kitware/nrtk-jatic).
+1.  Navigate to the official NRTK-JATIC repository maintained [on GitHub](
+    https://github.com/Kitware/nrtk-jatic).
 
-2.  Fork `nrtk-jatic` into your GitLab user namespace and clone that onto
+2.  Fork pyBSM into your GitHub user namespace and clone that onto
     your system.
 
 3.  Create a topic branch, edit files and create commits:
@@ -24,7 +24,7 @@ See the [`nrtk-jatic` README](README.md) file for additional information.
       feature or fix that was added.
       This is generally required for merger approval.
 
-4.  Push topic branch with commits to your fork in GitLab:
+4.  Push topic branch with commits to your fork in GitHub:
 
         $ git push origin HEAD -u
 
@@ -40,6 +40,11 @@ New merge requests trigger Continuous Integration workflows (CI) when the merge
 target is the `main` or `release`-variant branch.
 All checks/tests must pass before an MR can be merged by an individual with the
 appropriate permissions.
+
+GitHub/GitLab: The GitHub repository is a mirror of a private GitLab repository,
+so once the PR can be merged, it will not be merged via GitHub. A maintainer will
+push the branch to the GitLab repository and do the final merging there, which
+will then get mirrored out to main.
 
 We use Sphinx for manual and automatic API [documentation](docs).
 
