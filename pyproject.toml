@@ -7,7 +7,6 @@ build-backend = "poetry.core.masonry.api"
 # :auto package-meta:
 [tool.poetry]
 name = "nrtk-jatic"
-license = "Apache-2.0"
 readme = "README.md"
 packages = [{include = "nrtk_jatic", from="src"}]
 documentation = "https://nrtk-jatic.readthedocs.io/"
@@ -27,6 +26,7 @@ classifiers = [
 # :auto package-meta:
 # package-specific meta, don't put this in "generated package-meta"
 authors = ["Kitware, Inc. <nrtk@kitware.com>"]
+license = "Apache-2.0"
 version = "0.2.0"
 description = ""
 
@@ -122,7 +122,7 @@ pytest = ">=7.2.0"
 pytest-cov = ">=4.0.0"
 syrupy = ">=4.0.0"
 # Jupyter notebook testing
-notebook = ">=7.0.7"
+notebook = ">=7.2.2"
 papermill = ">=2.4.0"
 # :auto dev-testing:
 maite = {version = "^0.6.0", extras = ["test"]}
