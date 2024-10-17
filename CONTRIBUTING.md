@@ -1,13 +1,13 @@
 # Contributing to `NRTK-JATIC`
 
 ## Making a Contribution
-Here we describe at a high level how to contribute to `pyBSM`.
+Here we describe at a high level how to contribute to `NRTK-JATIC`.
 See the [`NRTK-JATIC` README](README.md) file for additional information.
 
 1.  Navigate to the official NRTK-JATIC repository maintained [on GitHub](
     https://github.com/Kitware/nrtk-jatic).
 
-2.  Fork pyBSM into your GitHub user namespace and clone that onto
+2.  Fork NRTK-JATIC into your GitHub user namespace and clone that onto
     your system.
 
 3.  Create a topic branch, edit files and create commits:
@@ -34,7 +34,7 @@ See the [`NRTK-JATIC` README](README.md) file for additional information.
     the topic branch for the pull request.
     Finally, click the "Create pull request" button to create the request.
 
-`nrtk-jatic` uses GitHub for code review and GitHub Actions for continuous
+`NRTK-JATIC` uses GitHub for code review and GitHub Actions for continuous
 testing.
 New merge requests trigger Continuous Integration workflows (CI) when the merge
 target is the `main` or `release`-variant branch.
