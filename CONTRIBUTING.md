@@ -28,17 +28,16 @@ See the [`nrtk-jatic` README](README.md) file for additional information.
 
         $ git push origin HEAD -u
 
-5. On GitLab, visit your forked project page then go the "Merge Requests" tab
-   and click on the "New merge request" button. In the source branch dropdown,
-   select the relevant branch in your forked repository. In the target branch
-   dropdown, select the relevant branch from the `nrtk-jatic` repository. Next,
-   click "Compare branches and continue". Finally, click the "Create merge
-   request" button to create the request.
+5.  Visit the Kitware NRTK-JATIC GitHub, browse to the "Pull requests" tab
+    and click on the "New pull request" button in the upper-right.
+    Click on the "Compare across forks" link, browse to your fork and browse to
+    the topic branch for the pull request.
+    Finally, click the "Create pull request" button to create the request.
 
-`nrtk-jatic` uses GitLab for code review and GitLab CI/CD for continuous
+`nrtk-jatic` uses GitHub for code review and GitHub Actions for continuous
 testing.
 New merge requests trigger Continuous Integration workflows (CI) when the merge
-target is the `master` or `release`-variant branch.
+target is the `main` or `release`-variant branch.
 All checks/tests must pass before an MR can be merged by an individual with the
 appropriate permissions.
 
