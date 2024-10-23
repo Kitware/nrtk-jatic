@@ -176,5 +176,4 @@ class JATICObjectDetectionDataset(Dataset):
         return len(self.imgs)
 
     def __getitem__(self, index: int) -> OBJ_DETECTION_DATUM_T:
-
         return self.imgs[index], self.dets[index], self.metadata[index]

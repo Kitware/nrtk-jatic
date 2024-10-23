@@ -38,5 +38,4 @@ class JATICImageClassificationDataset(Dataset):
         return len(self.imgs)
 
     def __getitem__(self, index: int) -> IMG_CLASSIFICATION_DATUM_T:
-
         return self.imgs[index], self.labels[index], self.metadata[index]
