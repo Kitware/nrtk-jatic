@@ -161,10 +161,12 @@ class VisDroneDataset:
         self._reshape = value
 
     @overload
-    def __getitem__(self, index: slice) -> VisDroneDataset: ...
+    def __getitem__(self, index: slice) -> VisDroneDataset:
+        ...
 
     @overload
-    def __getitem__(self, index: int) -> pr.SupportsObjectDetection: ...
+    def __getitem__(self, index: int) -> pr.SupportsObjectDetection:
+        ...
 
     def __getitem__(self, index: int | slice) -> VisDroneDataset | pr.SupportsObjectDetection:
         if isinstance(index, int):

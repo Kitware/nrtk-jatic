@@ -44,8 +44,8 @@ WORKDIR $PYSETUP_PATH/src
 # quicker install as runtime deps are already installed
 RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
     --mount=type=cache,target=/root/.cache/pypoetry,sharing=locked \
-    poetry config virtualenvs.create false && poetry install --sync \
-    --extras="maite-cpu tools headless"
+    poetry config virtualenvs.create false && poetry run pip \
+    install -e .[maite-cpu,tools,headless,pybsm-headless]
 
 ENTRYPOINT [ "python", "./src/nrtk_jatic/utils/bin/nrtk_perturber_cli.py"]
 # default args for nrtk_perturber_cli

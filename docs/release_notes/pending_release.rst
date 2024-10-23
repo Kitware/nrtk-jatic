@@ -16,3 +16,7 @@ Documentation
 
 Fixes
 -----
+
+Docker
+
+* Updated run path and poetry install for Dockerfile
