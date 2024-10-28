@@ -133,7 +133,7 @@ else:
             )
 
             input_img, dets, metadata = (
-                np.asarray(image),
+                np.transpose(np.asarray(image), (2, 0, 1)),
                 self._annotations[image_id],
                 self._image_metadata[index],
             )

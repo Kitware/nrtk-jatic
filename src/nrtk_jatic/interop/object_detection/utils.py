@@ -47,7 +47,7 @@ def dataset_to_coco(
         filename = output_dir / img_filenames[i]
         filename.parent.mkdir(parents=True, exist_ok=True)
 
-        im = Image.fromarray(np.asarray(image))
+        im = Image.fromarray(np.transpose(np.asarray(image), (1, 2, 0)))
         im.save(filename)
 
         labels = np.asarray(dets.labels)

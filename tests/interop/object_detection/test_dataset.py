@@ -24,8 +24,8 @@ class TestJATICImageClassificationDataset:
             (
                 JATICObjectDetectionDataset(
                     [
-                        np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8),
-                        np.random.randint(0, 255, (128, 128, 3), dtype=np.uint8),
+                        np.random.randint(0, 255, (3, 256, 256), dtype=np.uint8),
+                        np.random.randint(0, 255, (3, 128, 128), dtype=np.uint8),
                     ],
                     [
                         JATICDetectionTarget(
@@ -79,7 +79,9 @@ class TestJATICImageClassificationDataset:
             md_in = dataset[idx][2]
 
             # Get expected image and metadata from "normal" perturber
-            expected_img_out = perturber(np.asarray(img_in))
+            expected_img_out = perturber(np.transpose(np.asarray(img_in), (1, 2, 0)))
+            # Channel last to channel first
+            expected_img_out = np.transpose(expected_img_out, (2, 0, 1))
             expected_md_out = dict(md_in)
             expected_md_out["nrtk::perturber"] = perturber.get_config()
 
