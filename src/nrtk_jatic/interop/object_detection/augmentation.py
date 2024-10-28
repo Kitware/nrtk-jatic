@@ -51,10 +51,11 @@ class JATICDetectionAugmentation(Augmentation):
         for img, ann, md in zip(imgs, anns, metadata):
             # Perform augmentation
             aug_img = copy.deepcopy(img)
+            aug_img = np.transpose(aug_img, (1, 2, 0))
             height, width = aug_img.shape[0:2]  # type: ignore
             aug_img = self.augment(np.asarray(aug_img), md)
             aug_height, aug_width = aug_img.shape[0:2]
-            aug_imgs.append(aug_img)
+            aug_imgs.append(np.transpose(aug_img, (2, 0, 1)))
 
             # Resize bounding boxes
             y_aug_boxes = copy.deepcopy(np.asarray(ann.boxes))
@@ -108,14 +109,14 @@ class JATICDetectionAugmentationWithMetric(Augmentation):
 
         for img, aug_img, aug_md in zip(imgs, aug_imgs, aug_metadata):
             # Convert from channels-first to channels-last
-            img_1 = np.transpose(img, (1, 2, 0))
+            img_1 = img
             if aug_img is None:
                 img_2 = None
             else:
-                img_2 = np.transpose(aug_img, (1, 2, 0))
+                img_2 = aug_img
 
             # Compute Image metric values
-            metric_value = self.metric(img_1=img_1, img_2=img_2, additional_params=aug_md)
+            metric_value = self.metric(img_1=img_1, img_2=img_2, additional_params=aug_md)  # type: ignore
             metric_aug_md = copy.deepcopy(aug_md)
             metric_name = self.metric.__class__.__name__
             metric_aug_md.update({"nrtk::" + metric_name: metric_value})

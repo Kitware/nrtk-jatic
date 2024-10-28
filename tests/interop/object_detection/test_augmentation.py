@@ -72,7 +72,7 @@ class TestJATICDetectionAugmentation:
         updated.
         """
         augmentation = JATICDetectionAugmentation(augment=perturber)
-        img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+        img_in = np.random.randint(0, 255, (3, 256, 256), dtype=np.uint8)
         md_in: List[Dict[str, Any]] = [{"some_metadata": 1}]
 
         # Get copies to check for modification
@@ -81,7 +81,9 @@ class TestJATICDetectionAugmentation:
         md_copy = copy.deepcopy(md_in)
 
         # Get expected image and metadata from "normal" perturber
-        expected_img_out = perturber(img_in)
+        expected_img_out = perturber(np.transpose(img_in, (1, 2, 0)))
+        # switch from channel last to channel first
+        expected_img_out = np.transpose(expected_img_out, (2, 0, 1))
         expected_md_out = dict(md_in[0])
         expected_md_out["nrtk::perturber"] = perturber.get_config()
 
@@ -108,7 +110,7 @@ class TestJATICDetectionAugmentation:
 
 
 class TestJATICDetectionAugmentationWithMetric:
-    img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+    img_in = np.random.randint(0, 255, (3, 256, 256), dtype=np.uint8)
     md_in = [{"some_metadata": 1}]
     md_aug_nop_pertuber = [{"nrtk::perturber": {}, "some_metadata": 1}]
 
@@ -183,13 +185,11 @@ class TestJATICDetectionAugmentationWithMetric:
         md_copy = copy.deepcopy(self.md_in)
 
         # Get expected image and metadata from "normal" perturber
-        expected_img_out = perturber(np.transpose(self.img_in, (2, 0, 1)))
+        expected_img_out = perturber(self.img_in)
 
         with expectation:
             # Apply augmentation via adapter
-            imgs_out, targets_out, md_out = metric_augmentation(
-                ([np.transpose(self.img_in, (2, 0, 1))], targets_in, self.md_in)
-            )
+            imgs_out, targets_out, md_out = metric_augmentation(([self.img_in], targets_in, self.md_in))
 
             # Check if mocked metric was called with appropriate inputs
             kwargs = metric_patch.call_args.kwargs

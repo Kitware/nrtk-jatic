@@ -100,7 +100,7 @@ class TestNRTKPerturber:
         """Test if the perturber returns the intended number of datasets."""
         num_imgs = 4
         dataset = JATICObjectDetectionDataset(
-            imgs=[np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)] * num_imgs,
+            imgs=[np.random.randint(0, 255, (3, 256, 256), dtype=np.uint8)] * num_imgs,
             dets=[
                 JATICDetectionTarget(
                     boxes=np.array([[1.0, 2.0, 3.0, 4.0]]),

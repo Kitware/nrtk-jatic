@@ -32,7 +32,7 @@ except ImportError:
     [
         (
             JATICObjectDetectionDataset(
-                imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)],
+                imgs=[np.random.randint(0, 255, size=(3, 10, 10), dtype=np.uint8)],
                 dets=[
                     JATICDetectionTarget(
                         boxes=np.random.randint(0, 4, size=(2, 4)),
