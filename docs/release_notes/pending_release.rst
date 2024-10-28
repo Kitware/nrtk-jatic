@@ -8,6 +8,9 @@ Code Changes
 
 * Moved OTF perturber computation to perturb method for OTF perturbers.
 
+* Modified ``interop/object_detection classes`` to work with MAITE channel
+  first image format
+
 Documentation
 
 * Updated a few links from ``GitLab`` to ``GitHub``.
