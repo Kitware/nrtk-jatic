@@ -44,11 +44,11 @@ maite = "^0.6.0"
 # has a PR working on it and hopefully won't be too far into the future
 # https://github.com/python-poetry/poetry/pull/9553
 nrtk = [
-    {version = ">=0.14.0"},
-    {version = ">=0.14.0", extras=["pybsm-graphics"], markers = "extra == 'pybsm-graphics'", optional = true},
-    {version = ">=0.14.0", extras=["pybsm-headless"], markers = "extra == 'pybsm-headless'", optional = true},
-    {version = ">=0.14.0", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
-    {version = ">=0.14.0", extras=["headless"], markers = "extra == 'headless'", optional = true},
+    {version = ">=0.15.1"},
+    {version = ">=0.15.1", extras=["pybsm-graphics"], markers = "extra == 'pybsm-graphics'", optional = true},
+    {version = ">=0.15.1", extras=["pybsm-headless"], markers = "extra == 'pybsm-headless'", optional = true},
+    {version = ">=0.15.1", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
+    {version = ">=0.15.1", extras=["headless"], markers = "extra == 'headless'", optional = true},
 ]
 
 # REST API deps

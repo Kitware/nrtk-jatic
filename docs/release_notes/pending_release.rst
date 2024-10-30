@@ -11,6 +11,8 @@ Code Changes
 * Modified ``interop/object_detection classes`` to work with MAITE channel
   first image format
 
+* Updated ``nrtk_blur_config.json`` to use OneStepPerturbImageFactory.
+
 Documentation
 
 * Updated a few links from ``GitLab`` to ``GitHub``.
