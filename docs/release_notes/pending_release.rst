@@ -19,6 +19,8 @@ Documentation
 
 * Updated Design Principles link to new URL.
 
+* Expanded AUKUS container documentation.
+
 Fixes
 -----
 
