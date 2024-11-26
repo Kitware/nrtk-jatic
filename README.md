@@ -1,4 +1,7 @@
 <!-- :auto badges: -->
+[![PyPI - Python Version](https://img.shields.io/pypi/v/nrtk-jatic)](https://pypi.org/project/nrtk-jatic/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/nrtk-jatic)
+[![Documentation Status](https://readthedocs.org/projects/nrtk-jatic/badge/?version=latest)](https://nrtk-jatic.readthedocs.io/en/latest/?badge=latest)
 <!-- :auto badges: -->
 
 # nrtk-jatic
@@ -43,10 +46,6 @@ poetry install
 Certain plugins may require additional runtime dependencies. Details on these requirements can be found [here](https://nrtk-jatic.readthedocs.io/en/latest/implementations.html).
 
 For more detailed installation instructions, visit the [installation documentation](https://nrtk-jatic.readthedocs.io/en/latest/installation.html).
-<!-- :auto installation: -->
-
-See [here for more installation documentation](
-https://nrtk-jatic.readthedocs.io/en/latest/installation.html).
 <!-- :auto installation: -->
 
 <!-- :auto getting-started: -->

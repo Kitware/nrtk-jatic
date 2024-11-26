@@ -1,4 +1,4 @@
-# Contributing to `NRTK-JATIC`
+# Contributing to `nrtk-jatic`
 
 ## Overview
 This guide provides instructions for contributing to the `nrtk-jatic` project. For additional details, please refer to the [`nrtk-jatic` README](README.md).
