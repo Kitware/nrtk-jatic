@@ -1,4 +1,4 @@
-from typing import Sequence
+from collections.abc import Sequence
 
 import numpy as np
 import pytest
@@ -12,6 +12,8 @@ from nrtk_jatic.interop.image_classification.dataset import (
 )
 from tests.utils.test_utils import ResizePerturber
 
+random = np.random.default_rng()
+
 
 class TestJATICImageClassificationDataset:
     @pytest.mark.parametrize(
@@ -20,14 +22,14 @@ class TestJATICImageClassificationDataset:
             (
                 JATICImageClassificationDataset(
                     [
-                        np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8),
-                        np.random.randint(0, 255, (128, 128, 3), dtype=np.uint8),
+                        random.integers(0, 255, (256, 256, 3), dtype=np.uint8),
+                        random.integers(0, 255, (128, 128, 3), dtype=np.uint8),
                     ],
                     [np.asarray([0]), np.asarray([1])],
                     [{"some_metadata": 0}, {"some_metadata": 1}],
                 ),
                 [np.asarray([0]), np.asarray([1])],
-            )
+            ),
         ],
     )
     def test_dataset_adapter(
@@ -56,8 +58,8 @@ class TestJATICImageClassificationDataset:
                     "image_info": {
                         "width": expected_img_out.shape[1],
                         "height": expected_img_out.shape[0],
-                    }
-                }
+                    },
+                },
             )
 
             # Apply augmentation via adapter

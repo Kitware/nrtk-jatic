@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 import pytest
@@ -68,10 +68,10 @@ class TestAPIConversionFunctions:
                                     9.0e-7,
                                     1.0e-6,
                                     1.1e-6,
-                                ]
+                                ],
                             ),
                             qe=np.asarray([0.05, 0.6, 0.75, 0.85, 0.85, 0.75, 0.5, 0.2, 0]),
-                        )
+                        ),
                     ),
                     "scenario": to_config_dict(
                         PybsmScenario(
@@ -80,13 +80,13 @@ class TestAPIConversionFunctions:
                             altitude=75,
                             ground_range=0,
                             cn2_at_1m=0,
-                        )
+                        ),
                     ),
                 },
             ),
         ],
     )
-    def test_build_factory(self, data: Dict[str, Any], expected: Dict[str, Any]) -> None:
+    def test_build_factory(self, data: dict[str, Any], expected: dict[str, Any]) -> None:
         """Test if _build_pybsm_factory returns the expected factory."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         factory = build_factory(schema)
@@ -108,7 +108,7 @@ class TestAPIConversionFunctions:
             ),
         ],
     )
-    def test_build_factory_no_config(self, data: Dict[str, Any]) -> None:
+    def test_build_factory_no_config(self, data: dict[str, Any]) -> None:
         """Test if build_factory throws ."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         with pytest.raises(FileNotFoundError):
@@ -141,7 +141,7 @@ class TestAPIConversionFunctions:
             ),
         ],
     )
-    def test_build_factory_bad_config(self, data: Dict[str, Any]) -> None:
+    def test_build_factory_bad_config(self, data: dict[str, Any]) -> None:
         """Test if build_factory throws ."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         with pytest.raises(ValueError):  # noqa: PT011
@@ -161,10 +161,10 @@ class TestAPIConversionFunctions:
                     "image_metadata": [{"gsd": gsd} for gsd in range(11)],
                     "config_file": "",  # Not used in this test
                 }
-            )
+            ),
         ],
     )
-    def test_load_COCOJATIC_dataset(self, data: Dict[str, Any]) -> None:  # noqa: N802
+    def test_load_COCOJATIC_dataset(self, data: dict[str, Any]) -> None:  # noqa: N802
         """Test if load_COCOJATIC_dataset returns the expected dataset."""
         schema = NrtkPerturbInputSchema.model_validate(data)
         dataset = load_COCOJATIC_dataset(schema)

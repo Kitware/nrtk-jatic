@@ -1,9 +1,13 @@
-from typing import Any, Dict, List
+"""This module contains schemas for NRTK perturber API"""
+
+from typing import Any
 
 from pydantic import BaseModel
 
 
 class NrtkPerturbInputSchema(BaseModel):
+    """Input schema for NRTK perturber API"""
+
     # Header
     id: str
     name: str
@@ -12,7 +16,7 @@ class NrtkPerturbInputSchema(BaseModel):
     dataset_dir: str
     label_file: str
     output_dir: str
-    image_metadata: List[Dict[str, Any]]
+    image_metadata: list[dict[str, Any]]
 
     # NRTK Perturber
     config_file: str
@@ -30,12 +34,14 @@ class NrtkPerturbInputSchema(BaseModel):
                     "image_metadata": [{"gsd": gsd} for gsd in range(11)],
                     "is_factory": True,
                     "config": "path/to/config_file",
-                }
-            ]
+                },
+            ],
         }
 
 
 class DatasetSchema(BaseModel):
+    """Dataset schema for NRTK perturber API"""
+
     root_dir: str
     label_file: str
     metadata_file: str
@@ -48,14 +54,16 @@ class DatasetSchema(BaseModel):
                     "root_dir": "path/to/root/dir",
                     "label_file": "path/from/root_dir/to/label/file",
                     "metadata_file": "path/from/root_dir/to/metadata/file",
-                }
-            ]
+                },
+            ],
         }
 
 
 class NrtkPerturbOutputSchema(BaseModel):
+    """Output schema for NRTK perturber API"""
+
     message: str
-    datasets: List[DatasetSchema]
+    datasets: list[DatasetSchema]
 
     class Config:  # noqa: D106
         arbitrary_types_allowed = True
@@ -68,8 +76,8 @@ class NrtkPerturbOutputSchema(BaseModel):
                             "root_dir": "path/to/root/dir0",
                             "label_file": "path/from/root_dir/to/label/file",
                             "metadata_file": "path/from/root_dir/to/metadata/file",
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         }

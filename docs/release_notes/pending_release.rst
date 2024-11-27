@@ -24,6 +24,10 @@ Documentation
 Fixes
 -----
 
+CI/CD
+
+* Updated and applied ruff configuration.
+
 Docker
 
 * Updated run path and poetry install for Dockerfile

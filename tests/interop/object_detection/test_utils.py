@@ -1,7 +1,8 @@
 import json
+from contextlib import AbstractContextManager
 from contextlib import nullcontext as does_not_raise
 from pathlib import Path
-from typing import Any, ContextManager, Dict, List
+from typing import Any
 
 import numpy as np
 import py  # type: ignore
@@ -25,6 +26,8 @@ except ImportError:
     # Won't use above imports when not importable
     pass
 
+random = np.random.default_rng()
+
 
 @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
 @pytest.mark.parametrize(
@@ -32,13 +35,13 @@ except ImportError:
     [
         (
             JATICObjectDetectionDataset(
-                imgs=[np.random.randint(0, 255, size=(3, 10, 10), dtype=np.uint8)],
+                imgs=[random.integers(0, 255, size=(3, 10, 10), dtype=np.uint8)],
                 dets=[
                     JATICDetectionTarget(
-                        boxes=np.random.randint(0, 4, size=(2, 4)),
-                        labels=np.random.randint(0, 2, size=(2,)),
-                        scores=np.random.rand(2),
-                    )
+                        boxes=random.integers(0, 4, size=(2, 4)),
+                        labels=random.integers(0, 2, size=(2,)),
+                        scores=random.random(2),
+                    ),
                 ],
                 metadata=[{"test": "rand_metadata"}],
             ),
@@ -51,13 +54,13 @@ except ImportError:
         ),
         (
             JATICObjectDetectionDataset(
-                imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 2,
+                imgs=[random.integers(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 2,
                 dets=[
                     JATICDetectionTarget(
-                        boxes=np.random.randint(0, 4, size=(2, 4)),
-                        labels=np.random.randint(0, 2, size=(2,)),
-                        scores=np.random.rand(2),
-                    )
+                        boxes=random.integers(0, 4, size=(2, 4)),
+                        labels=random.integers(0, 2, size=(2,)),
+                        scores=random.random(2),
+                    ),
                 ]
                 * 2,
                 metadata=[{"test": "rand_metadata"}] * 2,
@@ -73,9 +76,9 @@ except ImportError:
 )
 def test_dataset_to_coco(
     dataset: Dataset,
-    img_filenames: List[Path],
-    categories: List[Dict[str, Any]],
-    expectation: ContextManager,
+    img_filenames: list[Path],
+    categories: list[dict[str, Any]],
+    expectation: AbstractContextManager,
     tmpdir: py.path.local,
 ) -> None:
     """Test that a MAITE dataset is appropriately saved to file in COCO format."""

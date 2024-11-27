@@ -1,5 +1,8 @@
+"""This module contains wrappers for NRTK perturbers for image classification"""
+
 import copy
-from typing import Optional, Sequence, Tuple
+from collections.abc import Sequence
+from typing import Optional
 
 import numpy as np
 from maite.protocols import ArrayLike
@@ -12,7 +15,7 @@ from maite.protocols.image_classification import (
 from nrtk.interfaces.image_metric import ImageMetric
 from nrtk.interfaces.perturb_image import PerturbImage
 
-IMG_CLASSIFICATION_BATCH_T = Tuple[InputBatchType, TargetBatchType, DatumMetadataBatchType]
+IMG_CLASSIFICATION_BATCH_T = tuple[InputBatchType, TargetBatchType, DatumMetadataBatchType]
 
 
 class JATICClassificationAugmentation(Augmentation):
@@ -28,6 +31,7 @@ class JATICClassificationAugmentation(Augmentation):
     """
 
     def __init__(self, augment: PerturbImage) -> None:
+        """Initialize augmentation wrapper"""
         self.augment = augment
 
     def __call__(self, batch: IMG_CLASSIFICATION_BATCH_T) -> IMG_CLASSIFICATION_BATCH_T:
@@ -54,7 +58,7 @@ class JATICClassificationAugmentation(Augmentation):
                 {
                     "nrtk::perturber": self.augment.get_config(),
                     "image_info": {"width": aug_width, "height": aug_height},
-                }
+                },
             )
             aug_metadata.append(m_aug)
 
@@ -77,6 +81,7 @@ class JATICClassificationAugmentationWithMetric(Augmentation):
     """
 
     def __init__(self, augmentations: Optional[Sequence[Augmentation]], metric: ImageMetric) -> None:
+        """Initialize augmentation with metric wrapper"""
         self.augmentations = augmentations
         self.metric = metric
 
@@ -97,10 +102,7 @@ class JATICClassificationAugmentationWithMetric(Augmentation):
         for img, aug_img, aug_md in zip(imgs, aug_imgs, aug_metadata):
             # Convert from channels-first to channels-last
             img_1 = np.transpose(img, (1, 2, 0))
-            if aug_img is None:
-                img_2 = None
-            else:
-                img_2 = np.transpose(aug_img, (1, 2, 0))
+            img_2 = None if aug_img is None else np.transpose(aug_img, (1, 2, 0))
 
             # Compute Image metric values
             metric_value = self.metric(img_1=img_1, img_2=img_2, additional_params=aug_md)
@@ -114,5 +116,4 @@ class JATICClassificationAugmentationWithMetric(Augmentation):
             # type ignore was included to handle the dual Sequence[ArrrayLike] | List[None]
             # case for the augmented images.
             return aug_imgs, aug_anns, metric_aug_metadata  # type: ignore
-        else:
-            return imgs, aug_anns, metric_aug_metadata
+        return imgs, aug_anns, metric_aug_metadata

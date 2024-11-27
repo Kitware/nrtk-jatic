@@ -1,7 +1,9 @@
+"""This module contains handle_aukus_post, which is the endpoint for AUKUS API requests"""
+
 import copy
 import os
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 import requests
 from fastapi import FastAPI, HTTPException
@@ -13,6 +15,8 @@ from nrtk_jatic.api.schema import NrtkPerturbInputSchema
 
 
 class Settings(BaseSettings):
+    """Dataclass for NRTK API settings"""
+
     NRTK_IP: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=os.getcwd().split("nrtk-jatic")[0] + "nrtk-jatic/configs/AUKUS_app.env")
@@ -22,8 +26,8 @@ settings = Settings()
 AUKUS_app = FastAPI()
 
 
-@AUKUS_app.post("/")
-def handle_aukus_post(data: AukusDatasetSchema) -> List[AukusDatasetSchema]:
+def _check_input(data: AukusDatasetSchema) -> None:
+    """Check input data and raise HTTPException if needed"""
     if data.data_format != "COCO":
         raise HTTPException(status_code=400, detail="Labels provided in incorrect format.")
     if not settings.NRTK_IP:
@@ -33,6 +37,11 @@ def handle_aukus_post(data: AukusDatasetSchema) -> List[AukusDatasetSchema]:
     if not os.path.isfile(data.nrtk_config):
         raise HTTPException(status_code=400, detail="Provided NRTK config is not a valid file.")
 
+
+@AUKUS_app.post("/")
+def handle_aukus_post(data: AukusDatasetSchema) -> list[AukusDatasetSchema]:
+    """Format AUKUS request data to NRTK API format and return NRTK API data in AUKUS format"""
+    _check_input(data)
     annotation_file = Path(data.uri) / data.labels[0]["iri"]
 
     nrtk_input = NrtkPerturbInputSchema(
@@ -46,7 +55,7 @@ def handle_aukus_post(data: AukusDatasetSchema) -> List[AukusDatasetSchema]:
     )
 
     # Call 'handle_post' function with processed data and get the result
-    out = requests.post(settings.NRTK_IP, json=jsonable_encoder(nrtk_input)).json()
+    out = requests.post(settings.NRTK_IP, json=jsonable_encoder(nrtk_input), timeout=3600).json()
 
     # Process the result and construct return JSONs
     return_jsons = []
@@ -57,10 +66,10 @@ def handle_aukus_post(data: AukusDatasetSchema) -> List[AukusDatasetSchema]:
         if dataset_json.labels:
             dataset_json.labels = [
                 {
-                    "name": dataset_json.labels[0]["name"] + "pertubation_{i}",
+                    "name": f"{dataset_json.labels[0]['name']}_pertubation_{i}",
                     "iri": dataset["label_file"],
                     "objectCount": dataset_json.labels[0]["objectCount"],
-                }
+                },
             ]
         return_jsons.append(dataset_json)
 

@@ -1,7 +1,9 @@
+"""This module contains dataset_to_coco, which converts a MAITE dataset to a COCO dataset"""
+
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import numpy as np
 from maite.protocols.object_detection import Dataset
@@ -15,15 +17,22 @@ except ImportError:
     is_usable = False
 
 
-def _xywh_bbox_xform(x1: int, y1: int, x2: int, y2: int) -> Tuple[int, int, int, int]:
+def _xywh_bbox_xform(x1: int, y1: int, x2: int, y2: int) -> tuple[int, int, int, int]:
     return x1, y1, x2 - x1, y2 - y1
+
+
+def _create_annotations(dataset_categories: list[dict[str, Any]]) -> kwcoco.CocoDataset:
+    annotations = kwcoco.CocoDataset()
+    for cat in dataset_categories:
+        annotations.add_category(name=cat["name"], supercategory=cat["supercategory"], id=cat["id"])
+    return annotations
 
 
 def dataset_to_coco(
     dataset: Dataset,
     output_dir: Path,
-    img_filenames: List[Path],
-    dataset_categories: List[Dict[str, Any]],
+    img_filenames: list[Path],
+    dataset_categories: list[dict[str, Any]],
 ) -> None:
     """Save dataset object to file as a COCO formatted dataset.
 
@@ -37,10 +46,9 @@ def dataset_to_coco(
         raise ValueError(f"Image filename and dataset length mismatch ({len(img_filenames)} != {len(dataset)})")
     if not is_usable:
         raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
-    annotations = kwcoco.CocoDataset()
-    for cat in dataset_categories:
-        annotations.add_category(name=cat["name"], supercategory=cat["supercategory"], id=cat["id"])
     mod_metadata = list()
+
+    annotations = _create_annotations(dataset_categories)
 
     for i in range(len(dataset)):
         image, dets, metadata = dataset[i]
@@ -63,7 +71,7 @@ def dataset_to_coco(
                         y1=int(bbox[1]),
                         x2=int(bbox[2]),
                         y2=int(bbox[3]),
-                    )
+                    ),
                 ),
             )
 

@@ -1,5 +1,8 @@
+"""This module contains wrappers for NRTK perturbers for object detection"""
+
 import copy
-from typing import Optional, Sequence, Tuple
+from collections.abc import Sequence
+from typing import Optional
 
 import numpy as np
 from maite.protocols import ArrayLike
@@ -14,7 +17,7 @@ from nrtk.interfaces.perturb_image import PerturbImage
 
 from nrtk_jatic.interop.object_detection.dataset import JATICDetectionTarget
 
-OBJ_DETECTION_BATCH_T = Tuple[InputBatchType, TargetBatchType, DatumMetadataBatchType]
+OBJ_DETECTION_BATCH_T = tuple[InputBatchType, TargetBatchType, DatumMetadataBatchType]
 
 
 class JATICDetectionAugmentation(Augmentation):
@@ -36,7 +39,8 @@ class JATICDetectionAugmentation(Augmentation):
         Augmentations to apply to an image.
     """
 
-    def __init__(self, augment: PerturbImage):
+    def __init__(self, augment: PerturbImage) -> None:
+        """Initialize augmentation wrapper"""
         self.augment = augment
 
     def __call__(self, batch: OBJ_DETECTION_BATCH_T) -> OBJ_DETECTION_BATCH_T:
@@ -89,7 +93,8 @@ class JATICDetectionAugmentationWithMetric(Augmentation):
         Image metric to be applied for a given image.
     """
 
-    def __init__(self, augmentations: Optional[Sequence[Augmentation]], metric: ImageMetric):
+    def __init__(self, augmentations: Optional[Sequence[Augmentation]], metric: ImageMetric) -> None:
+        """Initialize augmentation with metric wrapper"""
         self.augmentations = augmentations
         self.metric = metric
 
@@ -110,10 +115,7 @@ class JATICDetectionAugmentationWithMetric(Augmentation):
         for img, aug_img, aug_md in zip(imgs, aug_imgs, aug_metadata):
             # Convert from channels-first to channels-last
             img_1 = img
-            if aug_img is None:
-                img_2 = None
-            else:
-                img_2 = aug_img
+            img_2 = None if aug_img is None else aug_img
 
             # Compute Image metric values
             metric_value = self.metric(img_1=img_1, img_2=img_2, additional_params=aug_md)  # type: ignore
@@ -127,5 +129,4 @@ class JATICDetectionAugmentationWithMetric(Augmentation):
             # type ignore was included to handle the dual Sequence[ArrrayLike] | List[None]
             # case for the augmented images.
             return aug_imgs, aug_dets, metric_aug_metadata  # type: ignore
-        else:
-            return imgs, aug_dets, metric_aug_metadata
+        return imgs, aug_dets, metric_aug_metadata

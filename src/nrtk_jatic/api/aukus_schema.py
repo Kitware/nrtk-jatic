@@ -1,13 +1,17 @@
-from typing import Any, Dict, List, Optional
+"""This module contains schemas for AUKUS API"""
+
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
 
 class AukusdataCollectionSchema(BaseModel):
+    """Collection schema for AUKUS API"""
+
     # header params
     doc_type: str
     doc_version: str
-    ism: Dict[str, Any]
+    ism: dict[str, Any]
     last_update_time: str
     id: str
     name: str
@@ -21,15 +25,17 @@ class AukusdataCollectionSchema(BaseModel):
     local_region: Optional[str] = None
     collection_date_time: Optional[str] = None
     data_entries: Optional[int] = None
-    source: Optional[Dict[str, str]] = None
-    data_formats: Optional[List[Dict[str, Any]]] = None
+    source: Optional[dict[str, str]] = None
+    data_formats: Optional[list[dict[str, Any]]] = None
 
 
 class AukusDatasetSchema(BaseModel):
+    """Dataset schema for AUKUS API"""
+
     # header params
     doc_type: str
     doc_version: str
-    ism: Dict[str, Any]
+    ism: dict[str, Any]
     last_update_time: str
     id: str
     name: str
@@ -38,14 +44,14 @@ class AukusDatasetSchema(BaseModel):
     # Required Dataset Params
     size: str
     description: str
-    data_collections: List[AukusdataCollectionSchema]
+    data_collections: list[AukusdataCollectionSchema]
     data_format: str
-    labels: List[Dict[str, Any]]
+    labels: list[dict[str, Any]]
 
     # NRTk specific param
     nrtk_config: str
-    image_metadata: List[Dict[str, Any]]
+    image_metadata: list[dict[str, Any]]
     output_dir: str
 
     # Optional Dataset Params
-    tags: Optional[List[str]] = None
+    tags: Optional[list[str]] = None

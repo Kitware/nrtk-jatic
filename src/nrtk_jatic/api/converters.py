@@ -1,3 +1,5 @@
+"""This module contains functions to convert input schema to NRTK objects"""
+
 import json
 import logging
 import os
@@ -30,11 +32,9 @@ def build_factory(data: NrtkPerturbInputSchema) -> PerturbImageFactory:
         raise FileNotFoundError(f"Config file at {data.config_file} was not found")
     with open(data.config_file) as config_file:
         config = json.load(config_file)
-        if "PerturberFactory" not in config.keys():
+        if "PerturberFactory" not in config:
             raise ValueError(f'Config file at {data.config_file} does not have "PerturberFactory" key')
-        perturber_factory = from_config_dict(config["PerturberFactory"], PerturbImageFactory.get_impls())
-
-    return perturber_factory
+        return from_config_dict(config["PerturberFactory"], PerturbImageFactory.get_impls())
 
 
 if not is_usable:
@@ -52,10 +52,8 @@ else:
             raise ImportError("This tool requires additional dependencies, please install `nrtk-jatic[tools]`")
         kwcoco_dataset = kwcoco.CocoDataset(data.label_file)
 
-        dataset = COCOJATICObjectDetectionDataset(
+        return COCOJATICObjectDetectionDataset(
             root=data.dataset_dir,
             kwcoco_dataset=kwcoco_dataset,
             image_metadata=data.image_metadata,
         )
-
-        return dataset
