@@ -1,8 +1,14 @@
+"""
+This module contains wrappers for converting a COCO dataset or
+a generic dataset to a MAITE dataset for object detection
+"""
+
 import copy
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any
 
 import numpy as np
 from maite.protocols.object_detection import (
@@ -20,7 +26,7 @@ try:
 except ImportError:
     is_usable = False
 
-OBJ_DETECTION_DATUM_T = Tuple[InputType, TargetType, DatumMetadataType]
+OBJ_DETECTION_DATUM_T = tuple[InputType, TargetType, DatumMetadataType]
 
 LOG = logging.getLogger(__name__)
 
@@ -34,11 +40,11 @@ class JATICDetectionTarget:
     scores: np.ndarray
 
 
-def _xyxy_bbox_xform(x: int, y: int, w: int, h: int) -> Tuple[int, int, int, int]:
+def _xyxy_bbox_xform(x: int, y: int, w: int, h: int) -> tuple[int, int, int, int]:
     return x, y, x + w, y + h
 
 
-def _coco_to_maite_detections(coco_annotation: List) -> TargetType:
+def _coco_to_maite_detections(coco_annotation: list) -> TargetType:
     num_anns = len(coco_annotation)
     boxes = np.zeros((num_anns, 4))
     for i, anns in enumerate(coco_annotation):
@@ -65,7 +71,7 @@ else:
             The root directory of the dataset.
         kwcoco_dataset : kwcoco.CocoDataset
             The kwcoco COCODataset object.
-        image_metadata : List[Dict[str, Any]]
+        image_metadata : list[dict[str, Any]]
             A list of per-image metadata. Any metadata required by a perturber should be provided.
         """
 
@@ -73,8 +79,9 @@ else:
             self,
             root: str,
             kwcoco_dataset: kwcoco.CocoDataset,
-            image_metadata: List[Dict[str, Any]],
-        ):
+            image_metadata: list[dict[str, Any]],
+        ) -> None:
+            """Initialize MAITE-compliant dataset from a COCO dataset"""
             self._root: Path = Path(root)
             image_dir = self._root / "images"
             self.all_img_paths = [image_dir / val["file_name"] for key, val in kwcoco_dataset.imgs.items()]
@@ -129,7 +136,7 @@ else:
                         num_unique_classes=num_unique_classes,
                         unique_classes=unique_classes,
                     ),
-                )
+                ),
             )
 
             input_img, dets, metadata = (
@@ -140,11 +147,11 @@ else:
 
             return input_img, dets, metadata
 
-        def get_img_path_list(self) -> List[Path]:
+        def get_img_path_list(self) -> list[Path]:
             """Returns the sorted list of absolute paths for the input images."""
             return sorted(self.all_img_paths)
 
-        def get_categories(self) -> List[Dict[str, Any]]:
+        def get_categories(self) -> list[dict[str, Any]]:
             """Returns the list of categories for this dataset."""
             return self.classes
 
@@ -158,7 +165,7 @@ class JATICObjectDetectionDataset(Dataset):
         Sequence of images.
     dets : Sequence[ObjectDetectionTarget]
         Sequence of detections for each image.
-    metadata : Sequence[Dict[str, Any]]
+    metadata : Sequence[dict[str, Any]]
         Sequence of custom metadata for each image.
     """
 
@@ -168,12 +175,15 @@ class JATICObjectDetectionDataset(Dataset):
         dets: Sequence[TargetType],
         metadata: Sequence[DatumMetadataType],
     ) -> None:
+        """Initialize MAITE-compliant dataset"""
         self.imgs = imgs
         self.dets = dets
         self.metadata = metadata
 
     def __len__(self) -> int:
+        """Returns the number of images in the dataset."""
         return len(self.imgs)
 
     def __getitem__(self, index: int) -> OBJ_DETECTION_DATUM_T:
+        """Returns the dataset object at the given index."""
         return self.imgs[index], self.dets[index], self.metadata[index]

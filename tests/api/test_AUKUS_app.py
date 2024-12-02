@@ -1,5 +1,5 @@
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import py  # type: ignore
 import pytest
@@ -13,7 +13,7 @@ from nrtk_jatic.api.schema import DatasetSchema, NrtkPerturbOutputSchema
 from tests import DATASET_FOLDER, NRTK_PYBSM_CONFIG
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_aukus_client() -> Generator:
     # Create a test client for the FastAPI application
     with TestClient(AUKUS_app) as client:
@@ -47,7 +47,7 @@ def test_handle_aukus_post(test_aukus_client: TestClient, tmpdir: py.path.local)
                 "name": "AUKUS",
                 "iri": "annotations/COCO_annotations_VisDrone_TINY.json",
                 "objectCount": 100,
-            }
+            },
         ],
         tags=["training", "synthetic"],
     )
@@ -63,10 +63,10 @@ def test_handle_aukus_post(test_aukus_client: TestClient, tmpdir: py.path.local)
                         root_dir="test_path/perturb1",
                         label_file="annotations.json",
                         metadata_file="image_metadata.json",
-                    )
+                    ),
                 ]
                 * 4,
-            )
+            ),
         ),
     )
     response = test_aukus_client.post("/", json=jsonable_encoder(aukus_dataset))
@@ -108,7 +108,7 @@ def test_bad_data_format_post(test_aukus_client: TestClient, tmpdir: py.path.loc
                 "name": "AUKUS",
                 "iri": "annotations/COCO_annotations_VisDrone_TINY.json",
                 "objectCount": 100,
-            }
+            },
         ],
         tags=["training", "synthetic"],
     )
@@ -145,7 +145,7 @@ def test_bad_nrtk_config_post(test_aukus_client: TestClient, tmpdir: py.path.loc
                 "name": "AUKUS",
                 "iri": "annotations/COCO_annotations_VisDrone_TINY.json",
                 "objectCount": 100,
-            }
+            },
         ],
         tags=["training", "synthetic"],
     )

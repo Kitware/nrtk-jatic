@@ -1,3 +1,5 @@
+"""This module contains handle_post, which is the endpoint for NRTK API requests"""
+
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -61,7 +63,7 @@ def handle_post(data: NrtkPerturbInputSchema) -> NrtkPerturbOutputSchema:
                     root_dir=str(full_output_dir),
                     label_file="annotations.json",
                     metadata_file="image_metadata.json",
-                )
+                ),
             )
 
         return NrtkPerturbOutputSchema(

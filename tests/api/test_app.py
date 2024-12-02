@@ -1,8 +1,8 @@
 import os
 import unittest.mock as mock
+from collections.abc import Generator
 from importlib.util import find_spec
 from pathlib import Path
-from typing import Generator
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -22,27 +22,28 @@ from tests import BAD_NRTK_CONFIG, DATASET_FOLDER, LABEL_FILE, NRTK_PYBSM_CONFIG
 deps = ["kwcoco"]
 specs = [find_spec(dep) for dep in deps]
 is_usable = all(spec is not None for spec in specs)
+random = np.random.default_rng()
 
 TEST_RETURN_VALUE = [  # repeated test return value for 3 tests, saved to var to save space
     (
         "perturb1",
         JATICObjectDetectionDataset(
-            imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 11,
+            imgs=[random.integers(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 11,
             dets=[
                 JATICDetectionTarget(
-                    boxes=np.random.rand(2, 4),
-                    labels=np.random.rand(2),
-                    scores=np.random.rand(2),
-                )
+                    boxes=random.random((2, 4)),
+                    labels=random.random(2),
+                    scores=random.random(2),
+                ),
             ]
             * 11,
             metadata=[{}] * 11,
         ),
-    )
+    ),
 ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_client() -> Generator:
     # Create a test client for the FastAPI application
     with TestClient(app) as client:
@@ -146,7 +147,7 @@ def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py
             "root_dir": str(base_path),
             "label_file": label_file.name,
             "metadata_file": metadata_file.name,
-        }
+        },
     ]
     assert image_dir.is_dir()
     assert label_file.is_file()
@@ -156,8 +157,7 @@ def test_handle_post_pybsm(patch: MagicMock, test_client: TestClient, tmpdir: py
 
 
 @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
-@mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_bad_gsd_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
+def test_bad_gsd_post(test_client: TestClient, tmpdir: py.path.local) -> None:
     """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
@@ -179,8 +179,7 @@ def test_bad_gsd_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path
     assert response.json()["detail"] == "Image metadata length mismatch, metadata needed for every image"
 
 
-@mock.patch("nrtk_jatic.api.app.nrtk_perturber", return_value=TEST_RETURN_VALUE)
-def test_no_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
+def test_no_config_post(test_client: TestClient, tmpdir: py.path.local) -> None:
     """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
@@ -202,27 +201,7 @@ def test_no_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.pa
     assert response.json()["detail"] == "Config file at /bad/path/ was not found"
 
 
-@mock.patch(
-    "nrtk_jatic.api.app.nrtk_perturber",
-    return_value=[
-        (
-            "perturb1",
-            JATICObjectDetectionDataset(
-                imgs=[np.random.randint(0, 255, size=(3, 3, 3), dtype=np.uint8)] * 11,
-                dets=[
-                    JATICDetectionTarget(
-                        boxes=np.random.rand(2, 4),
-                        labels=np.random.rand(2),
-                        scores=np.random.rand(2),
-                    )
-                ]
-                * 11,
-                metadata=[{}] * 11,
-            ),
-        )
-    ],
-)
-def test_bad_config_post(patch: MagicMock, test_client: TestClient, tmpdir: py.path.local) -> None:
+def test_bad_config_post(test_client: TestClient, tmpdir: py.path.local) -> None:
     """Test that an error response is appropriately propagated to the user."""
     test_data = NrtkPerturbInputSchema(
         id="0",
