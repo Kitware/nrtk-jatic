@@ -1,6 +1,9 @@
 v0.3.0
 ======
 
+Numerous updates to linting standards, documentation, and updated channel
+ordering to be maite compliant.
+
 Updates / New Features
 ----------------------
 
