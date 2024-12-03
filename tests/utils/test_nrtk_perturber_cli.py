@@ -1,7 +1,7 @@
 import unittest.mock as mock
+from contextlib import AbstractContextManager
 from contextlib import nullcontext as does_not_raise
 from pathlib import Path
-from typing import ContextManager
 from unittest.mock import MagicMock
 
 import py  # type: ignore
@@ -108,9 +108,9 @@ class TestNRTKPerturberCLI:
     @mock.patch("pathlib.Path.is_file", side_effect=[True, False])
     def test_missing_metadata(
         self,
-        is_file_patch: MagicMock,
+        is_file_patch: MagicMock,  # noqa: ARG002
         config_file: str,
-        expectation: ContextManager,
+        expectation: AbstractContextManager,
         caplog: pytest.LogCaptureFixture,
         tmpdir: py.path.local,
     ) -> None:
@@ -134,7 +134,7 @@ class TestNRTKPerturberCLI:
         assert "Could not identify metadata file, assuming no metadata." in caplog.text
 
     @mock.patch("pathlib.Path.is_file", return_value=False)
-    def test_missing_annotations(self, is_file_patch: MagicMock, tmpdir: py.path.local) -> None:
+    def test_missing_annotations(self, tmpdir: py.path.local) -> None:
         """Check that an exception is appropriately raised if the annotations file is missing."""
         output_dir = tmpdir.join("out")
 
@@ -181,6 +181,6 @@ class TestNRTKPerturberCLI:
         )
 
         assert result.output.startswith(
-            "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"
+            "This tool requires additional dependencies, please install `nrtk-jatic[tools]`",
         )
         assert not output_dir.check(dir=1)

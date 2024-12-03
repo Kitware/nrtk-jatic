@@ -1,5 +1,5 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 import numpy as np
 import pytest
@@ -8,6 +8,8 @@ from maite.protocols.object_detection import TargetType
 from nrtk_jatic.interop.object_detection.augmentation import JATICDetectionAugmentation
 from nrtk_jatic.interop.object_detection.dataset import JATICObjectDetectionDataset
 from tests.utils.test_utils import ResizePerturber
+
+random = np.random.default_rng()
 
 
 @dataclass
@@ -24,8 +26,8 @@ class TestJATICImageClassificationDataset:
             (
                 JATICObjectDetectionDataset(
                     [
-                        np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8),
-                        np.random.randint(0, 255, (128, 128, 3), dtype=np.uint8),
+                        random.integers(0, 255, (3, 256, 256), dtype=np.uint8),
+                        random.integers(0, 255, (3, 128, 128), dtype=np.uint8),
                     ],
                     [
                         JATICDetectionTarget(
@@ -47,17 +49,17 @@ class TestJATICImageClassificationDataset:
                             boxes=np.asarray([[0.0, 0.0, 25.0, 200.0], [0.0, 0.0, 25.0, 200.0]]),
                             labels=np.asarray([1, 1]),
                             scores=np.asarray([1, 1]),
-                        )
+                        ),
                     ],
                     [
                         JATICDetectionTarget(
                             boxes=np.asarray([[0.0, 0, 25.0, 200.0]]),
                             labels=np.asarray([0]),
                             scores=np.asarray([1]),
-                        )
+                        ),
                     ],
                 ],
-            )
+            ),
         ],
     )
     def test_dataset_adapter(
@@ -79,7 +81,9 @@ class TestJATICImageClassificationDataset:
             md_in = dataset[idx][2]
 
             # Get expected image and metadata from "normal" perturber
-            expected_img_out = perturber(np.asarray(img_in))
+            expected_img_out = perturber(np.transpose(np.asarray(img_in), (1, 2, 0)))
+            # Channel last to channel first
+            expected_img_out = np.transpose(expected_img_out, (2, 0, 1))
             expected_md_out = dict(md_in)
             expected_md_out["nrtk::perturber"] = perturber.get_config()
 

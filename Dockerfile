@@ -38,16 +38,16 @@ ENV FASTAPI_ENV=development
 WORKDIR $PYSETUP_PATH
 
 # copy in our built poetry
-COPY . ./nrtk_jatic
-WORKDIR $PYSETUP_PATH/nrtk_jatic
+COPY . ./src
+WORKDIR $PYSETUP_PATH/src
 
 # quicker install as runtime deps are already installed
 RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
     --mount=type=cache,target=/root/.cache/pypoetry,sharing=locked \
-    poetry config virtualenvs.create false && poetry install --sync \
-    --extras="maite-cpu tools"
+    poetry config virtualenvs.create false && poetry run pip \
+    install -e .[maite-cpu,tools,headless,pybsm-headless]
 
-ENTRYPOINT [ "python", "./nrtk_cdao/utils/bin/nrtk_perturber_cli.py"]
+ENTRYPOINT [ "python", "./src/nrtk_jatic/utils/bin/nrtk_perturber_cli.py"]
 # default args for nrtk_perturber_cli
 CMD ["/root/input/dataset", "/root/output/", \
      "/root/input/nrtk_config.json", "-v"]

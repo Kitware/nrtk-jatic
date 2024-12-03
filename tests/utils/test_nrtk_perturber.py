@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from typing import List
 
 import numpy as np
 import pytest
@@ -43,13 +42,11 @@ if is_usable:
             metadata = [dict()] * len(kwcoco_dataset.imgs)
 
         # Initialize dataset object
-        dataset = COCOJATICObjectDetectionDataset(
+        return COCOJATICObjectDetectionDataset(
             root=str(DATASET_FOLDER),
             kwcoco_dataset=kwcoco_dataset,
             image_metadata=metadata,
         )
-
-        return dataset
 
 
 class TestNRTKPerturber:
@@ -93,20 +90,20 @@ class TestNRTKPerturber:
                     step=2,
                 ),
                 ["_ksize-1", "_ksize-3"],
-            )
+            ),
         ],
     )
-    def test_nrtk_perturber(self, perturber_factory: PerturbImageFactory, img_dirs: List[str]) -> None:
+    def test_nrtk_perturber(self, perturber_factory: PerturbImageFactory, img_dirs: list[str]) -> None:
         """Test if the perturber returns the intended number of datasets."""
         num_imgs = 4
         dataset = JATICObjectDetectionDataset(
-            imgs=[np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)] * num_imgs,
+            imgs=[np.random.default_rng().integers(0, 255, (3, 256, 256), dtype=np.uint8)] * num_imgs,
             dets=[
                 JATICDetectionTarget(
                     boxes=np.array([[1.0, 2.0, 3.0, 4.0]]),
                     labels=np.array([0]),
                     scores=np.array([0.5]),
-                )
+                ),
             ]
             * num_imgs,
             metadata=[{"img_metadata": 0.3}] * num_imgs,

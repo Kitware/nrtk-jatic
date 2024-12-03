@@ -1,6 +1,8 @@
 import copy
+from collections.abc import Sequence
+from contextlib import AbstractContextManager
 from contextlib import nullcontext as does_not_raise
-from typing import Any, ContextManager, Dict, List, Sequence
+from typing import Any
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -17,6 +19,8 @@ from nrtk_jatic.interop.object_detection.augmentation import (
 from nrtk_jatic.interop.object_detection.dataset import JATICDetectionTarget
 from tests.utils.test_utils import ResizePerturber
 
+random = np.random.default_rng()
+
 
 class TestJATICDetectionAugmentation:
     @pytest.mark.parametrize(
@@ -29,14 +33,14 @@ class TestJATICDetectionAugmentation:
                         boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([0, 2]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
                 [
                     JATICDetectionTarget(
                         boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([0, 2]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
             ),
             (
@@ -46,14 +50,14 @@ class TestJATICDetectionAugmentation:
                         boxes=np.asarray([[4.0, 8.0, 16.0, 32.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([1, 5]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
                 [
                     JATICDetectionTarget(
                         boxes=np.asarray([[1.0, 16.0, 4.0, 64.0], [0.5, 8.0, 1.5, 16.0]]),
                         labels=np.asarray([1, 5]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
             ),
         ],
@@ -72,8 +76,8 @@ class TestJATICDetectionAugmentation:
         updated.
         """
         augmentation = JATICDetectionAugmentation(augment=perturber)
-        img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
-        md_in: List[Dict[str, Any]] = [{"some_metadata": 1}]
+        img_in = random.integers(0, 255, (3, 256, 256), dtype=np.uint8)
+        md_in: list[dict[str, Any]] = [{"some_metadata": 1}]
 
         # Get copies to check for modification
         img_copy = np.copy(img_in)
@@ -81,7 +85,9 @@ class TestJATICDetectionAugmentation:
         md_copy = copy.deepcopy(md_in)
 
         # Get expected image and metadata from "normal" perturber
-        expected_img_out = perturber(img_in)
+        expected_img_out = perturber(np.transpose(img_in, (1, 2, 0)))
+        # switch from channel last to channel first
+        expected_img_out = np.transpose(expected_img_out, (2, 0, 1))
         expected_md_out = dict(md_in[0])
         expected_md_out["nrtk::perturber"] = perturber.get_config()
 
@@ -108,7 +114,7 @@ class TestJATICDetectionAugmentation:
 
 
 class TestJATICDetectionAugmentationWithMetric:
-    img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+    img_in = random.integers(0, 255, (3, 256, 256), dtype=np.uint8)
     md_in = [{"some_metadata": 1}]
     md_aug_nop_pertuber = [{"nrtk::perturber": {}, "some_metadata": 1}]
 
@@ -122,14 +128,14 @@ class TestJATICDetectionAugmentationWithMetric:
                         boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([0, 2]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
                 [
                     JATICDetectionTarget(
                         boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([0, 2]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
                 None,
                 md_in,
@@ -142,14 +148,14 @@ class TestJATICDetectionAugmentationWithMetric:
                         boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([0, 2]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
                 [
                     JATICDetectionTarget(
                         boxes=np.asarray([[1.0, 2.0, 3.0, 4.0], [2.0, 4.0, 6.0, 8.0]]),
                         labels=np.asarray([0, 2]),
                         scores=np.asarray([0.8, 0.86]),
-                    )
+                    ),
                 ],
                 img_in,
                 md_aug_nop_pertuber,
@@ -164,8 +170,8 @@ class TestJATICDetectionAugmentationWithMetric:
         targets_in: TargetBatchType,
         expected_targets_out: TargetBatchType,
         metric_input_img2: np.ndarray,
-        metric_metadata: List[Dict[str, Any]],
-        expectation: ContextManager,
+        metric_metadata: list[dict[str, Any]],
+        expectation: AbstractContextManager,
     ) -> None:
         """Test that the augmentation adapter works with the Image Metric workflow.
 
@@ -183,13 +189,11 @@ class TestJATICDetectionAugmentationWithMetric:
         md_copy = copy.deepcopy(self.md_in)
 
         # Get expected image and metadata from "normal" perturber
-        expected_img_out = perturber(np.transpose(self.img_in, (2, 0, 1)))
+        expected_img_out = perturber(self.img_in)
 
         with expectation:
             # Apply augmentation via adapter
-            imgs_out, targets_out, md_out = metric_augmentation(
-                ([np.transpose(self.img_in, (2, 0, 1))], targets_in, self.md_in)
-            )
+            imgs_out, targets_out, md_out = metric_augmentation(([self.img_in], targets_in, self.md_in))
 
             # Check if mocked metric was called with appropriate inputs
             kwargs = metric_patch.call_args.kwargs

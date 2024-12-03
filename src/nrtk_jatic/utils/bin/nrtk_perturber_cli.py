@@ -1,7 +1,9 @@
+"""This module contains nrtk_perturber_cli, which is a CLI script for running nrtk_perturber"""
+
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, TextIO
+from typing import Any, TextIO
 
 import click  # type: ignore
 from nrtk.interfaces.perturb_image_factory import PerturbImageFactory
@@ -20,6 +22,23 @@ try:
     is_usable = True
 except ImportError:
     is_usable = False
+
+
+def _load_metadata(dataset_dir: str, kwcoco_dataset: kwcoco.CocoDataset) -> list[dict[str, Any]]:
+    metadata_file = Path(dataset_dir) / "image_metadata.json"
+    if not metadata_file.is_file():
+        logging.warn(
+            "Could not identify metadata file, assuming no metadata. Expected at '[dataset_dir]/image_metadata.json'",
+        )
+        return [dict() for _ in range(len(kwcoco_dataset.imgs))]
+    logging.info(f"Loading metadata from {metadata_file}")
+    with open(metadata_file) as f:
+        return json.load(f)
+
+
+def _set_logging(verbose: bool) -> None:
+    if verbose:
+        logging.basicConfig(level=logging.INFO)
 
 
 @click.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -58,14 +77,13 @@ def nrtk_perturber_cli(
     :param verbose: Display progress messages. Default is false.
     """
     if generate_config_file:
-        config: Dict[str, Any] = dict()
+        config: dict[str, Any] = dict()
         config["PerturberFactory"] = make_default_config(PerturbImageFactory.get_impls())
         json.dump(config, generate_config_file, indent=4)
 
         exit()
 
-    if verbose:
-        logging.basicConfig(level=logging.INFO)
+    _set_logging(verbose)
 
     logging.info(f"Dataset path: {dataset_dir}")
 
@@ -80,16 +98,7 @@ def nrtk_perturber_cli(
     kwcoco_dataset = kwcoco.CocoDataset(coco_file)
 
     # Load metadata, if it exists
-    metadata_file = Path(dataset_dir) / "image_metadata.json"
-    if not metadata_file.is_file():
-        logging.warn(
-            "Could not identify metadata file, assuming no metadata. " "Expected at '[dataset_dir]/image_metadata.json'"
-        )
-        metadata: List[Dict[str, Any]] = [dict() for _ in range(len(kwcoco_dataset.imgs))]
-    else:
-        logging.info(f"Loading metadata from {metadata_file}")
-        with open(metadata_file) as f:
-            metadata = json.load(f)
+    metadata = _load_metadata(dataset_dir, kwcoco_dataset)
 
     # Load config
     config = json.load(config_file)
@@ -97,7 +106,9 @@ def nrtk_perturber_cli(
 
     # Initialize dataset object
     input_dataset = COCOJATICObjectDetectionDataset(
-        root=dataset_dir, kwcoco_dataset=kwcoco_dataset, image_metadata=metadata
+        root=dataset_dir,
+        kwcoco_dataset=kwcoco_dataset,
+        image_metadata=metadata,
     )
 
     # Augment input dataset

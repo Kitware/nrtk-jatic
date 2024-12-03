@@ -1,6 +1,8 @@
 import copy
+from collections.abc import Sequence
+from contextlib import AbstractContextManager
 from contextlib import nullcontext as does_not_raise
-from typing import Any, ContextManager, Dict, List, Sequence
+from typing import Any
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -15,6 +17,8 @@ from nrtk_jatic.interop.image_classification.augmentation import (
     JATICClassificationAugmentationWithMetric,
 )
 from tests.utils.test_utils import ResizePerturber
+
+random = np.random.default_rng()
 
 
 class TestJATICClassificationAugmentation:
@@ -37,8 +41,8 @@ class TestJATICClassificationAugmentation:
         Also tests that labels and metadata are appropriately updated.
         """
         augmentation = JATICClassificationAugmentation(augment=perturber)
-        img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
-        md_in: List[Dict[str, Any]] = [{"some_metadata": 1}]
+        img_in = random.integers(0, 255, (256, 256, 3), dtype=np.uint8)
+        md_in: list[dict[str, Any]] = [{"some_metadata": 1}]
 
         # Get copies to check for modification
         img_copy = np.copy(img_in)
@@ -54,8 +58,8 @@ class TestJATICClassificationAugmentation:
                 "image_info": {
                     "width": expected_img_out.shape[1],
                     "height": expected_img_out.shape[0],
-                }
-            }
+                },
+            },
         )
 
         # Apply augmentation via adapter
@@ -78,7 +82,7 @@ class TestJATICClassificationAugmentation:
 
 
 class TestJATICClassificationAugmentationWithMetric:
-    img_in = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+    img_in = random.integers(0, 255, (256, 256, 3), dtype=np.uint8)
     md_in = [{"some_metadata": 1}]
     md_aug_nop_pertuber = [
         {
@@ -88,7 +92,7 @@ class TestJATICClassificationAugmentationWithMetric:
                 "width": np.transpose(img_in, (2, 0, 1)).shape[1],
                 "height": np.transpose(img_in, (2, 0, 1)).shape[0],
             },
-        }
+        },
     ]
 
     @pytest.mark.parametrize(
@@ -112,8 +116,8 @@ class TestJATICClassificationAugmentationWithMetric:
         targets_in: TargetBatchType,
         expected_targets_out: TargetBatchType,
         metric_input_img2: np.ndarray,
-        metric_metadata: List[Dict[str, Any]],
-        expectation: ContextManager,
+        metric_metadata: list[dict[str, Any]],
+        expectation: AbstractContextManager,
     ) -> None:
         """Test that the augmentation adapter works with the Image Metric workflow.
 
@@ -124,7 +128,8 @@ class TestJATICClassificationAugmentationWithMetric:
         perturber = NOPPerturber()
         metric_patch = MagicMock(spec=ImageMetric, return_value=1.0)
         metric_augmentation = JATICClassificationAugmentationWithMetric(
-            augmentations=augmentations, metric=metric_patch
+            augmentations=augmentations,
+            metric=metric_patch,
         )
 
         # Get copies to check for modification
@@ -138,7 +143,7 @@ class TestJATICClassificationAugmentationWithMetric:
         with expectation:
             # Apply augmentation via adapter
             imgs_out, targets_out, md_out = metric_augmentation(
-                ([np.transpose(self.img_in, (2, 0, 1))], targets_in, self.md_in)
+                ([np.transpose(self.img_in, (2, 0, 1))], targets_in, self.md_in),
             )
 
             # Check if mocked metric was called with appropriate inputs

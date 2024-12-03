@@ -1,9 +1,12 @@
+"""This module contains VisDroneDataset, which is a MAITE wrapper for VisDrone dataset"""
+
 from __future__ import annotations
 
 import csv
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Sequence, overload
+from typing import overload
 
 import maite.protocols as pr
 import numpy as np
@@ -15,32 +18,37 @@ from torchvision.transforms.functional import pil_to_tensor
 
 @dataclass
 class ObjectDetectionData:
+    """Dataclass for object detection"""
+
     boxes: pr.ArrayLike
     labels: pr.ArrayLike
     scores: pr.ArrayLike
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[ObjectDetectionData]:
+        """Return an iterator for object detection data"""
         self.n = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> tuple[pr.ArrayLike, pr.ArrayLike, pr.ArrayLike]:
+        """Get next object detection data"""
         if self.n < len(self.boxes):
             self.n += 1
             return self.boxes[self.n - 1], self.labels[self.n - 1], self.scores[self.n - 1]
-        else:
-            raise StopIteration
+        raise StopIteration
 
 
 @dataclass
 class VisdroneDatumMetadata:
+    """Dataclass for Visdrone metadata"""
+
     id: str
-    image_info: Dict  # user defined datum metadata
+    image_info: dict  # user defined datum metadata
 
 
 def _load_annotations(annotation_path: Path) -> pr.HasDataBoxesLabels:
     boxes = []
     labels = []
-    with open(annotation_path, "r") as file:
+    with open(annotation_path) as file:
         for row in [x.split(",") for x in file.read().strip().splitlines()]:
             # skip VisDrone "ignored regions"
             if row[4] == "0":
@@ -55,7 +63,9 @@ def _load_annotations(annotation_path: Path) -> pr.HasDataBoxesLabels:
             label = int(row[5]) - 1
             labels.append(label)
     return ObjectDetectionData(
-        boxes=torch.stack(boxes).float(), labels=torch.tensor(labels).int(), scores=torch.ones((len(labels))).int()
+        boxes=torch.stack(boxes).float(),
+        labels=torch.tensor(labels).int(),
+        scores=torch.ones(len(labels)).int(),
     )
 
 
@@ -93,7 +103,8 @@ class VisDroneDataset:
         "motor",
     )
 
-    def __init__(self, root: Path | str, subset_ids: Sequence[str] | None = None):
+    def __init__(self, root: Path | str, subset_ids: Sequence[str] | None = None) -> None:
+        """Load and initialize VisDroneDataset"""
         self._root: Path = Path(root)
 
         # populate self._images and self._annotations
@@ -105,11 +116,7 @@ class VisDroneDataset:
         image_dir = self._root / "images"
         annotation_dir = self._root / "annotations"
 
-        # validate existence of image_dir and annotation_dir
-        if not image_dir.is_dir():
-            raise IndexError("Subdirectory `image` doesn't exist")
-        if not annotation_dir.is_dir():
-            raise IndexError("Subdirectory `annotation` doesn't exist")
+        self._check_dirs(image_dir, annotation_dir)
 
         all_image_paths = list(image_dir.glob("**/*.jpg"))
         all_image_ids = {p.stem for p in all_image_paths}
@@ -122,12 +129,7 @@ class VisDroneDataset:
         if subset_ids is not None:
             keep_ids = set(subset_ids)
 
-        # verify that all ids have image and annotation files
-        for image_id in keep_ids:
-            if image_id not in all_image_ids:
-                raise IndexError(f"No image file for id: {image_id}")
-            if image_id not in all_annotation_ids:
-                raise IndexError(f"No annotation file for id: {image_id}")
+        self._check_ids(keep_ids, all_image_ids, all_annotation_ids)
 
         # store sorted image paths
         self._images = sorted([p for p in all_image_paths if p.stem in keep_ids])
@@ -143,21 +145,41 @@ class VisDroneDataset:
         self._reshape = False
         # load pre-computered brisque score
         self.brisque_scores = dict()
-        with open(self._root / "brisque.csv", mode="r") as bscore_file:
+        with open(self._root / "brisque.csv") as bscore_file:
             reader = csv.reader(bscore_file)
             next(reader)  # skip header
             self.brisque_scores = {rows[0]: rows[1] for rows in reader}
 
+    @staticmethod
+    def _check_dirs(image_dir: Path, annotation_dir: Path) -> None:
+        """Validate existence of image_dir and annotation_dir"""
+        if not image_dir.is_dir():
+            raise IndexError("Subdirectory `image` doesn't exist")
+        if not annotation_dir.is_dir():
+            raise IndexError("Subdirectory `annotation` doesn't exist")
+
+    @staticmethod
+    def _check_ids(keep_ids: set, all_image_ids: set, all_annotation_ids: set) -> None:
+        """Verify that all ids have image and annotation files"""
+        for image_id in keep_ids:
+            if image_id not in all_image_ids:
+                raise IndexError(f"No image file for id: {image_id}")
+            if image_id not in all_annotation_ids:
+                raise IndexError(f"No annotation file for id: {image_id}")
+
     def __len__(self) -> int:
+        """Returns the number of images in the dataset"""
         return len(self._images)
 
     def set_augmentation(
         self,
         agm: pr.Augmentation[..., pr.SupportsObjectDetection],
     ) -> None:
+        """Sets _augmentation_func for the given value."""
         self._augmentation_func = agm
 
     def set_reshape(self, value: bool) -> None:
+        """Sets _reshape for the given value."""
         self._reshape = value
 
     @overload
@@ -167,6 +189,7 @@ class VisDroneDataset:
     def __getitem__(self, index: int) -> pr.SupportsObjectDetection: ...
 
     def __getitem__(self, index: int | slice) -> VisDroneDataset | pr.SupportsObjectDetection:
+        """Returns the dataset object at the given index or subset of dataset at the given slice"""
         if isinstance(index, int):
             image_path = self._images[index]
             image = Image.open(image_path)
@@ -190,7 +213,7 @@ class VisDroneDataset:
                 labeled_datum = self._augmentation_func(labeled_datum)
 
             return labeled_datum
-        elif isinstance(index, slice):
+        if isinstance(index, slice):
             images_subset = self._images[index]
-            dataset_subset = VisDroneDataset(root=self._root, subset_ids=[p.stem for p in images_subset])
-            return dataset_subset
+            return VisDroneDataset(root=self._root, subset_ids=[p.stem for p in images_subset])
+        raise IndexError("Bad index")
