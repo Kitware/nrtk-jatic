@@ -37,11 +37,14 @@ class JATICDetectionAugmentation(Augmentation):
     ----------
     augment : PerturbImage
         Augmentations to apply to an image.
+    name: Optional[str]
+        Name of the augmentation. Will appear in metadata key.
     """
 
-    def __init__(self, augment: PerturbImage) -> None:
+    def __init__(self, augment: PerturbImage, name: Optional[str] = None) -> None:
         """Initialize augmentation wrapper"""
         self.augment = augment
+        self.name = name
 
     def __call__(self, batch: OBJ_DETECTION_BATCH_T) -> OBJ_DETECTION_BATCH_T:
         """Apply augmentations to the given data batch."""
@@ -72,7 +75,8 @@ class JATICDetectionAugmentation(Augmentation):
             aug_dets.append(JATICDetectionTarget(y_aug_boxes, y_aug_labels, y_aug_scores))
 
             m_aug = copy.deepcopy(md)
-            m_aug.update({"nrtk::perturber": self.augment.get_config()})
+            key_name = f"::{self.name}" if self.name else ""
+            m_aug.update({f"nrtk::perturber{key_name}": self.augment.get_config()})
             aug_metadata.append(m_aug)
 
         # return batch of augmented inputs, resized bounding boxes and updated metadata
