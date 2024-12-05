@@ -10,3 +10,6 @@ Documentation
 
 Fixes
 -----
+
+* ``JATICClassificationAugmentation`` now expects channels-first input and properly returns channels-first output as
+  specified by the MAITE protocols.

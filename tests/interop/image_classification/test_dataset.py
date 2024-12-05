@@ -22,8 +22,8 @@ class TestJATICImageClassificationDataset:
             (
                 JATICImageClassificationDataset(
                     [
-                        random.integers(0, 255, (256, 256, 3), dtype=np.uint8),
-                        random.integers(0, 255, (128, 128, 3), dtype=np.uint8),
+                        random.integers(0, 255, (3, 256, 256), dtype=np.uint8),
+                        random.integers(0, 255, (3, 128, 128), dtype=np.uint8),
                     ],
                     [np.asarray([0]), np.asarray([1])],
                     [{"some_metadata": 0}, {"some_metadata": 1}],
@@ -50,17 +50,9 @@ class TestJATICImageClassificationDataset:
             md_in = dataset[idx][2]
 
             # Get expected image and metadata from "normal" perturber
-            expected_img_out = perturber(np.asarray(img_in))
+            expected_img_out = np.transpose(perturber(np.transpose(np.asarray(img_in), (1, 2, 0))), (2, 0, 1))
             expected_md_out = dict(md_in)
             expected_md_out["nrtk::perturber"] = perturber.get_config()
-            expected_md_out.update(
-                {
-                    "image_info": {
-                        "width": expected_img_out.shape[1],
-                        "height": expected_img_out.shape[0],
-                    },
-                },
-            )
 
             # Apply augmentation via adapter
             img_out, lbl_out, md_out = augmentation(([img_in], [lbl_in], [md_in]))

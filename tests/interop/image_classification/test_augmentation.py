@@ -41,7 +41,7 @@ class TestJATICClassificationAugmentation:
         Also tests that labels and metadata are appropriately updated.
         """
         augmentation = JATICClassificationAugmentation(augment=perturber)
-        img_in = random.integers(0, 255, (256, 256, 3), dtype=np.uint8)
+        img_in = random.integers(0, 255, (3, 256, 256), dtype=np.uint8)  # MAITE is channels-first
         md_in: list[dict[str, Any]] = [{"some_metadata": 1}]
 
         # Get copies to check for modification
@@ -50,17 +50,9 @@ class TestJATICClassificationAugmentation:
         md_copy = copy.deepcopy(md_in)
 
         # Get expected image and metadata from "normal" perturber
-        expected_img_out = perturber(img_in)
+        expected_img_out = np.transpose(perturber(np.transpose(img_in, (1, 2, 0))), (2, 0, 1))
         expected_md_out = dict(md_in[0])
         expected_md_out["nrtk::perturber"] = perturber.get_config()
-        expected_md_out.update(
-            {
-                "image_info": {
-                    "width": expected_img_out.shape[1],
-                    "height": expected_img_out.shape[0],
-                },
-            },
-        )
 
         # Apply augmentation via adapter
         imgs_out, targets_out, md_out = augmentation(([img_in], targets_in, md_in))
@@ -88,10 +80,6 @@ class TestJATICClassificationAugmentationWithMetric:
         {
             "nrtk::perturber": {},
             "some_metadata": 1,
-            "image_info": {
-                "width": np.transpose(img_in, (2, 0, 1)).shape[1],
-                "height": np.transpose(img_in, (2, 0, 1)).shape[0],
-            },
         },
     ]
 
