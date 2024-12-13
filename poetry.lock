@@ -2819,13 +2819,13 @@ test = ["pytest", "pytest-console-scripts", "pytest-jupyter", "pytest-tornasync"
 
 [[package]]
 name = "nrtk"
-version = "0.15.1"
+version = "0.17.0"
 description = "An open source toolkit for evaluating the natural robustness of computer vision algorithms."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "nrtk-0.15.1-py3-none-any.whl", hash = "sha256:255827ee948ff3ee35a3c620acdf4709ae88192b3e9b8efc8dea4dede330fb65"},
-    {file = "nrtk-0.15.1.tar.gz", hash = "sha256:3d764edd9ee7bb368695ec445dd198a0f25dfbe32445f0e9db0adb6322d00bbb"},
+    {file = "nrtk-0.17.0-py3-none-any.whl", hash = "sha256:6bc93042aa624799d9c83fece902f7c3e4a5b31bdc88254e25217fbf65221b8b"},
+    {file = "nrtk-0.17.0.tar.gz", hash = "sha256:e636c450b535ebb10ce9a8bf9010badd501dca3e8ccb6c291544da03b6768197"},
 ]
 
 [package.dependencies]
@@ -2836,11 +2836,6 @@ numpy = [
 opencv-python = {version = ">=4.6", optional = true, markers = "extra == \"graphics\""}
 opencv-python-headless = {version = ">=4.6", optional = true, markers = "extra == \"headless\""}
 Pillow = ">=10.3.0"
-pybsm = [
-    {version = ">=0.8.0", optional = true, markers = "extra == \"pybsm\" or extra == \"pybsm-graphics\" or extra == \"pybsm-headless\""},
-    {version = ">=0.8.0", extras = ["headless"], optional = true, markers = "extra == \"pybsm-headless\""},
-    {version = ">=0.8.0", extras = ["graphics"], optional = true, markers = "extra == \"pybsm-graphics\""},
-]
 pycocotools = ">=2.0.6"
 scikit-image = [
     {version = ">=0.20", markers = "python_version < \"3.12\""},
@@ -2852,13 +2847,12 @@ smqtk-core = ">=0.19"
 smqtk-detection = ">=0.19.0"
 smqtk-image-io = ">=0.17.1"
 tqdm = ">=4.64"
+typing-extensions = ">=4.5.0"
 
 [package.extras]
 graphics = ["opencv-python (>=4.6)"]
 headless = ["opencv-python-headless (>=4.6)"]
-pybsm = ["pybsm (>=0.8.0)"]
-pybsm-graphics = ["pybsm (>=0.8.0)", "pybsm[graphics] (>=0.8.0)"]
-pybsm-headless = ["pybsm (>=0.8.0)", "pybsm[headless] (>=0.8.0)"]
+pybsm = ["pybsm (>=0.10.1)"]
 
 [[package]]
 name = "numpy"
@@ -3517,32 +3511,6 @@ files = [
 
 [package.extras]
 tests = ["pytest"]
-
-[[package]]
-name = "pybsm"
-version = "0.8.0"
-description = "pyBSM is a Python-based tool for sensor modeling. It provides common components useful for simulating the image formation process through different imaging systems."
-optional = true
-python-versions = "<4.0,>=3.9"
-files = [
-    {file = "pybsm-0.8.0-py3-none-any.whl", hash = "sha256:b59f75a81e378d9f2ac8cb94a6b560b83ff3b2848529afe5a1430b77d25fc892"},
-    {file = "pybsm-0.8.0.tar.gz", hash = "sha256:b25b917ceff730cc00eb97015a0f3e29ed057149d08361b08bcb3497db2e2c99"},
-]
-
-[package.dependencies]
-matplotlib = ">=3.5.2"
-numpy = [
-    {version = ">=1.22,<2.0", markers = "python_version < \"3.12\""},
-    {version = ">=1.26,<2.0", markers = "python_version >= \"3.12\" and python_version < \"3.13\""},
-]
-opencv-python = {version = ">=4.6", optional = true, markers = "extra == \"graphics\""}
-opencv-python-headless = {version = ">=4.6", optional = true, markers = "extra == \"headless\""}
-scipy = ">=1.10.0,<1.14"
-setuptools = ">=65.6.1"
-
-[package.extras]
-graphics = ["opencv-python (>=4.6)"]
-headless = ["opencv-python-headless (>=4.6)"]
 
 [[package]]
 name = "pycocotools"
@@ -5834,14 +5802,14 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 type = ["pytest-mypy"]
 
 [extras]
-graphics = ["nrtk", "nrtk", "nrtk", "nrtk", "nrtk"]
-headless = ["nrtk", "nrtk", "nrtk", "nrtk", "nrtk"]
+graphics = ["nrtk", "nrtk", "nrtk"]
+headless = ["nrtk", "nrtk", "nrtk"]
 maite-cpu = ["torch", "torchvision"]
-pybsm-graphics = ["nrtk", "nrtk", "nrtk", "nrtk", "nrtk"]
-pybsm-headless = ["nrtk", "nrtk", "nrtk", "nrtk", "nrtk"]
+pybsm-graphics = ["nrtk", "nrtk", "nrtk"]
+pybsm-headless = ["nrtk", "nrtk", "nrtk"]
 tools = ["kwcoco"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "d346bb154c7aad684ece457d76cc0d5db32cb97b58afc78de67b7b4a674495e2"
+content-hash = "9e2e23938ba1b76e284be34648946ec5a8a4bf935fbe437b16a6b8829cf0c467"
