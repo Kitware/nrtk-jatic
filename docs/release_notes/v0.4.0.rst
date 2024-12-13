@@ -1,6 +1,10 @@
 v0.4.0
 ======
 
+Fixed the ``JATICClassificationAugmentation`` to use proper channels-first ordering. Dropped
+the older version of ``nrtk`` in order to simplify it's dependency chain when ``pybsm``
+dropped the need for ``opencv``.
+
 Updates / New Features
 ----------------------
 

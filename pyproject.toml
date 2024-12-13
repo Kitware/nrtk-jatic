@@ -44,6 +44,7 @@ maite = "^0.6.0"
 # https://github.com/python-poetry/poetry/pull/9553
 nrtk = [
     {version = ">=0.17.0"},
+    {version = ">=0.17.0", extras=["pybsm"], markers = "extra == 'pybsm'", optional = true},
     {version = ">=0.17.0", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
     {version = ">=0.17.0", extras=["headless"], markers = "extra == 'headless'", optional = true},
 ]
@@ -70,8 +71,7 @@ torchvision = {version = ">=0.10.0", optional = true, source = "pytorch_cpu"}
 tools = ["kwcoco"]
 maite-cpu = ["torch", "torchvision"]
 # these use the "markers" check in nrtk optional extras
-pybsm-graphics = ["nrtk"]
-pybsm-headless = ["nrtk"]
+pybsm = ["nrtk"]
 graphics = ["nrtk"]
 headless = ["nrtk"]
 
