@@ -12,4 +12,4 @@
 dependency_scanning:
   before_script:
     - !reference [.shared-setup, before_script]
-    - poetry install --sync --only main,linting,tests,docs --extras tools
+    - poetry install --sync --only main,linting,tests,docs --extras "tools"

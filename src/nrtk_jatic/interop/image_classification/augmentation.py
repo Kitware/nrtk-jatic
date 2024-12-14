@@ -28,11 +28,14 @@ class JATICClassificationAugmentation(Augmentation):
     ----------
     augment : PerturbImage
         Augmentations to apply to an image.
+    name: Optional[str]
+        Name of the augmentation. Will appear in metadata key.
     """
 
-    def __init__(self, augment: PerturbImage) -> None:
+    def __init__(self, augment: PerturbImage, name: Optional[str] = None) -> None:
         """Initialize augmentation wrapper"""
         self.augment = augment
+        self.name = name
 
     def __call__(self, batch: IMG_CLASSIFICATION_BATCH_T) -> IMG_CLASSIFICATION_BATCH_T:
         """Apply augmentations to the given data batch."""
@@ -40,30 +43,28 @@ class JATICClassificationAugmentation(Augmentation):
 
         # iterate over (parallel) elements in batch
         aug_imgs = list()  # list of individual augmented inputs
-        aug_labels = list()  # list of individual class labels
-        aug_metadata = list()  # list of individual image-level metadata
+        aug_anns = list()  # list of individual augmented annotations
+        aug_metadata = list()  # list of individual augmented image-level metadata
 
         for img, ann, md in zip(imgs, anns, metadata):
             # Perform augmentation
-            aug_img = copy.deepcopy(img)
-            aug_img = self.augment(np.asarray(aug_img), md)
-            aug_height, aug_width = aug_img.shape[0:2]
+            aug_img = np.transpose(np.asarray(copy.deepcopy(img)), (1, 2, 0))  # Convert to channels-last
+            aug_img, _ = self.augment(aug_img, additional_params=md)
+            if aug_img.ndim > 2:
+                # Convert back to channels first
+                aug_img = np.transpose(aug_img, (2, 0, 1))
             aug_imgs.append(aug_img)
 
-            y_aug_labels = copy.deepcopy(ann)
-            aug_labels.append(y_aug_labels)
+            aug_ann = copy.deepcopy(ann)
+            aug_anns.append(aug_ann)
 
-            m_aug = copy.deepcopy(md)
-            m_aug.update(
-                {
-                    "nrtk::perturber": self.augment.get_config(),
-                    "image_info": {"width": aug_width, "height": aug_height},
-                },
-            )
-            aug_metadata.append(m_aug)
+            aug_md = copy.deepcopy(md)
+            key_name = f"::{self.name}" if self.name else ""
+            aug_md.update({f"nrtk::perturber{key_name}": self.augment.get_config()})
+            aug_metadata.append(aug_md)
 
         # return batch of augmented inputs, class labels and updated metadata
-        return aug_imgs, aug_labels, aug_metadata
+        return aug_imgs, aug_anns, aug_metadata
 
 
 class JATICClassificationAugmentationWithMetric(Augmentation):
