@@ -50,7 +50,8 @@ class TestJATICClassificationAugmentation:
         md_copy = copy.deepcopy(md_in)
 
         # Get expected image and metadata from "normal" perturber
-        expected_img_out = np.transpose(perturber(np.transpose(img_in, (1, 2, 0))), (2, 0, 1))
+        input_image, _ = perturber(np.transpose(img_in, (1, 2, 0)))
+        expected_img_out = np.transpose(input_image, (2, 0, 1))
         expected_md_out = dict(md_in[0])
         expected_md_out["nrtk::perturber"] = perturber.get_config()
 
@@ -78,7 +79,7 @@ class TestJATICClassificationAugmentationWithMetric:
     md_in = [{"some_metadata": 1}]
     md_aug_nop_pertuber = [
         {
-            "nrtk::perturber": {},
+            "nrtk::perturber": {"box_alignment_mode": "extent"},
             "some_metadata": 1,
         },
     ]
@@ -126,7 +127,7 @@ class TestJATICClassificationAugmentationWithMetric:
         md_copy = copy.deepcopy(self.md_in)
 
         # Get expected image and metadata from "normal" perturber
-        expected_img_out = perturber(np.transpose(self.img_in, (2, 0, 1)))
+        expected_img_out, _ = perturber(np.transpose(self.img_in, (2, 0, 1)))
 
         with expectation:
             # Apply augmentation via adapter

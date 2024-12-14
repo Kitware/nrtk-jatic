@@ -25,6 +25,10 @@ except ImportError:
     is_usable = False
 
 
+@pytest.mark.skipif(
+    not (PybsmScenario.is_usable() and PybsmSensor.is_usable()),
+    reason="pybsm not found. Please install `nrtk[pybsm]`.",
+)
 class TestAPIConversionFunctions:
     @pytest.mark.parametrize(
         ("data", "expected"),

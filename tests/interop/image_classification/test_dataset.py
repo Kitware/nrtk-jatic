@@ -50,7 +50,8 @@ class TestJATICImageClassificationDataset:
             md_in = dataset[idx][2]
 
             # Get expected image and metadata from "normal" perturber
-            expected_img_out = np.transpose(perturber(np.transpose(np.asarray(img_in), (1, 2, 0))), (2, 0, 1))
+            input_image, _ = perturber(np.transpose(np.asarray(img_in), (1, 2, 0)))
+            expected_img_out = np.transpose(input_image, (2, 0, 1))
             expected_md_out = dict(md_in)
             expected_md_out["nrtk::perturber"] = perturber.get_config()
 

@@ -49,7 +49,7 @@ class JATICClassificationAugmentation(Augmentation):
         for img, ann, md in zip(imgs, anns, metadata):
             # Perform augmentation
             aug_img = np.transpose(np.asarray(copy.deepcopy(img)), (1, 2, 0))  # Convert to channels-last
-            aug_img = self.augment(aug_img, md)
+            aug_img, _ = self.augment(aug_img, additional_params=md)
             if aug_img.ndim > 2:
                 # Convert back to channels first
                 aug_img = np.transpose(aug_img, (2, 0, 1))

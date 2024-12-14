@@ -60,7 +60,7 @@ class JATICDetectionAugmentation(Augmentation):
             aug_img = copy.deepcopy(img)
             aug_img = np.transpose(aug_img, (1, 2, 0))
             height, width = aug_img.shape[0:2]  # type: ignore
-            aug_img = self.augment(np.asarray(aug_img), md)
+            aug_img, _ = self.augment(np.asarray(aug_img), additional_params=md)
             aug_height, aug_width = aug_img.shape[0:2]
             aug_imgs.append(np.transpose(aug_img, (2, 0, 1)))
 

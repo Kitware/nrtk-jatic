@@ -1,0 +1,19 @@
+v0.4.0
+======
+
+Fixed the ``JATICClassificationAugmentation`` to use proper channels-first ordering. Dropped
+the older version of ``nrtk`` in order to simplify it's dependency chain when ``pybsm``
+dropped the need for ``opencv``.
+
+Updates / New Features
+----------------------
+
+Documentation
+
+* Added T&E guide for NRTK brightness perturbations.
+
+Fixes
+-----
+
+* ``JATICClassificationAugmentation`` now expects channels-first input and properly returns channels-first output as
+  specified by the MAITE protocols.
