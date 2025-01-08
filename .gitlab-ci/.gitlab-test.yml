@@ -27,7 +27,8 @@ notebooks:
         NOTEBOOK_FILE: [
           "augmentations.ipynb",
           "jatic-perturbations-saliency.ipynb",
-          "nrtk_brightness_perturber_demo.ipynb"
+          "nrtk_brightness_perturber_demo.ipynb",
+          "nrtk_focus_perturber_demo.ipynb"
           # "daml/daml_example_notebook.ipynb", broken notebook
         ]
       - NOTEBOOK_DIR: "examples/gradio"
