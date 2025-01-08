@@ -1,12 +1,13 @@
 # :auto build-system:
 [build-system]
-requires = ["poetry-core>=1.9"]
+requires = ["poetry-core>=1.9,<2.0"]
 build-backend = "poetry.core.masonry.api"
 # :auto build-system:
 
 # :auto package-meta:
 [tool.poetry]
 name = "nrtk-jatic"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{include = "nrtk_jatic", from="src"}]
 documentation = "https://nrtk-jatic.readthedocs.io/"
