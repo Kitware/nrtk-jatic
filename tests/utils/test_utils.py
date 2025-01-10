@@ -5,6 +5,7 @@ import numpy as np
 from nrtk.interfaces.perturb_image import PerturbImage
 from PIL import Image
 from smqtk_image_io import AxisAlignedBoundingBox
+from typing_extensions import override
 
 
 class ResizePerturber(PerturbImage):
@@ -12,6 +13,7 @@ class ResizePerturber(PerturbImage):
         self.w = w
         self.h = h
 
+    @override
     def perturb(
         self,
         image: np.ndarray,
@@ -25,5 +27,6 @@ class ResizePerturber(PerturbImage):
         img = img.resize((self.w, self.h))
         return np.array(img), boxes
 
+    @override
     def get_config(self) -> dict[str, Any]:
         return {"w": self.w, "h": self.h}
