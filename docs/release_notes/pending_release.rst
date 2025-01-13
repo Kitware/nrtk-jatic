@@ -10,6 +10,8 @@ Documentation
 
 Fixes
 
+* Updated check for ``kwcoco`` in ``object_detection/dataset.py``
+
 Examples
 
 * Added an example notebook exploring the DefocusOTFPerturber and
