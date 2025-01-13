@@ -1,8 +1,10 @@
 import json
+import unittest.mock as mock
 from contextlib import AbstractContextManager
 from contextlib import nullcontext as does_not_raise
 from pathlib import Path
 from typing import Any
+from unittest.mock import MagicMock
 
 import numpy as np
 import py  # type: ignore
@@ -128,3 +130,13 @@ def test_dataset_to_coco(
             # loaded dataset.
             for k, v in md.items():
                 assert v == c_md[k]
+
+
+@mock.patch.object(COCOJATICObjectDetectionDataset, "is_usable")
+@pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jati[tools]' not installed.")
+def test_missing_deps(mock_is_usable: MagicMock) -> None:
+    """Test that an exception is raised when required dependencies are not installed."""
+    mock_is_usable.return_value = False
+    assert not COCOJATICObjectDetectionDataset.is_usable()
+    with pytest.raises(ImportError, match=r"kwcoco not found. Please install 'nrtk-jatic\[tools\]'."):
+        COCOJATICObjectDetectionDataset(None, None, None)

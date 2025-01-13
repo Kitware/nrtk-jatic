@@ -19,7 +19,7 @@ class JATICDetectionTarget:
     scores: np.ndarray
 
 
-class TestJATICImageClassificationDataset:
+class TestJATICObjectDetectionDataset:
     @pytest.mark.parametrize(
         ("dataset", "expected_dets_out"),
         [
