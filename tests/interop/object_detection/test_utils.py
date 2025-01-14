@@ -45,7 +45,8 @@ random = np.random.default_rng()
                         scores=random.random(2),
                     ),
                 ],
-                metadata=[{"test": "rand_metadata"}],
+                datum_metadata=[{"id": 0}],
+                dataset_id="dummy_dataset",
             ),
             ["images/img1.png"],
             [
@@ -65,7 +66,8 @@ random = np.random.default_rng()
                     ),
                 ]
                 * 2,
-                metadata=[{"test": "rand_metadata"}] * 2,
+                datum_metadata=[{"id": idx} for idx in range(2)],
+                dataset_id="dummy_dataset",
             ),
             ["images/img1.png"],
             [
@@ -110,7 +112,6 @@ def test_dataset_to_coco(
 
         # Re-create MAITE dataset from file
         coco_dataset = COCOJATICObjectDetectionDataset(
-            root=tmpdir,
             kwcoco_dataset=kwcoco.CocoDataset(label_file),
             image_metadata=metadata,
         )

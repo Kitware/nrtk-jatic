@@ -4,6 +4,10 @@ Pending Release Notes
 Updates / New Features
 ----------------------
 
+Dependencies
+
+* Updated to be compatible with MAITE v0.7.1
+
 Documentation
 
 * Added T&E guide for NRTK turbulence perturbations.
