@@ -16,4 +16,7 @@ Examples
 
 * Added an example notebook exploring the DefocusOTFPerturber and
   its use within the nrtk-jatic workflow.
+
+* Added an example notebook exploring the RandomTranslationPerturber and
+  its use within the nrtk-jatic workflow
 -----
