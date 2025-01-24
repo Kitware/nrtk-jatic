@@ -18,5 +18,8 @@ Examples
   its use within the nrtk-jatic workflow.
 
 * Added an example notebook exploring the RandomTranslationPerturber and
-  its use within the nrtk-jatic workflow
+  its use within the nrtk-jatic workflow.
+
+* Added an example notebook exploring sensor transformation via the PybsmPerturber
+  and its use within the nrtk-jatic workflow.
 -----
