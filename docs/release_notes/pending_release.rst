@@ -12,6 +12,8 @@ Documentation
 
 * Added T&E guide for NRTK turbulence perturbations.
 
+* Added ``T&E Notebooks`` section to documentation.
+
 Fixes
 
 * Updated check for ``kwcoco`` in ``object_detection/dataset.py``

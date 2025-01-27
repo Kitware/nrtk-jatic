@@ -15,6 +15,7 @@ information exclusive to the JATIC extention of NRTK. Documentation for NRTK can
 
    installation
    jatic_interoperability
+   testing_and_eval_guides
    api
    containers
    schema
