@@ -28,25 +28,26 @@ try:
 except ImportError:
     is_usable = False
 
-if is_usable:
 
-    def _load_dataset(dataset_path: str, load_metadata: bool = True) -> COCOJATICObjectDetectionDataset:
-        coco_file = Path(dataset_path) / "annotations.json"
-        kwcoco_dataset = kwcoco.CocoDataset(coco_file)
+def _load_dataset(dataset_path: str, load_metadata: bool = True) -> COCOJATICObjectDetectionDataset:
+    if not is_usable:
+        raise ImportError("Extra 'nrtk-jatic[tools]' not installed.")
 
-        if load_metadata:
-            metadata_file = Path(dataset_path) / "image_metadata.json"
-            with open(metadata_file) as f:
-                metadata = json.load(f)
-        else:
-            metadata = [dict()] * len(kwcoco_dataset.imgs)
+    coco_file = Path(dataset_path) / "annotations.json"
+    kwcoco_dataset = kwcoco.CocoDataset(coco_file)
 
-        # Initialize dataset object
-        return COCOJATICObjectDetectionDataset(
-            root=str(DATASET_FOLDER),
-            kwcoco_dataset=kwcoco_dataset,
-            image_metadata=metadata,
-        )
+    if load_metadata:
+        metadata_file = Path(dataset_path) / "image_metadata.json"
+        with open(metadata_file) as f:
+            metadata = json.load(f)
+    else:
+        metadata = [{"id": idx} for idx in range(len(kwcoco_dataset.imgs))]
+
+    # Initialize dataset object
+    return COCOJATICObjectDetectionDataset(
+        kwcoco_dataset=kwcoco_dataset,
+        image_metadata=metadata,
+    )
 
 
 class TestNRTKPerturber:
@@ -106,7 +107,8 @@ class TestNRTKPerturber:
                 ),
             ]
             * num_imgs,
-            metadata=[{"img_metadata": 0.3}] * num_imgs,
+            datum_metadata=[{"id": idx} for idx in range(num_imgs)],
+            dataset_id="dummy_dataset",
         )
 
         augmented_datasets = nrtk_perturber(maite_dataset=dataset, perturber_factory=perturber_factory)
