@@ -43,10 +43,10 @@ maite = "^0.7.1"
 # has a PR working on it and hopefully won't be too far into the future
 # https://github.com/python-poetry/poetry/pull/9553
 nrtk = [
-    {version = ">=0.17.0"},
-    {version = ">=0.17.0", extras=["pybsm"], markers = "extra == 'pybsm'", optional = true},
-    {version = ">=0.17.0", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
-    {version = ">=0.17.0", extras=["headless"], markers = "extra == 'headless'", optional = true},
+    {version = ">=0.20.0"},
+    {version = ">=0.20.0", extras=["pybsm"], markers = "extra == 'pybsm'", optional = true},
+    {version = ">=0.20.0", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
+    {version = ">=0.20.0", extras=["headless"], markers = "extra == 'headless'", optional = true},
 ]
 
 # REST API deps
