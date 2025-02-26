@@ -4,6 +4,13 @@
 [![Documentation Status](https://readthedocs.org/projects/nrtk-jatic/badge/?version=latest)](https://nrtk-jatic.readthedocs.io/en/latest/?badge=latest)
 <!-- :auto badges: -->
 
+# NOTE
+
+The `nrtk-jatic` package is deprecated and will soon be scheduled for deletion.
+All functionality has been integrated into the core [`nrtk` package](https://gitlab.jatic.net/jatic/kitware/nrtk)
+under the `nrtk.interop.maite` module.
+Please switch to using this in the near future.
+
 # nrtk-jatic
 
 The `nrtk-jatic` package is an extension of the Natural Robustness Toolkit
