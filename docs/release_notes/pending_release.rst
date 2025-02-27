@@ -4,6 +4,11 @@ Pending Release Notes
 Updates / New Features
 ----------------------
 
+Updates
+
+* Mapped all modules to to parallel versions in ``nrtk.interop.maite`` and added
+  depreacation warning at import time
+
 Dependencies
 
 * Updated to be compatible with MAITE v0.7.1
