@@ -200,7 +200,7 @@ class TestAPIConversionFunctions:
         """Test that ImportError appropriately raised when imports missing"""
         schema = NrtkPerturbInputSchema.model_validate(data)
 
-        with pytest.raises(ImportError, match=r"This tool requires additional dependencies"):
+        with pytest.raises(ImportError, match=r"kwcoco must be installed. Please install via `nrtk\[tools\]`."):
             _ = load_COCOJATIC_dataset(schema)
 
     @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
