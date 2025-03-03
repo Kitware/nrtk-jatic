@@ -139,5 +139,5 @@ def test_missing_deps(mock_is_usable: MagicMock) -> None:
     """Test that an exception is raised when required dependencies are not installed."""
     mock_is_usable.return_value = False
     assert not COCOJATICObjectDetectionDataset.is_usable()
-    with pytest.raises(ImportError, match=r"kwcoco not found. Please install 'nrtk-jatic\[tools\]'."):
+    with pytest.raises(ImportError, match=r"kwcoco must be installed. Please install via `nrtk\[tools\]`."):
         COCOJATICObjectDetectionDataset(None, None, None)

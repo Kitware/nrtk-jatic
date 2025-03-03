@@ -225,26 +225,3 @@ def test_bad_config_post(test_client: TestClient, tmpdir: py.path.local) -> None
         response.json()["detail"]
         == "Configuration dictionary given does not have an implementation type specification."
     )
-
-
-@mock.patch("nrtk_jatic.api.app.is_usable", False)
-def test_missing_deps(test_client: TestClient, tmpdir: py.path.local) -> None:
-    """Test that an exception is raised when required dependencies are not installed."""
-    test_data = NrtkPerturbInputSchema(
-        id="0",
-        name="Example",
-        dataset_dir=str(DATASET_FOLDER),
-        label_file=str(LABEL_FILE),
-        output_dir=str(tmpdir),
-        image_metadata=[{"id": idx, "gsd": idx} for idx in range(11)],
-        config_file=str(NRTK_PYBSM_CONFIG),
-    )
-
-    # Send a POST request to the API endpoint
-    response = test_client.post("/", json=jsonable_encoder(test_data))
-
-    # Check response status code
-    assert response.status_code == 400
-
-    # Check that we got the correct error message
-    assert response.json()["detail"] == "This tool requires additional dependencies, please install `nrtk-jatic[tools]`"

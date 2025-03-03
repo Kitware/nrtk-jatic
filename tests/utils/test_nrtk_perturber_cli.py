@@ -175,12 +175,11 @@ class TestNRTKPerturberCLI:
 
         runner = CliRunner()
 
-        result = runner.invoke(
-            nrtk_perturber_cli,
-            [str(DATASET_FOLDER), str(output_dir), str(NRTK_PYBSM_CONFIG)],
-        )
+        with pytest.raises(ImportError, match=r"kwcoco must be installed. Please install via `nrtk\[tools\]`."):
+            runner.invoke(
+                nrtk_perturber_cli,
+                [str(DATASET_FOLDER), str(output_dir), str(NRTK_PYBSM_CONFIG)],
+                catch_exceptions=False,
+            )
 
-        assert result.output.startswith(
-            "This tool requires additional dependencies, please install `nrtk-jatic[tools]`",
-        )
         assert not output_dir.check(dir=1)
