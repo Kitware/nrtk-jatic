@@ -1,6 +1,9 @@
 v0.5.0
 ======
 
+Final release of ``nrtk-jatic``: ``nrtk-jatic`` will fail to import on 2025/05/01. Please transition to
+``nrtk.interop.maite`` (``nrtk`` v0.20.0+).
+
 Updates / New Features
 ----------------------
 
