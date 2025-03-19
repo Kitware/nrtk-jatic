@@ -6,8 +6,10 @@ Updates / New Features
 
 Updates
 
+* ``nrtk-jatic`` will fail to import on 2025/05/01. Please transition to ``nrtk.interop.maite`` (``nrtk`` v0.20.0+).
+
 * Mapped all modules to to parallel versions in ``nrtk.interop.maite`` and added
-  depreacation warning at import time
+  deprecation warning at import time
 
 Dependencies
 
