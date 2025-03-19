@@ -4,12 +4,11 @@
 [![Documentation Status](https://readthedocs.org/projects/nrtk-jatic/badge/?version=latest)](https://nrtk-jatic.readthedocs.io/en/latest/?badge=latest)
 <!-- :auto badges: -->
 
-# NOTE
+# DEPRECATED
 
-The `nrtk-jatic` package is deprecated and will soon be scheduled for deletion.
+The `nrtk-jatic` package is deprecated and will fail to import on 2025/05/01.
 All functionality has been integrated into the core [`nrtk` package](https://gitlab.jatic.net/jatic/kitware/nrtk)
-under the `nrtk.interop.maite` module.
-Please switch to using this in the near future.
+(v0.20.0) under the `nrtk.interop.maite` module. Please migrate to the `nrtk` package as soon as possible.
 
 # nrtk-jatic
 
