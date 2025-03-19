@@ -51,7 +51,7 @@ class TestNRTKPerturberCLI:
         # Confirm entrypoint arguments are as expected
         kwargs = entrypoint_patch.call_args.kwargs
         assert len(kwargs["maite_dataset"]) == 11
-        assert kwargs["maite_dataset"]._image_metadata == [{"img_gsd": 0.105}] * 11
+        assert kwargs["maite_dataset"]._image_metadata == {idx: {"id": idx, "img_gsd": 0.105} for idx in range(11)}
         assert len(kwargs["perturber_factory"]) == 4
 
         # Confirm dataset_to_coco arguments are as expected
@@ -175,12 +175,11 @@ class TestNRTKPerturberCLI:
 
         runner = CliRunner()
 
-        result = runner.invoke(
-            nrtk_perturber_cli,
-            [str(DATASET_FOLDER), str(output_dir), str(NRTK_PYBSM_CONFIG)],
-        )
+        with pytest.raises(ImportError, match=r"kwcoco must be installed. Please install via `nrtk\[tools\]`."):
+            runner.invoke(
+                nrtk_perturber_cli,
+                [str(DATASET_FOLDER), str(output_dir), str(NRTK_PYBSM_CONFIG)],
+                catch_exceptions=False,
+            )
 
-        assert result.output.startswith(
-            "This tool requires additional dependencies, please install `nrtk-jatic[tools]`",
-        )
         assert not output_dir.check(dir=1)

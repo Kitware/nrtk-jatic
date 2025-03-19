@@ -9,12 +9,20 @@ This is an extension of the Natural Robustness Toolkit (NRTK) for JATIC. This do
 information exclusive to the JATIC extention of NRTK. Documentation for NRTK can be found
 `here <https://nrtk.readthedocs.io/en/latest/index.html>`_.
 
+NOTE
+----
+The ``nrtk-jatic`` package is deprecated and will soon be scheduled for deletion.
+All functionality has been integrated into the core `NRTK package <https://gitlab.jatic.net/jatic/kitware/nrtk>`_
+under the ``nrtk.interop.maite`` module.
+Please switch to using this in the near future.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    installation
    jatic_interoperability
+   testing_and_eval_guides
    api
    containers
    schema

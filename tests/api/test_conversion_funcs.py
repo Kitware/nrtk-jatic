@@ -1,4 +1,5 @@
 import os
+import unittest.mock as mock
 from typing import Any
 
 import numpy as np
@@ -162,7 +163,7 @@ class TestAPIConversionFunctions:
                     "dataset_dir": str(DATASET_FOLDER),
                     "label_file": str(LABEL_FILE),
                     "output_dir": "",  # Not used in this test
-                    "image_metadata": [{"gsd": gsd} for gsd in range(11)],
+                    "image_metadata": [{"id": idx, "gsd": idx} for idx in range(11)],
                     "config_file": "",  # Not used in this test
                 }
             ),
@@ -177,3 +178,51 @@ class TestAPIConversionFunctions:
             assert dataset[i][2]["gsd"] == data["image_metadata"][i]["gsd"]
         # Check number of image matches
         assert len(dataset) == len(os.listdir(os.path.join(data["dataset_dir"], "images")))
+
+    @mock.patch("nrtk_jatic.api.converters.is_usable", False)
+    @pytest.mark.parametrize(
+        "data",
+        [
+            (
+                {
+                    "id": "0",
+                    "name": "Example",
+                    "dataset_dir": str(DATASET_FOLDER),
+                    "label_file": str(LABEL_FILE),
+                    "output_dir": "",  # Not used in this test
+                    "image_metadata": [{"id": idx, "gsd": idx} for idx in range(11)],
+                    "config_file": "",  # Not used in this test
+                }
+            ),
+        ],
+    )
+    def test_load_COCOJATIC_dataset_not_usable(self, data: dict[str, Any]) -> None:  # noqa: N802
+        """Test that ImportError appropriately raised when imports missing"""
+        schema = NrtkPerturbInputSchema.model_validate(data)
+
+        with pytest.raises(ImportError, match=r"kwcoco must be installed. Please install via `nrtk\[tools\]`."):
+            _ = load_COCOJATIC_dataset(schema)
+
+    @pytest.mark.skipif(not is_usable, reason="Extra 'nrtk-jatic[tools]' not installed.")
+    @pytest.mark.parametrize(
+        "data",
+        [
+            (
+                {
+                    "id": "0",
+                    "name": "Example",
+                    "dataset_dir": str(DATASET_FOLDER),
+                    "label_file": str(LABEL_FILE),
+                    "output_dir": "",  # Not used in this test
+                    "image_metadata": [{"gsd": idx} for idx in range(11)],
+                    "config_file": "",  # Not used in this test
+                }
+            ),
+        ],
+    )
+    def test_load_COCOJATIC_dataset_bad_metadata(self, data: dict[str, Any]) -> None:  # noqa: N802
+        """Test that ValueError appropriately raised when bad metadata is provided"""
+        schema = NrtkPerturbInputSchema.model_validate(data)
+
+        with pytest.raises(ValueError, match=r"ID not present in image metadata. Is it a DatumMetadataType?"):
+            _ = load_COCOJATIC_dataset(schema)

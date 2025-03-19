@@ -1,12 +1,13 @@
 # :auto build-system:
 [build-system]
-requires = ["poetry-core>=1.9"]
+requires = ["poetry-core>=1.9,<2.0"]
 build-backend = "poetry.core.masonry.api"
 # :auto build-system:
 
 # :auto package-meta:
 [tool.poetry]
 name = "nrtk-jatic"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{include = "nrtk_jatic", from="src"}]
 documentation = "https://nrtk-jatic.readthedocs.io/"
@@ -25,9 +26,8 @@ classifiers = [
 # :auto package-meta:
 # package-specific meta, don't put this in "generated package-meta"
 authors = ["Kitware, Inc. <nrtk@kitware.com>"]
-license = "Apache-2.0"
-version = "0.4.0"
-description = ""
+version = "0.5.0"
+description = "A wrapper for nrtk to comply with maite protocols."
 
 [tool.poetry.dependencies]
 # :auto python-version:
@@ -37,16 +37,16 @@ python = "^3.9"
 # Python capped to <3.13 because of:
 # https://stackoverflow.com/questions/77431252/why-doesnt-poetry-select-the-good-version-of-my-dependency
 numpy = {version = ">=1.22,<2.0", python = ">=3.9,<3.13" } # CVE-2021-34141
-maite = "^0.6.0"
+maite = "^0.7.1"
 
 # This does not work with poetry install but does work with pip. Poetry
 # has a PR working on it and hopefully won't be too far into the future
 # https://github.com/python-poetry/poetry/pull/9553
 nrtk = [
-    {version = ">=0.17.0"},
-    {version = ">=0.17.0", extras=["pybsm"], markers = "extra == 'pybsm'", optional = true},
-    {version = ">=0.17.0", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
-    {version = ">=0.17.0", extras=["headless"], markers = "extra == 'headless'", optional = true},
+    {version = ">=0.20.0"},
+    {version = ">=0.20.0", extras=["pybsm"], markers = "extra == 'pybsm'", optional = true},
+    {version = ">=0.20.0", extras=["graphics"], markers = "extra == 'graphics'", optional = true},
+    {version = ">=0.20.0", extras=["headless"], markers = "extra == 'headless'", optional = true},
 ]
 
 # REST API deps
@@ -81,11 +81,12 @@ headless = ["nrtk"]
 optional = true
 
 [tool.poetry.group.linting.dependencies]
-mypy = ">=0.991,!=1.11.0"
+mypy = ">=1.12.0"
 pre-commit = ">=2.20"
 ruff = "^0.5.6"
 types-setuptools = ">=65.6.0.1"
 sphinx-lint = ">=1.0.0"
+pyright = {version=">=1.1.320",extras=["nodejs"]}
 # :auto linting:
 types-PyYAML = ">=6.0.12.11"
 types-requests = ">=2.31.0.10"
@@ -118,7 +119,7 @@ syrupy = ">=4.0.0"
 notebook = ">=7.2.2"
 papermill = ">=2.4.0"
 # :auto tests:
-maite = {version = "^0.6.0", extras = ["test"]}
+maite = {version = "^0.7.1", extras = ["test"]}
 
 [tool.poetry.scripts]
 nrtk-perturber = "nrtk_jatic.utils.bin.nrtk_perturber_cli:nrtk_perturber_cli"
@@ -245,3 +246,22 @@ incremental = false
 module = "tests.*"
 ignore_errors = true
 # :auto mypy:
+
+# :auto pyright:
+[tool.pyright]
+pythonVersion = "3.9"
+reportMissingImports = "warning"
+typeCheckingMode = "standard"
+include = [
+    "src/nrtk_jatic",
+    "tests",
+    "examples"
+    ]
+exclude = [
+    "**/__pycache__",
+    "demos",
+    "scripts",
+    "docs/_build",
+    "docs/_implementations",
+    ]
+# :auto pyright:
