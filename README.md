@@ -7,7 +7,7 @@
 # DEPRECATED
 
 The `nrtk-jatic` package is deprecated and will fail to import on 2025/05/01.
-All functionality has been integrated into the core [`nrtk` package](https://gitlab.jatic.net/jatic/kitware/nrtk)
+All functionality has been integrated into the core [`nrtk` package](https://github.com/Kitware/nrtk)
 (v0.20.0) under the `nrtk.interop.maite` module. Please migrate to the `nrtk` package as soon as possible.
 
 # nrtk-jatic
